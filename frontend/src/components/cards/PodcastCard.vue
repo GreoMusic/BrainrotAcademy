@@ -38,12 +38,15 @@ async function watchForVoices() {
       if (segment && segment.turns?.some((turn) => turn.audio)) {
         liveSeg.value = segment
         stopPolling()
-        // Restart so they hear it rather than read it - but never re-lock a
-        // card they already listened through.
+        // Caption playback has not started yet, so voices begin once from the
+        // first turn instead of restarting a line the listener already read.
         if (props.active && !finished.value) playTurn(0)
       } else if (audio_ready) {
         if (segment) liveSeg.value = segment
         stopPolling()
+        // Rendering completed without usable audio. Run the caption fallback
+        // once; it no longer races and restarts when voices arrive.
+        if (props.active && !finished.value) playTurn(0)
       }
     } catch {
       stopPolling()
@@ -109,6 +112,10 @@ function stopAudio() {
 
 function toggle() {
   if (showQuiz.value) return
+  if (awaitingVoices.value) {
+    watchForVoices()
+    return
+  }
   if (playing.value) {
     stopAudio()
     playing.value = false
@@ -141,8 +148,8 @@ watch(
   () => props.active,
   (a) => {
     if (a) {
-      playTurn(0)
-      watchForVoices()
+      if (awaitingVoices.value) watchForVoices()
+      else playTurn(0)
     } else {
       stopAudio()
       stopPolling()
@@ -198,7 +205,9 @@ onBeforeUnmount(() => {
 
         <!-- Captions are not optional: most people watch muted. -->
         <transition name="fade">
-          <div class="q line" :key="idx">{{ current.text }}</div>
+          <div class="q line" :key="idx">
+            {{ awaitingVoices ? 'Preparing both voices…' : current.text }}
+          </div>
         </transition>
 
         <div class="wave" :class="{ on: playing }">
@@ -208,8 +217,8 @@ onBeforeUnmount(() => {
 
       <div class="controls">
         <button class="ctl" @click="step(-1)">◀◀</button>
-        <button class="btn btn-primary play" @click="toggle">
-          {{ playing ? 'Pause' : 'Play' }}
+        <button class="btn btn-primary play" :disabled="awaitingVoices" @click="toggle">
+          {{ awaitingVoices ? 'Preparing voices…' : playing ? 'Pause' : 'Play' }}
         </button>
         <button class="ctl" @click="step(1)">▶▶</button>
       </div>

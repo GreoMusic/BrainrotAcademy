@@ -4,6 +4,7 @@ Complements test_orchestrator.py: that one proves the engine, this one proves
 the wiring between the engine and HTTP.
 """
 import json
+import io
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from app import create_app  # noqa: E402
 import catalogue  # noqa: E402
 import mistral_client  # noqa: E402
 import topics  # noqa: E402
+from routes import friction as friction_routes  # noqa: E402
 from routes.session import BLOCKING  # noqa: E402
 from routes import coach as coach_routes  # noqa: E402
 
@@ -80,6 +82,54 @@ def test_health(client):
     health = client.get("/api/health").get_json()
     assert health["ok"] is True
     assert health["realtime_stt_model"] == config.REALTIME_STT_MODEL
+
+
+def test_conversation_gate_returns_transcript_and_reflection(client, monkeypatch):
+    monkeypatch.setattr(
+        friction_routes.mc,
+        "transcribe_diarized",
+        lambda *_args, **_kwargs: {
+            "text": (
+                "My day was pretty good. I went for a long walk after lunch. "
+                "That sounds relaxing. Where did you go? I walked around the lake near home."
+            ),
+            "segments": [
+                {"speaker": "speaker_0", "text": "My day was pretty good. I went for a long walk after lunch."},
+                {"speaker": "speaker_1", "text": "That sounds relaxing. Where did you go?"},
+                {"speaker": "speaker_0", "text": "I walked around the lake near home."},
+            ],
+        },
+    )
+    monkeypatch.setattr(
+        friction_routes.mc,
+        "chat_json",
+        lambda *_args, **_kwargs: {
+            "real": True,
+            "reason": "You shared something specific and responded to a follow-up question.",
+            "reflection": {
+                "strengths": ["You shared a concrete detail.", "You responded to curiosity."],
+                "next_step": "Invite the other person to explain their view first.",
+                "follow_up": "What part feels most surprising to you?",
+            },
+        },
+    )
+
+    response = client.post(
+        "/api/friction/talk",
+        data={
+            "audio": (io.BytesIO(b"fake webm"), "conversation.webm"),
+            "prompt": "How has your day been so far?",
+        },
+        content_type="multipart/form-data",
+    )
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["pass"] is True
+    assert "long walk" in payload["transcript"]
+    assert {segment["speaker"] for segment in payload["segments"]} == {"speaker_0", "speaker_1"}
+    assert len(payload["reflection"]["strengths"]) == 2
+    assert payload["reflection"]["next_step"]
 
 
 def test_realtime_coach_websocket_is_registered(client):

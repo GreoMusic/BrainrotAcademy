@@ -327,7 +327,10 @@ button { border: 0; background: none; cursor: pointer; }
   position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
   z-index: 30; display: flex; align-items: flex-end;
 }
-.sheet { width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 20px 20px 22px; }
+.sheet {
+  width: 100%; max-height: 92%; overflow-y: auto; background: #fff;
+  border-radius: 22px 22px 0 0; padding: 20px 20px 22px;
+}
 .sheet-handle { width: 36px; height: 4px; background: #ddd; border-radius: 4px; margin: 0 auto 14px; }
 
 .cam-box {
