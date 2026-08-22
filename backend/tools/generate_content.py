@@ -232,24 +232,45 @@ def render_audio(topic: str, script: dict, *, workers: int = 8, quiet: bool = Fa
     def render(job):
         path, text, voice = job
         if path.exists() and path.stat().st_size > 0:
-            return path, True  # resume: never re-pay for audio already on disk
-        path.write_bytes(mc.tts(text, voice_id=voice))
-        return path, False
+            return path, True, None  # resume: never re-pay for audio already on disk
+        try:
+            path.write_bytes(mc.tts(text, voice_id=voice))
+            return path, False, None
+        except Exception as exc:  # noqa: BLE001
+            # One guardrail rejection or transient failure must not discard the
+            # other voices. The failed turn is left caption-only below.
+            return path, False, str(exc)
 
     done = 0
+    failed: set[Path] = set()
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        for path, cached in pool.map(render, jobs):
+        for path, cached, error in pool.map(render, jobs):
             done += 1
+            if error:
+                failed.add(path)
             if not quiet:
-                print("  [{}/{}] {}{}".format(
-                    done, len(jobs), path.name, " (cached)" if cached else ""))
+                suffix = " (cached)" if cached else " (captions only)" if error else ""
+                print("  [{}/{}] {}{}".format(done, len(jobs), path.name, suffix))
 
     # Durations let the UI size the progress dots and preload turn N+1.
     for seg in script.get("segments", []):
         for turn in seg.get("turns", []):
             # Derive from the url, not the turn id - the filename carries a
             # content hash now, so rebuilding it from the id would miss.
-            turn["dur"] = _duration(out_dir / Path(turn["audio"]).name)
+            audio = turn.get("audio")
+            path = out_dir / Path(audio).name if audio else None
+            if path in failed:
+                turn.pop("audio", None)
+                # A readable caption duration keeps the segment moving.
+                turn["dur"] = max(3.0, min(12.0, len(turn.get("text", "").split()) * 0.38))
+            elif path:
+                turn["dur"] = _duration(path)
+
+        qa = seg.get("quiz_after") or {}
+        for key in ("reaction_correct_audio", "reaction_wrong_audio"):
+            audio = qa.get(key)
+            if audio and out_dir / Path(audio).name in failed:
+                qa.pop(key, None)
         seg["dur"] = round(sum(t.get("dur", 0) for t in seg.get("turns", [])), 2)
 
     return script
