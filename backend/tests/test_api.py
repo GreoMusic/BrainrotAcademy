@@ -121,6 +121,36 @@ def test_coach_reply_stream_interleaves_text_and_pcm(client, monkeypatch):
     assert events[-1] == {"type": "result", "understood": True, "done": False}
 
 
+def test_coach_text_completes_when_tts_stream_fails(client, monkeypatch):
+    monkeypatch.setattr(
+        coach_routes,
+        "_coach_payload",
+        lambda *_args: {
+            "transcript": "Carbon comes from air.",
+            "reply": "Correct. Carbon dioxide supplies it.",
+            "understood": True,
+            "done": False,
+        },
+    )
+
+    def broken_tts(*_args, **_kwargs):
+        raise RuntimeError("temporary voice failure")
+        yield b""  # pragma: no cover - makes this a generator
+
+    monkeypatch.setattr(coach_routes.mc, "tts_stream", broken_tts)
+    response = client.post(
+        "/api/coach/turn/stream",
+        json={"text": "Carbon comes from air.", "topic": "photosynthesis"},
+    )
+    events = [json.loads(line) for line in response.get_data(as_text=True).splitlines()]
+
+    assert "".join(e["text"] for e in events if e["type"] == "text_delta") == (
+        "Correct. Carbon dioxide supplies it."
+    )
+    assert any(e["type"] == "audio_error" for e in events)
+    assert events[-1]["type"] == "result"
+
+
 def test_unknown_session_404s(client):
     assert client.get("/api/session/nope/next").status_code == 404
 

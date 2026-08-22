@@ -59,7 +59,9 @@ def status(slug: str) -> dict[str, Any]:
         if content.pack_exists(slug):
             pack = content.load_pack(slug)
             return {
-                "stage": STAGE_READY if pack.get("audio_ready") else STAGE_AUDIO,
+                "stage": STAGE_READY
+                if pack.get("audio_ready") and not content.missing_audio_assets(pack)
+                else STAGE_AUDIO,
                 "slug": slug,
             }
         return {"stage": "unknown", "slug": slug}
@@ -109,6 +111,15 @@ def ensure_pack(
     # Already on disk from an earlier session or run.
     if content.pack_exists(slug):
         pack = content.load_pack(slug)
+        if pack.get("audio_ready") and content.missing_audio_assets(pack):
+            # A checked-in/cached JSON file can outlive its generated MP3
+            # directory. Repair the lie before serving the first podcast card.
+            pack = content.read_pack_file(slug)
+            content.remove_missing_audio_assets(pack)
+            pack["audio_ready"] = False
+            content.write_pack_file(slug, pack)
+            content.clear_cache()
+            pack = content.load_pack(slug)
         if want_audio and not pack.get("audio_ready"):
             _kick_audio(slug)
         return slug, pack

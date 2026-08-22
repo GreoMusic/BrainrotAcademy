@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, onBeforeUnmount } from 'vue'
+import { reactive, ref, nextTick, onBeforeUnmount } from 'vue'
 
 const props = defineProps({ card: Object, active: Boolean })
 const emit = defineEmits(['answered'])
@@ -31,8 +31,11 @@ let lastSpeechAt = 0
 let ended = false
 let normalSocketClose = false
 let playbackContext = null
+let playbackGain = null
 let nextPlaybackAt = 0
 const playbackSources = new Set()
+const voiceUrls = new Set()
+let replayAudio = null
 
 const SILENCE_MS = 3000
 
@@ -56,24 +59,33 @@ function scrollDown() {
   })
 }
 
-function queuePcm(encoded, sampleRate) {
-  if (!playbackContext) {
+async function ensurePlaybackContext() {
+  if (!playbackContext || playbackContext.state === 'closed') {
     playbackContext = new AudioContext()
+    playbackGain = playbackContext.createGain()
+    playbackGain.gain.value = 1.6
+    playbackGain.connect(playbackContext.destination)
     nextPlaybackAt = playbackContext.currentTime
   }
-  playbackContext.resume().catch(() => {})
+  if (playbackContext.state === 'suspended') await playbackContext.resume()
+  if (playbackContext.state !== 'running') throw new Error('Audio playback is suspended')
+  return playbackContext
+}
+
+async function queuePcm(encoded, sampleRate) {
+  const context = await ensurePlaybackContext()
 
   const raw = atob(encoded)
   const bytes = new Uint8Array(raw.length)
   for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
   const samples = new Float32Array(bytes.buffer)
-  const buffer = playbackContext.createBuffer(1, samples.length, sampleRate)
+  const buffer = context.createBuffer(1, samples.length, sampleRate)
   buffer.copyToChannel(samples)
 
-  const source = playbackContext.createBufferSource()
+  const source = context.createBufferSource()
   source.buffer = buffer
-  source.connect(playbackContext.destination)
-  const startsAt = Math.max(nextPlaybackAt, playbackContext.currentTime + 0.06)
+  source.connect(playbackGain)
+  const startsAt = Math.max(nextPlaybackAt, context.currentTime + 0.06)
   source.start(startsAt)
   nextPlaybackAt = startsAt + buffer.duration
   playbackSources.add(source)
@@ -87,7 +99,76 @@ function stopPlayback() {
   playbackSources.clear()
   if (playbackContext) playbackContext.close().catch(() => {})
   playbackContext = null
+  playbackGain = null
   nextPlaybackAt = 0
+}
+
+function wavUrl(chunks, sampleRate) {
+  const pcmBytes = chunks.reduce((total, chunk) => total + chunk.length, 0)
+  const wav = new ArrayBuffer(44 + pcmBytes)
+  const view = new DataView(wav)
+  const ascii = (offset, value) => {
+    for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i))
+  }
+  ascii(0, 'RIFF')
+  view.setUint32(4, 36 + pcmBytes, true)
+  ascii(8, 'WAVE')
+  ascii(12, 'fmt ')
+  view.setUint32(16, 16, true)
+  view.setUint16(20, 3, true) // IEEE float PCM
+  view.setUint16(22, 1, true)
+  view.setUint32(24, sampleRate, true)
+  view.setUint32(28, sampleRate * 4, true)
+  view.setUint16(32, 4, true)
+  view.setUint16(34, 32, true)
+  ascii(36, 'data')
+  view.setUint32(40, pcmBytes, true)
+  const output = new Uint8Array(wav, 44)
+  let offset = 0
+  for (const chunk of chunks) {
+    output.set(chunk, offset)
+    offset += chunk.length
+  }
+  const url = URL.createObjectURL(new Blob([wav], { type: 'audio/wav' }))
+  voiceUrls.add(url)
+  return url
+}
+
+function coachVoiceUrl(encodedChunks, sampleRate) {
+  return wavUrl(encodedChunks.map((encoded) => {
+    const raw = atob(encoded)
+    const bytes = new Uint8Array(raw.length)
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
+    return bytes
+  }), sampleRate)
+}
+
+function primeVoicePlayback() {
+  if (replayAudio) replayAudio.pause()
+  // Keep an HTML audio element alive from the trusted microphone click. Some
+  // embedded browsers reject a later AudioContext.resume(), but allow this
+  // already-authorized element to swap from silence to the Voxtral reply.
+  const silence = new Uint8Array(2400 * 4)
+  replayAudio = new Audio(wavUrl([silence], 24000))
+  replayAudio.loop = true
+  replayAudio.volume = 0
+  replayAudio.play().catch(() => {})
+}
+
+async function playVoiceUrl(url) {
+  if (!replayAudio) replayAudio = new Audio()
+  replayAudio.pause()
+  replayAudio.loop = false
+  replayAudio.src = url
+  replayAudio.volume = 1
+  await replayAudio.play()
+}
+
+function replayVoice(message) {
+  if (!message.voiceUrl) return
+  playVoiceUrl(message.voiceUrl).catch(() => {
+    liveStatus.value = 'Tap the speaker again to play voice'
+  })
 }
 
 async function askCoach(text) {
@@ -95,6 +176,7 @@ async function askCoach(text) {
   const history = messages.value.slice()
   messages.value.push({ role: 'user', content: text })
   busy.value = true
+  let reply = null
   scrollDown()
   try {
     const res = await fetch('/api/coach/turn/stream', {
@@ -108,7 +190,9 @@ async function askCoach(text) {
     })
     if (!res.ok || !res.body) throw new Error('Coach stream unavailable')
 
-    const reply = { role: 'assistant', content: '', streaming: true }
+    // Keep the local reference reactive too. Mutating the raw object that was
+    // pushed into a ref array only repainted when another ref changed.
+    reply = reactive({ role: 'assistant', content: '', streaming: true })
     messages.value.push(reply)
     streamingReply.value = true
     const reader = res.body.getReader()
@@ -116,6 +200,8 @@ async function askCoach(text) {
     let pending = ''
     let sampleRate = 24000
     let result = null
+    let voiceError = ''
+    const encodedAudio = []
 
     while (true) {
       const { value, done } = await reader.read()
@@ -130,15 +216,40 @@ async function askCoach(text) {
           reply.content += event.text
           scrollDown()
         }
-        if (event.type === 'audio') queuePcm(event.audio, sampleRate)
-        if (event.type === 'audio_error') throw new Error(event.error || 'Voxtral audio failed')
+        if (event.type === 'audio') {
+          encodedAudio.push(event.audio)
+          if (!voiceError) {
+            try {
+              await queuePcm(event.audio, sampleRate)
+            } catch (error) {
+              voiceError = String(error?.message || error)
+              stopPlayback()
+            }
+          }
+        }
+        if (event.type === 'audio_error') voiceError = event.error || 'Voxtral audio failed'
         if (event.type === 'result') result = event
       }
       if (done) break
     }
 
     reply.streaming = false
+    if (encodedAudio.length) reply.voiceUrl = coachVoiceUrl(encodedAudio, sampleRate)
     streamingReply.value = false
+    if (voiceError && reply.voiceUrl) {
+      try {
+        await playVoiceUrl(reply.voiceUrl)
+        voiceError = ''
+      } catch {
+        // The visible replay button remains the final browser-permission escape hatch.
+      }
+    }
+    if (voiceError) {
+      liveStatus.value = 'Voice unavailable for this reply'
+      setTimeout(() => {
+        if (liveStatus.value === 'Voice unavailable for this reply') liveStatus.value = ''
+      }, 3000)
+    }
     const remainingMs = playbackContext
       ? Math.max(0, (nextPlaybackAt - playbackContext.currentTime) * 1000)
       : 0
@@ -154,7 +265,8 @@ async function askCoach(text) {
     if (remainingMs) await new Promise((resolve) => setTimeout(resolve, remainingMs))
   } catch (error) {
     streamingReply.value = false
-    messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
+    if (reply) reply.streaming = false
+    if (!reply?.content) messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
     stopPlayback()
   } finally {
     busy.value = false
@@ -292,7 +404,14 @@ async function startLiveMic() {
 
 function toggleMic() {
   if (recording.value) stopLiveMic()
-  else if (!connecting.value && !finalizing.value && !busy.value) startLiveMic()
+  else if (!connecting.value && !finalizing.value && !busy.value) {
+    // Create/resume the output context while this trusted click still carries
+    // browser user activation. Creating it later, when Voxtral's first chunk
+    // arrives, can leave the context suspended and the reply silent.
+    ensurePlaybackContext().catch(() => {})
+    primeVoicePlayback()
+    startLiveMic()
+  }
 }
 
 function endCoaching() {
@@ -311,6 +430,9 @@ onBeforeUnmount(() => {
   releaseAudio()
   normalSocketClose = true
   if (socket && socket.readyState < WebSocket.CLOSING) socket.close()
+  if (replayAudio) replayAudio.pause()
+  voiceUrls.forEach((url) => URL.revokeObjectURL(url))
+  voiceUrls.clear()
 })
 </script>
 
@@ -361,6 +483,17 @@ onBeforeUnmount(() => {
           :class="[m.role === 'user' ? 'me' : 'them', { streaming: m.streaming }]"
         >
           {{ m.content }}
+          <button
+            v-if="m.role === 'assistant' && m.voiceUrl"
+            class="replay-voice"
+            aria-label="Replay coach voice"
+            @click="replayVoice(m)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 10v4h4l5 4V6l-5 4H4Z" />
+              <path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11" />
+            </svg>
+          </button>
         </div>
         <div v-if="recording || finalizing" class="bubble me live-transcript">
           {{ liveTranscript || '…' }}
@@ -411,6 +544,13 @@ onBeforeUnmount(() => {
   vertical-align: -2px; border-radius: 2px; background: currentColor;
   animation: cursorBlink 0.8s steps(1) infinite;
 }
+.replay-voice {
+  width: 25px; height: 25px; margin: 7px 0 -3px; padding: 0;
+  display: grid; place-items: center; border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%; background: rgba(255, 255, 255, 0.78); color: #555;
+}
+.replay-voice svg { width: 14px; height: 14px; fill: currentColor; }
+.replay-voice svg path:last-child { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
 @keyframes cursorBlink { 50% { opacity: 0; } }
 .live-transcript { position: relative; min-width: 74px; font-style: italic; }
 .live-dot {

@@ -35,13 +35,14 @@ async function watchForVoices() {
   poll = setInterval(async () => {
     try {
       const { segment, audio_ready } = await api.segment(slug, seg.value.id)
-      if (segment && segment.turns?.[0]?.audio) {
+      if (segment && segment.turns?.some((turn) => turn.audio)) {
         liveSeg.value = segment
         stopPolling()
         // Restart so they hear it rather than read it - but never re-lock a
         // card they already listened through.
         if (props.active && !finished.value) playTurn(0)
       } else if (audio_ready) {
+        if (segment) liveSeg.value = segment
         stopPolling()
       }
     } catch {
@@ -67,15 +68,27 @@ function playTurn(n) {
   if (turn.audio) {
     audio = new Audio(turn.audio)
     audio.onended = () => playTurn(n + 1)
-    // A turn whose audio 404s or fails to load must not strand the segment
-    // here forever - move on, the same as the timer-based fallback would.
-    audio.onerror = () => playTurn(n + 1)
-    audio.play().catch(() => {})
+    audio.onerror = () => playCaptionFallback(n, turn)
+    audio.play().catch(() => playCaptionFallback(n, turn))
     // Preload N+1 during N so the swap on `ended` is not audibly gappy.
     if (next && next.audio) preload = new Audio(next.audio)
   } else {
     timer = setTimeout(() => playTurn(n + 1), (turn.dur || 3) * 1000)
   }
+  playing.value = true
+}
+
+function playCaptionFallback(n, turn) {
+  // Missing/blocked clips still advance using the caption timing instead of
+  // leaving the podcast stuck forever on a silent line.
+  if (timer) return
+  if (audio) {
+    audio.onended = null
+    audio.onerror = null
+    audio.pause()
+    audio = null
+  }
+  timer = setTimeout(() => playTurn(n + 1), (turn.dur || 3) * 1000)
   playing.value = true
 }
 

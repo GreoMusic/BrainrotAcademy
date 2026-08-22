@@ -125,11 +125,21 @@ def turn_stream():
         audio_events: queue.Queue[tuple[str, object]] = queue.Queue()
 
         def synthesize() -> None:
+            sent_audio = False
             try:
-                for chunk in mc.tts_stream(payload["reply"], voice_id=config.VOICE_COACH):
-                    audio_events.put(("audio", base64.b64encode(chunk).decode()))
-            except Exception as exc:  # noqa: BLE001
-                audio_events.put(("audio_error", str(exc)))
+                for attempt in range(2):
+                    try:
+                        for chunk in mc.tts_stream(payload["reply"], voice_id=config.VOICE_COACH):
+                            sent_audio = True
+                            audio_events.put(("audio", base64.b64encode(chunk).decode()))
+                        break
+                    except Exception as exc:  # noqa: BLE001
+                        # Retry once only when the stream failed before producing
+                        # audio. Retrying mid-utterance would repeat spoken words.
+                        if attempt == 0 and not sent_audio:
+                            continue
+                        audio_events.put(("audio_error", str(exc)))
+                        break
             finally:
                 audio_events.put(("audio_done", None))
 
@@ -143,7 +153,7 @@ def turn_stream():
         audio_started = False
         audio_finished = False
         for index, word in enumerate(words):
-            if index == len(words) - 1 and not audio_started:
+            if index == len(words) - 1 and not audio_started and not audio_finished:
                 while not audio_started:
                     kind, value = audio_events.get()
                     yield event(kind, **({"audio": value} if kind == "audio" else {"error": value} if value else {}))
