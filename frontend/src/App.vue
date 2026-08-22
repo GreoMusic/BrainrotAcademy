@@ -20,6 +20,14 @@ const previewFrictionCard = {
   payload: { topic: 'black-holes' },
 }
 
+// A 10ms silent WAV. iOS Safari only unlocks audio for a page once a media
+// element actually plays inside a real user gesture - `new Audio().play()`
+// with no src never produces sound, so WebKit never counts it and every
+// later programmatic Audio() (every podcast turn, every coach reply) plays
+// silently for the rest of the session. This one genuinely plays.
+const SILENT_WAV =
+  'data:audio/wav;base64,UklGRsQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+
 function finishFrictionPreview() {
   previewFrictionDone.value = true
   setTimeout(() => { window.location.href = '/' }, 1400)
@@ -62,7 +70,7 @@ async function start(payload) {
 
   // This tap is the user gesture that unlocks audio for the whole session.
   try {
-    new Audio().play().catch(() => {})
+    new Audio(SILENT_WAV).play().catch(() => {})
   } catch {}
 
   try {
