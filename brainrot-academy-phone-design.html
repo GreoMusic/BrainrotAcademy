@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brainrot Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAFA;
+    --surface:#FFFFFF;
+    --border:#DBDBDB;
+    --border-soft:#EFEFEF;
+    --ink:#262626;
+    --dim:#8E8E8E;
+    --blue:#0095F6;
+    --g1:#FEDA75; --g2:#FA7E1E; --g3:#D62976; --g4:#962FBF; --g5:#4F5BD5;
+    --ig-gradient: linear-gradient(45deg, var(--g1), var(--g2), var(--g3), var(--g4), var(--g5));
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#EDEDED;
+    color: var(--ink);
+    font-family:'Inter', -apple-system, sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    user-select:none;
+  }
+
+  /* PHONE FRAME */
+  .phone{
+    width:320px; height:660px; background:#111; border-radius:42px; padding:10px;
+    box-shadow: 0 30px 60px -15px rgba(0,0,0,0.35); position:relative; flex:none;
+  }
+  .screen{
+    width:100%; height:100%; background:#000; border-radius:32px; overflow:hidden;
+    position:relative; display:flex; flex-direction:column;
+  }
+  .notch{ position:absolute; top:10px; left:50%; transform:translateX(-50%); width:90px; height:16px; background:#000; border-radius:10px; z-index:40; }
+
+  .view{ display:none; flex-direction:column; height:100%; position:relative; width:100%; }
+  .view.active{ display:flex; }
+
+  /* ================= FULL-BLEED REEL ================= */
+  .reel-screen{ position:relative; width:100%; height:100%; overflow:hidden; background:#000; cursor:pointer; }
+  .reel-bg{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:100px; transition: opacity .2s ease;
+  }
+  .reel-scrim-top{ position:absolute; top:0; left:0; right:0; height:110px; background:linear-gradient(180deg, rgba(0,0,0,0.5), transparent); z-index:2; pointer-events:none; }
+  .reel-scrim-bottom{ position:absolute; bottom:0; left:0; right:0; height:230px; background:linear-gradient(0deg, rgba(0,0,0,0.7), transparent); z-index:2; pointer-events:none; }
+
+  .reel-topbar{ position:absolute; top:16px; left:0; right:0; display:flex; align-items:center; justify-content:center; gap:20px; z-index:5; }
+  .reel-topbar .tglabel{ font-size:13.5px; font-weight:700; color:rgba(255,255,255,.55); }
+  .reel-topbar .tglabel.on{ color:#fff; }
+  .reel-topright{ position:absolute; top:16px; right:14px; z-index:5; color:#fff; font-size:19px; opacity:.9; }
+
+  .reel-actions{ position:absolute; right:10px; bottom:118px; display:flex; flex-direction:column; align-items:center; gap:19px; z-index:6; color:#fff; }
+  .reel-actions .act{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .reel-actions .act .ic{ font-size:25px; filter:drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+  .reel-actions .act .n{ font-size:10px; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+
+  .reel-caption{ position:absolute; left:14px; right:68px; bottom:24px; z-index:6; color:#fff; }
+  .reel-caption .user-row{ display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+  .reel-caption .avatar{ width:27px;height:27px;border-radius:50%; background:rgba(255,255,255,.22); display:flex;align-items:center;justify-content:center; font-size:12.5px; border:1.5px solid #fff;}
+  .reel-caption .uname{ font-size:12.5px; font-weight:700; text-shadow:0 1px 2px rgba(0,0,0,.4); }
+  .reel-caption .follow{ font-size:10px; font-weight:700; border:1px solid #fff; border-radius:6px; padding:2px 8px; margin-left:2px; }
+  .reel-caption .cap{ font-size:11.5px; line-height:1.4; color:rgba(255,255,255,.94); margin-bottom:7px; max-width:210px; text-shadow:0 1px 2px rgba(0,0,0,.3); }
+  .reel-caption .music{ font-size:10px; color:rgba(255,255,255,.85); display:flex; align-items:center; gap:5px; }
+
+  .progress-row{ position:absolute; top:0; left:10px; right:10px; display:flex; gap:4px; padding-top:8px; z-index:8; }
+  .progress-row .seg{ flex:1; height:2.5px; border-radius:3px; background:rgba(255,255,255,.3); overflow:hidden; }
+  .progress-row .seg i{ display:block; height:100%; background:#fff; width:0%; }
+  .progress-row .seg.done i{ width:100%; }
+
+  .tap-hint{ position:absolute; left:0; right:0; bottom:9px; display:flex; justify-content:center; z-index:6; pointer-events:none; }
+  .tap-hint span{ font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.6); animation: floaty 1.6s ease-in-out infinite; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0); opacity:.4;} 50%{ transform:translateY(-4px); opacity:.9;} }
+
+  /* budget timer overlay (unlocked feed) */
+  .budget{ position:absolute; top:16px; left:14px; right:14px; z-index:8; }
+  .budget-row{ display:flex; justify-content:space-between; font-size:10.5px; font-weight:700; color:#fff; margin-bottom:5px; text-shadow:0 1px 2px rgba(0,0,0,.4); }
+  .budget-track{ height:3px; background:rgba(255,255,255,.28); border-radius:3px; overflow:hidden; }
+  .budget-fill{ height:100%; background: var(--ig-gradient); }
+
+  /* ================= GATE (full-screen takeover) ================= */
+  .gate-full{
+    position:absolute; inset:0; z-index:25; display:flex; align-items:center; justify-content:center;
+    background: rgba(10,10,12,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding:22px;
+  }
+  .gate-card{ background:#fff; border-radius:24px; padding:30px 24px 26px 24px; text-align:center; width:100%; box-shadow:0 24px 60px rgba(0,0,0,.35); }
+  .gate-wordmark{ font-family:'Grand Hotel', cursive; font-size:20px; color:#111; margin-bottom:10px; }
+  .gate-ring{ width:74px; height:74px; border-radius:50%; margin:0 auto 14px auto; padding:3px; background: var(--ig-gradient); display:flex; align-items:center; justify-content:center; }
+  .gate-ring .inner{ width:100%; height:100%; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:29px; }
+  .gate-title{ font-size:18px; font-weight:800; margin:0 0 6px 0; }
+  .gate-sub{ font-size:12.5px; color:var(--dim); line-height:1.5; margin:0 0 20px 0; }
+
+  /* ================= Buttons ================= */
+  .btn{ font-family:'Inter', sans-serif; font-weight:700; font-size:14px; border:none; border-radius:11px; padding:13px 16px; cursor:pointer; width:100%; text-align:center; color:#fff; }
+  .btn:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--blue); }
+  .btn-gradient{ background: var(--ig-gradient); }
+  .btn-ghost{ background:#F2F2F2; color:#111; }
+
+  /* ================= Light content screens (learn / coach / verdict / empty) ================= */
+  .lightscreen{ width:100%; height:100%; background:var(--surface); display:flex; flex-direction:column; }
+  .content{ flex:1; padding:22px 18px 18px 18px; display:flex; flex-direction:column; overflow-y:auto; }
+  .pill{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:0.03em; padding:5px 10px; border-radius:20px; width:fit-content; margin-bottom:14px; text-transform:uppercase; }
+  .pill.grad{ background: var(--ig-gradient); color:#fff; }
+  .pill.blue{ background: rgba(0,149,246,0.1); color: var(--blue); }
+  .pill.gray{ background:#F2F2F2; color:#666; }
+  .screen-title{ font-size:20px; font-weight:800; margin:0 0 6px 0; line-height:1.15; }
+  .screen-sub{ font-size:13px; color: var(--dim); line-height:1.5; margin:0 0 16px 0; }
+
+  .dashes{ display:flex; gap:4px; margin-bottom:16px; }
+  .dashes .d{ flex:1; height:3px; border-radius:3px; background:#eee; }
+  .dashes .d.on{ background: var(--ig-gradient); }
+  .learn-card{ flex:1; border-radius:18px; background: linear-gradient(160deg,#fff6ea,#ffe9f2); border:1px solid var(--border-soft); padding:20px; display:flex; flex-direction:column; justify-content:center; margin-bottom:16px; }
+  .learn-card .k{ font-size:10.5px; font-weight:700; color: var(--g3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px; }
+  .learn-card .q{ font-size:15px; font-weight:700; line-height:1.4; margin-bottom:10px; }
+  .learn-card .a{ font-size:12.5px; color:#555; line-height:1.5; }
+  .tabs{ display:flex; gap:6px; margin-bottom:14px; }
+  .tab{ flex:1; text-align:center; padding:8px 4px; border-radius:9px; font-size:11px; font-weight:600; background:#F2F2F2; color:#888; cursor:pointer; }
+  .tab.on{ background:#111; color:#fff; }
+
+  .appbar{ display:flex; align-items:center; justify-content:space-between; padding:14px 14px 10px 14px; border-bottom:1px solid var(--border-soft); flex:none; }
+
+  .chat-area{ flex:1; display:flex; flex-direction:column; justify-content:flex-end; gap:10px; margin-bottom:14px; }
+  .bubble{ max-width:82%; padding:10px 13px; border-radius:16px; font-size:13px; line-height:1.45; }
+  .bubble.them{ background:#F2F2F2; align-self:flex-start; border-bottom-left-radius:4px; }
+  .bubble.me{ background: var(--blue); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+  .voice-msg{ display:flex; align-items:center; gap:8px; }
+  .voice-msg .wave{ display:flex; align-items:center; gap:2px; height:18px; }
+  .voice-msg .wave span{ width:2.5px; background:#fff; border-radius:2px; opacity:.85; display:block; }
+  .bubble.them .voice-msg .wave span{ background:#999; }
+
+  .verdict-screen{ position:relative; width:100%; height:100%; background: linear-gradient(165deg,#0f0f13,#1c1b22); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:#fff; padding:0 24px; }
+  .verdict-ring{ width:104px; height:104px; border-radius:50%; padding:4px; background: var(--ig-gradient); display:flex; align-items:center; justify-content:center; animation: pop .4s cubic-bezier(.2,1.5,.4,1); }
+  @keyframes pop{ 0%{ transform:scale(0.4); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  .verdict-ring .inner{ width:100%; height:100%; border-radius:50%; background:#111; display:flex; align-items:center; justify-content:center; font-size:40px; }
+  .verdict-title{ font-size:19px; font-weight:800; text-align:center; }
+  .verdict-sub{ font-size:12.5px; color:rgba(255,255,255,.65); max-width:220px; line-height:1.5; text-align:center; }
+  .verdict-btnwrap{ width:100%; position:absolute; bottom:26px; left:0; right:0; padding:0 24px; }
+
+  .empty-screen{ position:relative; width:100%; height:100%; background:#111; display:flex; flex-direction:column; color:#fff; }
+
+  /* ================= Friction bottom sheet (over reel) ================= */
+  .sheet-overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.45); z-index:30; display:flex; align-items:flex-end; }
+  .sheet{ width:100%; background:#fff; border-radius:22px 22px 0 0; padding:20px 20px 22px 20px; }
+  .sheet-handle{ width:36px; height:4px; background:#ddd; border-radius:4px; margin:0 auto 14px auto; }
+  .cam-box{ width:100%; aspect-ratio:16/11; border-radius:14px; margin:14px 0; background: repeating-linear-gradient(45deg,#f4f4f4,#f4f4f4 10px,#ececec 10px,#ececec 20px); border:1.5px dashed #ccc; display:flex; align-items:center; justify-content:center; font-size:28px; color:#999; }
+  .eq-box{ font-size:22px; font-weight:700; text-align:center; margin:16px 0; }
+  .num-input{ display:block; margin:0 auto; background:#F7F7F7; border:1px solid var(--border); border-radius:10px; padding:10px; text-align:center; font-size:14px; font-weight:600; width:90px; }
+  .link-row{ display:flex; justify-content:center; margin-top:10px; }
+  .link-row span{ color: var(--dim); font-size:11.5px; cursor:pointer; text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen">
+    <div class="notch"></div>
+
+    <!-- ===================== LOCKED REEL FEED (swipeable, 2 clips) ===================== -->
+    <div class="view active" id="v-scroll1">
+      <div class="reel-screen" id="locked-reel" onclick="advanceLocked()">
+        <div class="reel-bg" id="locked-bg">🌀</div>
+        <div class="reel-scrim-top"></div>
+        <div class="reel-scrim-bottom"></div>
+        <div class="reel-topbar"><span class="tglabel">Following</span><span class="tglabel on">For You</span></div>
+        <div class="reel-topright">♡</div>
+        <div class="reel-actions">
+          <div class="act"><span class="ic">♡</span><span class="n" id="locked-likes">2.1M</span></div>
+          <div class="act"><span class="ic">💬</span><span class="n" id="locked-comments">12.4K</span></div>
+          <div class="act"><span class="ic">✈</span><span class="n">Share</span></div>
+          <div class="act"><span class="ic">⋯</span></div>
+        </div>
+        <div class="reel-caption">
+          <div class="user-row">
+            <div class="avatar" id="locked-avatar">🥣</div>
+            <span class="uname" id="locked-user">cerealtok</span>
+            <span class="follow">Follow</span>
+          </div>
+          <div class="cap" id="locked-caption">ranking all 47 cereals so you don't have to</div>
+          <div class="music">♪ <span id="locked-music">original audio — cerealtok</span></div>
+        </div>
+        <div class="tap-hint"><span>tap to keep scrolling</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== GATE (full-screen takeover) ===================== -->
+    <div class="view" id="v-wall">
+      <div class="reel-screen">
+        <div class="reel-bg" style="filter:blur(6px);">🌀</div>
+        <div class="gate-full">
+          <div class="gate-card">
+            <div class="gate-wordmark">Brainrot Academy</div>
+            <div class="gate-ring"><div class="inner">🎓</div></div>
+            <p class="gate-title">Enrollment check.</p>
+            <p class="gate-sub">The feed's full. Complete a quick learning round to get back in.</p>
+            <button class="btn btn-gradient" onclick="go('v-learn')">Start learning</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== LEARNING ===================== -->
+    <div class="view" id="v-learn">
+      <div class="lightscreen">
+        <div class="content">
+          <div class="dashes"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+          <span class="pill grad">learning round</span>
+          <div class="tabs">
+            <div class="tab on">podcast</div>
+            <div class="tab">flashcards</div>
+            <div class="tab">fun facts</div>
+          </div>
+          <div class="learn-card">
+            <div class="k">topic — the ottoman empire</div>
+            <div class="q">"So why did Mehmed II actually want Constantinople so badly?"</div>
+            <div class="a">2-voice AI podcast, generated fresh from Mistral each round — 90 seconds, then a 3-card recap.</div>
+          </div>
+          <button class="btn btn-primary" onclick="go('v-coach')">Done — talk to coach</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== COACH (DM-style chat) ===================== -->
+    <div class="view" id="v-coach">
+      <div class="lightscreen">
+        <div class="appbar">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;">🤖</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;">coach</div>
+              <div style="font-size:10.5px;color:var(--dim);">active now</div>
+            </div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="chat-area">
+            <div class="bubble them">Tell me what you just learned about Mehmed II 🎙️</div>
+            <div class="bubble me">
+              <div class="voice-msg">
+                <span>▶</span>
+                <div class="wave">
+                  <span style="height:6px;"></span><span style="height:14px;"></span><span style="height:9px;"></span>
+                  <span style="height:16px;"></span><span style="height:7px;"></span><span style="height:12px;"></span>
+                  <span style="height:5px;"></span>
+                </div>
+                <span style="font-size:11px;">0:14</span>
+              </div>
+            </div>
+            <div class="bubble them" style="font-size:11.5px;color:#666;">"...he wanted Constantinople because it connected trade routes between Europe and Asia, and taking it basically ended the Byzantine Empire..."</div>
+          </div>
+          <button class="btn btn-primary" onclick="go('v-verdict')">Submit answer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== VERDICT (full-bleed) ===================== -->
+    <div class="view" id="v-verdict">
+      <div class="verdict-screen">
+        <div class="verdict-ring"><div class="inner">✓</div></div>
+        <div class="verdict-title">You're verified</div>
+        <div class="verdict-sub">Real understanding, not a bluff. Mistral confidence: 92%.</div>
+        <div class="verdict-btnwrap">
+          <button class="btn btn-gradient" onclick="go('v-scroll2')">Enter the feed</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== UNLOCKED REEL FEED (swipeable, budget timer) ===================== -->
+    <div class="view" id="v-scroll2">
+      <div class="reel-screen" id="unlocked-reel" onclick="advanceUnlocked()">
+        <div class="reel-bg" id="unlocked-bg">🐸</div>
+        <div class="reel-scrim-top"></div>
+        <div class="reel-scrim-bottom"></div>
+        <div class="budget">
+          <div class="budget-row"><span>SCROLL BUDGET</span><span id="budget-label">01:48 left</span></div>
+          <div class="budget-track"><div class="budget-fill" id="budget-fill" style="width:82%;"></div></div>
+        </div>
+        <div class="reel-actions">
+          <div class="act"><span class="ic">♡</span><span class="n" id="unlocked-likes">4.5M</span></div>
+          <div class="act"><span class="ic">💬</span><span class="n" id="unlocked-comments">31K</span></div>
+          <div class="act"><span class="ic">✈</span><span class="n">Share</span></div>
+          <div class="act"><span class="ic">⋯</span></div>
+        </div>
+        <div class="reel-caption">
+          <div class="user-row">
+            <div class="avatar" id="unlocked-avatar">🐸</div>
+            <span class="uname" id="unlocked-user">wildliferizz</span>
+            <span class="follow">Follow</span>
+          </div>
+          <div class="cap" id="unlocked-caption">raccoon washes a grape like it's a five-course meal</div>
+          <div class="music">♪ <span id="unlocked-music">original audio — wildliferizz</span></div>
+        </div>
+        <div class="tap-hint"><span>tap to keep scrolling</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== FRICTION SHEET (over reel) ===================== -->
+    <div class="view" id="v-friction">
+      <div class="reel-screen">
+        <div class="reel-bg">🎧</div>
+        <div class="reel-scrim-top"></div>
+        <div class="budget">
+          <div class="budget-row"><span>SCROLL BUDGET</span><span>01:30 left</span></div>
+          <div class="budget-track"><div class="budget-fill" style="width:58%;"></div></div>
+        </div>
+        <div class="sheet-overlay">
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <p class="gate-title" style="text-align:center;">Quick toll before you continue</p>
+            <p class="gate-sub" style="text-align:center;">Hold your hand on real grass — camera checks it's genuine, not a photo.</p>
+            <div class="cam-box">📷 point at grass</div>
+            <button class="btn btn-gradient" onclick="go('v-scroll2b')">Verified ✓ continue</button>
+            <div class="link-row"><span onclick="go('v-frictionmath')">or solve a problem instead</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== FRICTION MATH ALT ===================== -->
+    <div class="view" id="v-frictionmath">
+      <div class="reel-screen">
+        <div class="reel-bg">🎧</div>
+        <div class="reel-scrim-top"></div>
+        <div class="budget">
+          <div class="budget-row"><span>SCROLL BUDGET</span><span>01:30 left</span></div>
+          <div class="budget-track"><div class="budget-fill" style="width:58%;"></div></div>
+        </div>
+        <div class="sheet-overlay">
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <p class="gate-title" style="text-align:center;">Solve to continue</p>
+            <div class="eq-box">14 × 3 − 9 = ?</div>
+            <input class="num-input" placeholder="?" />
+            <button class="btn btn-gradient" style="margin-top:16px;" onclick="go('v-scroll2b')">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== BACK TO UNLOCKED FEED ===================== -->
+    <div class="view" id="v-scroll2b">
+      <div class="reel-screen" onclick="go('v-empty')">
+        <div class="reel-bg">🎧</div>
+        <div class="reel-scrim-top"></div>
+        <div class="reel-scrim-bottom"></div>
+        <div class="budget">
+          <div class="budget-row"><span>SCROLL BUDGET</span><span>00:22 left</span></div>
+          <div class="budget-track"><div class="budget-fill" style="width:12%;"></div></div>
+        </div>
+        <div class="reel-actions">
+          <div class="act"><span class="ic">♡</span><span class="n">890K</span></div>
+          <div class="act"><span class="ic">💬</span><span class="n">6.7K</span></div>
+          <div class="act"><span class="ic">✈</span><span class="n">Share</span></div>
+        </div>
+        <div class="reel-caption">
+          <div class="user-row"><div class="avatar">🎧</div><span class="uname">quantum_chill</span><span class="follow">Follow</span></div>
+          <div class="cap">lofi guy explains string theory in 45 seconds</div>
+          <div class="music">♪ original audio — quantum_chill</div>
+        </div>
+        <div class="tap-hint"><span>tap to keep scrolling</span></div>
+      </div>
+    </div>
+
+    <!-- ===================== TIME'S UP ===================== -->
+    <div class="view" id="v-empty">
+      <div class="empty-screen">
+        <div class="content" style="justify-content:center;align-items:center;text-align:center;">
+          <span class="pill gray" style="background:rgba(255,255,255,.1);color:#ccc;">session ended</span>
+          <p class="screen-title" style="color:#fff;">Back to the list.</p>
+          <p class="screen-sub" style="color:rgba(255,255,255,.55);">Scroll budget's spent. Next learning round is already generating.</p>
+          <div style="font-size:52px;margin:18px 0;">🔁</div>
+          <button class="btn btn-gradient" onclick="resetDemo()">Restart loop</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function go(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // ---- swipeable locked reel feed ----
+  const lockedClips = [
+    { bg:'🌀', avatar:'🥣', user:'cerealtok', cap:"ranking all 47 cereals so you don't have to", music:'original audio — cerealtok', likes:'2.1M', comments:'12.4K' },
+    { bg:'🐶', avatar:'🐶', user:'theo.does.tricks', cap:'dog learns to open the fridge (bad idea)', music:'original audio — theo.does.tricks', likes:'988K', comments:'8.9K' },
+  ];
+  let lockedIdx = 0;
+  function renderLocked(){
+    const c = lockedClips[lockedIdx];
+    document.getElementById('locked-bg').textContent = c.bg;
+    document.getElementById('locked-avatar').textContent = c.avatar;
+    document.getElementById('locked-user').textContent = c.user;
+    document.getElementById('locked-caption').textContent = c.cap;
+    document.getElementById('locked-music').textContent = c.music;
+    document.getElementById('locked-likes').textContent = c.likes;
+    document.getElementById('locked-comments').textContent = c.comments;
+  }
+  function advanceLocked(){
+    lockedIdx++;
+    if(lockedIdx >= lockedClips.length){
+      go('v-wall');
+    } else {
+      renderLocked();
+    }
+  }
+
+  // ---- swipeable unlocked reel feed ----
+  const unlockedClips = [
+    { bg:'🐸', avatar:'🐸', user:'wildliferizz', cap:"raccoon washes a grape like it's a five-course meal", music:'original audio — wildliferizz', likes:'4.5M', comments:'31K', budget:'01:48 left', fill:'82%' },
+  ];
+  let unlockedIdx = 0;
+  function renderUnlocked(){
+    const c = unlockedClips[unlockedIdx];
+    document.getElementById('unlocked-bg').textContent = c.bg;
+    document.getElementById('unlocked-avatar').textContent = c.avatar;
+    document.getElementById('unlocked-user').textContent = c.user;
+    document.getElementById('unlocked-caption').textContent = c.cap;
+    document.getElementById('unlocked-music').textContent = c.music;
+    document.getElementById('unlocked-likes').textContent = c.likes;
+    document.getElementById('unlocked-comments').textContent = c.comments;
+    document.getElementById('budget-label').textContent = c.budget;
+    document.getElementById('budget-fill').style.width = c.fill;
+  }
+  function advanceUnlocked(){
+    go('v-friction');
+  }
+
+  function resetDemo(){
+    lockedIdx = 0; unlockedIdx = 0;
+    renderLocked(); renderUnlocked();
+    go('v-scroll1');
+  }
+
+  renderLocked();
+  renderUnlocked();
+  go('v-scroll1');
+</script>
+
+</body>
+</html>
