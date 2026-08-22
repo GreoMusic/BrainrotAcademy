@@ -1,5 +1,5 @@
 <script setup>
-import { ref, nextTick, onBeforeUnmount } from 'vue'
+import { reactive, ref, nextTick, onBeforeUnmount } from 'vue'
 
 const props = defineProps({ card: Object, active: Boolean })
 const emit = defineEmits(['answered'])
@@ -41,24 +41,30 @@ function scrollDown() {
   })
 }
 
-function queuePcm(encoded, sampleRate) {
-  if (!playbackContext) {
+async function ensurePlaybackContext() {
+  if (!playbackContext || playbackContext.state === 'closed') {
     playbackContext = new AudioContext()
     nextPlaybackAt = playbackContext.currentTime
   }
-  playbackContext.resume().catch(() => {})
+  if (playbackContext.state === 'suspended') await playbackContext.resume()
+  if (playbackContext.state !== 'running') throw new Error('Audio playback is suspended')
+  return playbackContext
+}
+
+async function queuePcm(encoded, sampleRate) {
+  const context = await ensurePlaybackContext()
 
   const raw = atob(encoded)
   const bytes = new Uint8Array(raw.length)
   for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
   const samples = new Float32Array(bytes.buffer)
-  const buffer = playbackContext.createBuffer(1, samples.length, sampleRate)
+  const buffer = context.createBuffer(1, samples.length, sampleRate)
   buffer.copyToChannel(samples)
 
-  const source = playbackContext.createBufferSource()
+  const source = context.createBufferSource()
   source.buffer = buffer
-  source.connect(playbackContext.destination)
-  const startsAt = Math.max(nextPlaybackAt, playbackContext.currentTime + 0.06)
+  source.connect(context.destination)
+  const startsAt = Math.max(nextPlaybackAt, context.currentTime + 0.06)
   source.start(startsAt)
   nextPlaybackAt = startsAt + buffer.duration
   playbackSources.add(source)
@@ -94,7 +100,9 @@ async function askCoach(text) {
     })
     if (!res.ok || !res.body) throw new Error('Coach stream unavailable')
 
-    reply = { role: 'assistant', content: '', streaming: true }
+    // Keep the local reference reactive too. Mutating the raw object that was
+    // pushed into a ref array only repainted when another ref changed.
+    reply = reactive({ role: 'assistant', content: '', streaming: true })
     messages.value.push(reply)
     streamingReply.value = true
     const reader = res.body.getReader()
@@ -119,7 +127,7 @@ async function askCoach(text) {
         }
         if (event.type === 'audio' && !voiceError) {
           try {
-            queuePcm(event.audio, sampleRate)
+            await queuePcm(event.audio, sampleRate)
           } catch (error) {
             voiceError = String(error?.message || error)
             stopPlayback()
@@ -291,7 +299,13 @@ async function startLiveMic() {
 
 function toggleMic() {
   if (recording.value) stopLiveMic()
-  else if (!connecting.value && !finalizing.value && !busy.value) startLiveMic()
+  else if (!connecting.value && !finalizing.value && !busy.value) {
+    // Create/resume the output context while this trusted click still carries
+    // browser user activation. Creating it later, when Voxtral's first chunk
+    // arrives, can leave the context suspended and the reply silent.
+    ensurePlaybackContext().catch(() => {})
+    startLiveMic()
+  }
 }
 
 function endCoaching() {
