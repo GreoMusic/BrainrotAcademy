@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { api } from './api'
 import FeedView from './views/FeedView.vue'
+import TouchGrassCard from './components/cards/TouchGrassCard.vue'
 
 const board = ref(null)
 const openSubject = ref(null)
@@ -10,6 +11,19 @@ const draft = ref('')
 const error = ref('')
 const starting = ref(false)
 const justReset = ref(false)
+const previewFriction = import.meta.env.DEV
+  && new URLSearchParams(window.location.search).get('preview') === 'friction'
+const previewFrictionDone = ref(false)
+const previewFrictionCard = {
+  id: 'preview:friction',
+  type: 'touch_grass',
+  payload: { topic: 'black-holes' },
+}
+
+function finishFrictionPreview() {
+  previewFrictionDone.value = true
+  setTimeout(() => { window.location.href = '/' }, 1400)
+}
 
 // Shown while Mistral builds the pack. These name what is actually happening
 // rather than faking a percentage.
@@ -72,7 +86,17 @@ async function start(payload) {
       <div class="screen">
         <div class="notch" />
 
-        <FeedView v-if="session" :session="session" />
+        <div v-if="previewFriction && previewFrictionDone" class="card verdict-screen">
+          <div class="verdict-ring"><div class="inner">✓</div></div>
+          <div class="verdict-title">Reset complete</div>
+          <div class="verdict-sub">Reflection reviewed. Returning to your subjects.</div>
+        </div>
+        <TouchGrassCard
+          v-else-if="previewFriction"
+          :card="previewFrictionCard"
+          @cleared="finishFrictionPreview"
+        />
+        <FeedView v-else-if="session" :session="session" />
 
         <div v-else class="card reel">
           <div class="reel-bg" style="filter: blur(6px)">🌀</div>
