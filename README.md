@@ -103,8 +103,8 @@ of the app works and any bug is in the wiring.
 | File | Role |
 |---|---|
 | `backend/orchestrator.py` | The transition engine. Pure functions over a dict. |
-| `backend/routes/session.py` | The feed's only critical path. Does no network I/O. |
-| `backend/mistral_client.py` | Every Mistral call: chat, vision, TTS, transcription. |
+| `backend/routes/session.py` | Session lifecycle, card serving, and math-gate OCR verification. |
+| `backend/mistral_client.py` | Every Mistral call: chat, vision, OCR, TTS, transcription. |
 | `backend/giphy_client.py` | GIPHY reel clips. Best-effort - no key or a failure just means fewer clips. |
 | `backend/tools/generate_content.py` | Offline. Writes topic packs + podcast MP3s + reel gifs. |
 | `frontend/src/views/FeedView.vue` | Scroll-snap feed, server-driven card switch. |
@@ -131,6 +131,7 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 |---|---|
 | Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
 | Touch-grass / math-work photo checks | `mistral-medium-latest` (vision) |
+| Handwritten math-gate answer extraction | `mistral-ocr-latest` |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
 | Talk-to-human transcription | `voxtral-mini-latest` |
 | Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |

@@ -1,0 +1,477 @@
+{
+  "topic": "concurrency",
+  "title": "Concurrency",
+  "emoji": "💻",
+  "blurb": "Coding - Concurrency",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the difference between a thread and a process?",
+      "back": "Threads share memory; processes don’t.",
+      "hook": "Same bed, different dreams."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Why use a mutex?",
+      "back": "Prevent race conditions in shared data.",
+      "hook": "Lock it or lose it."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s a deadlock?",
+      "back": "Threads waiting forever for each other.",
+      "hook": "Circular waiting, zero progress."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What does async/await do?",
+      "back": "Lets code run without blocking.",
+      "hook": "Non-blocking, no waiting."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What’s a race condition?",
+      "back": "Output depends on thread timing.",
+      "hook": "Timing is everything. Or not."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s a semaphore?",
+      "back": "A counter for thread access.",
+      "hook": "Count it or chaotically flout it."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The first computer bug was a literal moth trapped in a relay.",
+      "emoji": "🐛"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Java’s synchronized keyword uses intrinsic locks (mutexes) under the hood.",
+      "emoji": "🔒"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Go’s goroutines are so lightweight you can spawn millions.",
+      "emoji": "🚀"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is Concurrency?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Threads vs. Processes"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Race Conditions: The Silent Killer"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Locks: The Traffic Cop"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Which of these is true about threads?",
+      "options": [
+        "They run in separate memory spaces",
+        "They share the same memory",
+        "They can’t communicate"
+      ],
+      "correct": 1,
+      "explain": "Threads in the same process share memory, unlike processes."
+    },
+    {
+      "item_id": "fc2",
+      "q": "A mutex ensures what?",
+      "options": [
+        "Only one thread runs at a time",
+        "Only one thread accesses shared data at a time",
+        "Threads run in parallel"
+      ],
+      "correct": 1,
+      "explain": "Mutexes prevent concurrent access to shared resources."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Deadlock requires what four conditions?",
+      "options": [
+        "Mutual exclusion, hold and wait, no preemption, circular wait",
+        "Starvation, race conditions, memory leaks",
+        "Locks, semaphores, threads"
+      ],
+      "correct": 0,
+      "explain": "These four conditions must all be true for a deadlock to occur."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Async/await is used for what?",
+      "options": [
+        "Synchronous multi-threading",
+        "Non-blocking I/O operations",
+        "Memory management"
+      ],
+      "correct": 1,
+      "explain": "Async/await enables non-blocking execution of I/O-bound tasks."
+    },
+    {
+      "item_id": "fc5",
+      "q": "A race condition occurs when...",
+      "options": [
+        "Threads access shared data in a predictable order",
+        "Threads access shared data in an unpredictable order",
+        "Threads never access shared data"
+      ],
+      "correct": 1,
+      "explain": "Race conditions arise from unpredictable thread timing."
+    },
+    {
+      "item_id": "fc6",
+      "q": "A binary semaphore acts like...",
+      "options": [
+        "A mutex",
+        "A thread pool",
+        "A queue"
+      ],
+      "correct": 0,
+      "explain": "A binary semaphore can only be 0 or 1, like a mutex."
+    },
+    {
+      "item_id": "ff1",
+      "q": "The term 'debugging' comes from...",
+      "options": [
+        "A moth in Harvard’s Mark II computer",
+        "A programming language named Bug",
+        "A type of error in early code"
+      ],
+      "correct": 0,
+      "explain": "Grace Hopper found an actual moth causing a relay failure in 1947."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What does Java’s synchronized use internally?",
+      "options": [
+        "Semaphores",
+        "Intrinsic locks (mutexes)",
+        "Thread pools"
+      ],
+      "correct": 1,
+      "explain": "Synchronized blocks use intrinsic locks to enforce mutual exclusion."
+    },
+    {
+      "item_id": "ff3",
+      "q": "Go’s goroutines are...",
+      "options": [
+        "Heavyweight like threads",
+        "Lightweight and managed by the Go runtime",
+        "Only for I/O tasks"
+      ],
+      "correct": 1,
+      "explain": "Goroutines are managed by Go’s runtime, making them very efficient."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is Concurrency?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Alright, concurrency is when a program does multiple things at once—or at least looks like it does!",
+            "id": "s1_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/concurrency/s1_t1_ee9dfb5d.mp3",
+            "dur": 2.87
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so like multitasking? But my laptop freezes when I open too many tabs.",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/concurrency/s1_t2_14dc4504.mp3",
+            "dur": 4.2
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly! But concurrency isn’t *true* multitasking—it’s about managing tasks so they *seem* simultaneous.",
+            "id": "s1_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/concurrency/s1_t3_5567a1a6.mp3",
+            "dur": 5.06
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh great, so it’s just a magic trick.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/concurrency/s1_t4_73e12dd2.mp3",
+            "dur": 1.91
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "More like a smart trick! Think CPU switching tasks super fast.",
+            "id": "s1_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/concurrency/s1_t5_9b0e5165.mp3",
+            "dur": 3.34
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So it’s just faster switching?",
+            "id": "s1_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/concurrency/s1_t6_c809f938.mp3",
+            "dur": 2.08
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the core idea of concurrency?",
+          "options": [
+            "Doing multiple things truly at once",
+            "Managing tasks to *appear* simultaneous",
+            "A magic trick to freeze your laptop"
+          ],
+          "correct": 1,
+          "reaction_correct": "Told you it was a smart trick!",
+          "reaction_wrong": "Nope, it’s not actual magic.",
+          "reaction_correct_audio": "/static/audio/concurrency/s1_rok_c915e93e.mp3",
+          "reaction_wrong_audio": "/static/audio/concurrency/s1_rno_df6c5b45.mp3"
+        },
+        "dur": 19.46
+      },
+      {
+        "id": "s2",
+        "title": "Threads vs. Processes",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Threads and processes both help with concurrency.",
+            "id": "s2_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/concurrency/s2_t1_bdf52954.mp3",
+            "dur": 2.03
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Are they the same thing?",
+            "id": "s2_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/concurrency/s2_t2_3646c6ac.mp3",
+            "dur": 0.8
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "No! Processes are like separate apps—each has its own memory.",
+            "id": "s2_t3",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/concurrency/s2_t3_7dbb23bc.mp3",
+            "dur": 3.06
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So threads are just… half an app?",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/concurrency/s2_t4_86aec505.mp3",
+            "dur": 2.34
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Threads share memory in one process, making them lighter but riskier.",
+            "id": "s2_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/concurrency/s2_t5_cc5abf74.mp3",
+            "dur": 2.66
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Riskier how?",
+            "id": "s2_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/concurrency/s2_t6_2c0cee4e.mp3",
+            "dur": 1.11
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the key difference between threads and processes?",
+          "options": [
+            "Threads share memory, processes don’t",
+            "Processes are slower than threads",
+            "Threads are magic"
+          ],
+          "correct": 0,
+          "reaction_correct": "Finally, you got it!",
+          "reaction_wrong": "Not quite—threads share memory.",
+          "reaction_correct_audio": "/static/audio/concurrency/s2_rok_8ead216f.mp3",
+          "reaction_wrong_audio": "/static/audio/concurrency/s2_rno_fc03d3b8.mp3"
+        },
+        "dur": 12.0
+      },
+      {
+        "id": "s3",
+        "title": "Race Conditions: The Silent Killer",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Race conditions happen when threads access shared data unpredictably.",
+            "id": "s3_t1",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/concurrency/s3_t1_ff820ad1.mp3",
+            "dur": 2.63
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So it’s like two people grabbing the last slice of pizza?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/concurrency/s3_t2_c671b053.mp3",
+            "dur": 2.42
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Yes! But instead of pizza, it’s *data*—and the results can be messy.",
+            "id": "s3_t3",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/concurrency/s3_t3_24fbab9c.mp3",
+            "dur": 2.67
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, now my program’s a pizza fight.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/concurrency/s3_t4_4f24ebf0.mp3",
+            "dur": 1.52
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly. That’s why we use locks to control access.",
+            "id": "s3_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/concurrency/s3_t5_274fbbc9.mp3",
+            "dur": 2.37
+          }
+        ],
+        "quiz_after": {
+          "q": "What causes race conditions?",
+          "options": [
+            "Threads accessing shared data unpredictably",
+            "Too many pizza slices",
+            "Lack of locks"
+          ],
+          "correct": 0,
+          "reaction_correct": "Bingo! That’s the chaos we avoid.",
+          "reaction_wrong": "Nope—it’s about shared data.",
+          "reaction_correct_audio": "/static/audio/concurrency/s3_rok_2aae851e.mp3",
+          "reaction_wrong_audio": "/static/audio/concurrency/s3_rno_bee59c46.mp3"
+        },
+        "dur": 11.61
+      },
+      {
+        "id": "s4",
+        "title": "Locks: The Traffic Cop",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Locks ensure only one thread uses a resource at a time.",
+            "id": "s4_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/concurrency/s4_t1_9be6397e.mp3",
+            "dur": 2.47
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So it’s like a bouncer at a club?",
+            "id": "s4_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/concurrency/s4_t2_5b134640.mp3",
+            "dur": 1.42
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Yes! But if you forget to release the lock, everything gets stuck.",
+            "id": "s4_t3",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/concurrency/s4_t3_f03f3d51.mp3",
+            "dur": 2.93
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Awesome, so now my program’s a bouncer who never lets anyone in.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/concurrency/s4_t4_a588d3ec.mp3",
+            "dur": 2.01
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "That’s why we use timeouts or try-locks to avoid deadlocks.",
+            "id": "s4_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/concurrency/s4_t5_29d17ca5.mp3",
+            "dur": 2.59
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the risk of misusing locks?",
+          "options": [
+            "Deadlocks",
+            "Faster execution",
+            "Race conditions"
+          ],
+          "correct": 0,
+          "reaction_correct": "Exactly—deadlocks are the worst.",
+          "reaction_wrong": "Nope—it’s deadlocks.",
+          "reaction_correct_audio": "/static/audio/concurrency/s4_rok_216faa1e.mp3",
+          "reaction_wrong_audio": "/static/audio/concurrency/s4_rno_6926d17a.mp3"
+        },
+        "dur": 11.42
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Concurrency. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

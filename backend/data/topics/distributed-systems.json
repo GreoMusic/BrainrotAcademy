@@ -1,0 +1,468 @@
+{
+  "topic": "distributed-systems",
+  "title": "Distributed Systems",
+  "emoji": "💻",
+  "blurb": "Coding - Distributed Systems",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the main challenge in distributed systems?",
+      "back": "Handling partial failures and latency.",
+      "hook": "Chaos is the only constant here."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "What does CAP theorem say you can’t have?",
+      "back": "Consistency, Availability, and Partition tolerance all at once.",
+      "hook": "Pick two, lose one. Always."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s a quorum in distributed systems?",
+      "back": "Majority of nodes agreeing to proceed.",
+      "hook": "Democracy but for your data."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s gossip protocol used for?",
+      "back": "Spreading info in a network.",
+      "hook": "Rumors, but useful ones."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What’s a heartbeat in distributed systems?",
+      "back": "A signal to check if nodes are alive.",
+      "hook": "Your system’s pulse check."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s consensus in distributed systems?",
+      "back": "Agreeing on a single data value.",
+      "hook": "Everyone gets on the same page."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "Google’s Spanner database uses atomic clocks to sync time across the globe.",
+      "emoji": "⏰"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Amazon’s DynamoDB can handle millions of requests per second with single-digit millisecond latency.",
+      "emoji": "⚡"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "NASA uses a distributed system to process data from the James Webb Space Telescope.",
+      "emoji": "🔭"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is a Distributed System?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "The CAP Theorem: Pick Two"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Gossip Protocol: office chatter for servers"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Consensus Algorithms: The Voting System"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Which is NOT a typical distributed system challenge?",
+      "options": [
+        "Latency",
+        "Partial failures",
+        "Single-threaded performance"
+      ],
+      "correct": 2,
+      "explain": "Distributed systems deal with network delays and partial failures, not single-threaded speed."
+    },
+    {
+      "item_id": "fc2",
+      "q": "If you prioritize Consistency and Partition tolerance, what do you sacrifice?",
+      "options": [
+        "Availability",
+        "Durability",
+        "Scalability"
+      ],
+      "correct": 0,
+      "explain": "CAP theorem: you can only guarantee two out of Consistency, Availability, Partition tolerance."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Why do we use quorums?",
+      "options": [
+        "To reduce latency",
+        "To ensure majority agreement",
+        "To encrypt data"
+      ],
+      "correct": 1,
+      "explain": "Quorums ensure a majority of nodes agree before proceeding, preventing split-brain scenarios."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Which protocol is gossip commonly used in?",
+      "options": [
+        "Bitcoin",
+        "Cassandra",
+        "TCP/IP"
+      ],
+      "correct": 1,
+      "explain": "Gossip protocol is used in Cassandra for peer-to-peer data synchronization."
+    },
+    {
+      "item_id": "fc5",
+      "q": "What happens if a heartbeat fails?",
+      "options": [
+        "Node is assumed dead",
+        "Data is replicated",
+        "Latency decreases"
+      ],
+      "correct": 0,
+      "explain": "A failed heartbeat typically means the node is considered down or unresponsive."
+    },
+    {
+      "item_id": "fc6",
+      "q": "Which algorithm is used for consensus?",
+      "options": [
+        "Paxos",
+        "MapReduce",
+        "FTP"
+      ],
+      "correct": 0,
+      "explain": "Paxos is a family of protocols for solving consensus in a network of unreliable processors."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What does Spanner use atomic clocks for?",
+      "options": [
+        "Encryption",
+        "Global time synchronization",
+        "Load balancing"
+      ],
+      "correct": 1,
+      "explain": "Spanner uses atomic clocks to provide globally synchronized timestamps for transactions."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What is DynamoDB optimized for?",
+      "options": [
+        "High availability",
+        "Low latency",
+        "High encryption"
+      ],
+      "correct": 1,
+      "explain": "DynamoDB is designed for low-latency, high-throughput workloads."
+    },
+    {
+      "item_id": "ff3",
+      "q": "Why does NASA use distributed systems for JWST?",
+      "options": [
+        "To reduce costs",
+        "To process massive data volumes",
+        "To encrypt images"
+      ],
+      "correct": 1,
+      "explain": "The James Webb Space Telescope generates enormous amounts of data, requiring distributed processing."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is a Distributed System?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Imagine your app running on 100 servers instead of one. That’s distributed systems!",
+            "id": "s1_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/distributed-systems/s1_t1_f5c75f57.mp3",
+            "dur": 3.57
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Why not just one big server?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/distributed-systems/s1_t2_e852667f.mp3",
+            "dur": 1.21
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "One fails, everything crashes. Distributed? The others pick up the slack.",
+            "id": "s1_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/distributed-systems/s1_t3_224a6dd2.mp3",
+            "dur": 3.16
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s just backup servers?",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/distributed-systems/s1_t4_848d8f2c.mp3",
+            "dur": 1.63
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Nope! It’s also about scale. One server can’t handle Netflix’s traffic.",
+            "id": "s1_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/distributed-systems/s1_t5_57a96309.mp3",
+            "dur": 3.03
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "But don’t they talk to each other?",
+            "id": "s1_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/distributed-systems/s1_t6_c4a5be3c.mp3",
+            "dur": 1.24
+          }
+        ],
+        "quiz_after": {
+          "q": "Why use distributed systems over a single server?",
+          "options": [
+            "They look cooler",
+            "Fault tolerance and scalability",
+            "They’re cheaper"
+          ],
+          "correct": 1,
+          "reaction_correct": "Finally, you get it!",
+          "reaction_wrong": "Nope, think bigger.",
+          "reaction_correct_audio": "/static/audio/distributed-systems/s1_rok_618ce928.mp3",
+          "reaction_wrong_audio": "/static/audio/distributed-systems/s1_rno_8f37a6c7.mp3"
+        },
+        "dur": 13.84
+      },
+      {
+        "id": "s2",
+        "title": "The CAP Theorem: Pick Two",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Distributed systems can’t have all three: consistency, availability, partition tolerance.",
+            "id": "s2_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/distributed-systems/s2_t1_a84b5616.mp3",
+            "dur": 3.26
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "What’s partition tolerance?",
+            "id": "s2_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/distributed-systems/s2_t2_c08ae7ad.mp3",
+            "dur": 1.29
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Network issues split your system. Tolerance means it still works.",
+            "id": "s2_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/distributed-systems/s2_t3_7834bef5.mp3",
+            "dur": 2.99
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So if I pick availability and consistency, I’m doomed?",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/distributed-systems/s2_t4_0695cb38.mp3",
+            "dur": 2.78
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Yep! Partition tolerance is a must. So you’re stuck choosing between the other two.",
+            "id": "s2_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/distributed-systems/s2_t5_dc6743bc.mp3",
+            "dur": 3.14
+          }
+        ],
+        "quiz_after": {
+          "q": "Which two properties can you prioritize in CAP theorem?",
+          "options": [
+            "Consistency and availability",
+            "Availability and partition tolerance",
+            "Consistency and partition tolerance"
+          ],
+          "correct": 2,
+          "reaction_correct": "Smart choice!",
+          "reaction_wrong": "Try again, hotshot.",
+          "reaction_correct_audio": "/static/audio/distributed-systems/s2_rok_12c57c23.mp3",
+          "reaction_wrong_audio": "/static/audio/distributed-systems/s2_rno_994404a2.mp3"
+        },
+        "dur": 13.46
+      },
+      {
+        "id": "s3",
+        "title": "Gossip Protocol: office chatter for servers",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Servers gossip to share info without a central hub.",
+            "id": "s3_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/distributed-systems/s3_t1_ac58e0bb.mp3",
+            "dur": 2.21
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Like my coworkers?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/distributed-systems/s3_t2_fcc4ed39.mp3",
+            "dur": 0.88
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly! They randomly tell each other updates, spreading data fast.",
+            "id": "s3_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/distributed-systems/s3_t3_62643b88.mp3",
+            "dur": 3.13
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s unreliable office gossip, but for computers?",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/distributed-systems/s3_t4_f7c39380.mp3",
+            "dur": 3.11
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Surprisingly reliable! It’s resilient and scales well.",
+            "id": "s3_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/distributed-systems/s3_t5_365d9e98.mp3",
+            "dur": 2.58
+          }
+        ],
+        "quiz_after": {
+          "q": "How does gossip protocol spread data?",
+          "options": [
+            "Centralized command",
+            "Random server-to-server updates",
+            "Broadcast from one server"
+          ],
+          "correct": 1,
+          "reaction_correct": "You’ve got the vibe!",
+          "reaction_wrong": "Nope, think peer-to-peer.",
+          "reaction_correct_audio": "/static/audio/distributed-systems/s3_rok_94bab636.mp3",
+          "reaction_wrong_audio": "/static/audio/distributed-systems/s3_rno_791ad08a.mp3"
+        },
+        "dur": 11.91
+      },
+      {
+        "id": "s4",
+        "title": "Consensus Algorithms: The Voting System",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Paxos and Raft help servers agree on data state.",
+            "id": "s4_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/distributed-systems/s4_t1_0607928c.mp3",
+            "dur": 2.14
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Why can’t they just decide?",
+            "id": "s4_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/distributed-systems/s4_t2_73e36e3d.mp3",
+            "dur": 1.62
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Network delays or failures could cause splits. These algorithms prevent chaos.",
+            "id": "s4_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/distributed-systems/s4_t3_f0df675e.mp3",
+            "dur": 3.15
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s like a never-ending meeting?",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/distributed-systems/s4_t4_795b25f1.mp3",
+            "dur": 1.85
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "More like a quick vote to avoid a tie.",
+            "id": "s4_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/distributed-systems/s4_t5_4a380714.mp3",
+            "dur": 1.35
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the purpose of consensus algorithms like Raft?",
+          "options": [
+            "Speed up data transfer",
+            "Agree on a single data state",
+            "Encrypt data"
+          ],
+          "correct": 1,
+          "reaction_correct": "Bingo!",
+          "reaction_wrong": "Not even close.",
+          "reaction_correct_audio": "/static/audio/distributed-systems/s4_rok_a3266f57.mp3",
+          "reaction_wrong_audio": "/static/audio/distributed-systems/s4_rno_3a143e8b.mp3"
+        },
+        "dur": 10.11
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Distributed Systems. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
