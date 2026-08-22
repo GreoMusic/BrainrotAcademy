@@ -20,7 +20,7 @@ SESSIONS: dict[str, dict] = {}
 # Cards that need the user's answer before the engine can pick what comes next.
 # Prefetch stops at one of these: serving past it would advance session state
 # for a card the client will not show, silently skipping content.
-BLOCKING = {"quiz", "math_gate", "touch_grass", "talk_to_human"}
+BLOCKING = {"quiz", "coach", "math_gate", "touch_grass", "talk_to_human"}
 
 
 def _get(session_id: str):
@@ -100,7 +100,7 @@ def friction_clear(sid: str):
     state, err = _get(sid)
     if err:
         return err
-    state = orch.clear_friction(state)
+    state = orch.clear_friction(state, content.load_pack(state["topic"]))
     return jsonify({"progress": orch.progress(state), "stage": state["stage"]})
 
 

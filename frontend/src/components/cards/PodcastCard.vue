@@ -80,10 +80,13 @@ function answer(i) {
 }
 
 // Same contract as VideoCard: play only while on screen.
+// `immediate` matters: a card can mount already active (the first card in the
+// feed, or after a programmatic scroll), and a plain watcher never fires for
+// the initial value, so it would sit there silently forever.
 watch(() => props.active, (a) => {
   if (a) playTurn(0)
   else { stopAudio(); playing.value = false; idx.value = 0; showQuiz.value = false; picked.value = null }
-})
+}, { immediate: true, flush: 'post' })
 
 onBeforeUnmount(stopAudio)
 </script>
@@ -109,7 +112,7 @@ onBeforeUnmount(stopAudio)
     </div>
 
     <!-- Captions are not optional: most people scroll muted. -->
-    <transition name="fade" mode="out-in">
+    <transition name="fade">
       <div class="caption" :key="idx">{{ current.text }}</div>
     </transition>
 

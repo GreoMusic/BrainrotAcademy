@@ -210,3 +210,88 @@ def test_progress_shape():
     s = orch.record_answer(s, "quiz:i0", True)
     s = orch.record_answer(s, "quiz:i0", True)
     assert orch.progress(s)["mastered"] == 1
+
+
+def test_coach_card_appears_as_a_check():
+    """Every COACH_EVERY-th check swaps multiple choice for a conversation."""
+    pack = make_pack()
+    s = orch.new_session("s1", "test", pack)
+
+    kinds = []
+    for _ in range(120):
+        card, s = orch.next_card(s, pack)
+        kinds.append(card["type"])
+        if card["type"] == "quiz":
+            s = orch.record_answer(s, card["id"], True, card["payload"]["item_id"])
+        elif card["type"] == "coach":
+            s = orch.record_answer(s, card["id"], True)
+        elif card["type"] in orch.FRICTION_KINDS:
+            s = orch.clear_friction(s, pack)
+        if "coach" in kinds:
+            break
+
+    assert "coach" in kinds, kinds
+
+
+def test_a_coach_conversation_resolves_the_whole_check():
+    """The coach is one card standing in for a full quiz round, so a single
+    answer must end the CHECK instead of waiting for peers that never come."""
+    pack = make_pack()
+    s = orch.new_session("s1", "test", pack)
+    s["stage"] = orch.CHECK
+    s["round"] = orch.COACH_EVERY
+
+    card, s = orch.next_card(s, pack)
+    assert card["type"] == "coach"
+
+    s = orch.record_answer(s, card["id"], True)
+    nxt, s = orch.next_card(s, pack)
+    assert s["stage"] == orch.SCROLL, "passing the coach should unlock scrolling"
+    assert nxt["type"] == "video"
+
+
+def test_failing_the_coach_returns_to_learning():
+    pack = make_pack()
+    s = orch.new_session("s1", "test", pack)
+    s["stage"] = orch.CHECK
+    s["round"] = orch.COACH_EVERY
+
+    card, s = orch.next_card(s, pack)
+    s = orch.record_answer(s, card["id"], False)
+    nxt, s = orch.next_card(s, pack)
+    assert s["stage"] == orch.LEARN
+    assert nxt["type"] in ("flashcard", "fun_fact", "podcast")
+
+
+def test_a_learn_round_mixes_kinds():
+    """Weakest-first alone buried podcast segments behind every flashcard."""
+    pack = make_pack()
+    pack["items"] += [
+        {"id": "ff1", "kind": "fun_fact", "text": "x"},
+        {"id": "pod_s1", "kind": "podcast", "segment_id": "s1"},
+    ]
+    pack["podcast"] = {"segments": [{"id": "s1", "turns": [{"id": "t1", "text": "hi"}]}]}
+    s = orch.new_session("s1", "test", pack)
+
+    cards, s = drain(s, pack, 3)
+    kinds = [c["type"] for c in cards]
+    assert len(set(kinds)) == 3, kinds
+    assert "podcast" in kinds
+
+
+def test_clearing_a_gate_resumes_learning_while_material_remains():
+    """Sending every cleared gate to CHECK meant the happy path taught one
+    round and then never taught anything again."""
+    pack = make_pack(n_items=12)
+    s = orch.new_session("s1", "test", pack)
+    s["stage"] = orch.FRICTION
+
+    s = orch.clear_friction(s, pack)
+    assert s["stage"] == orch.LEARN
+
+    # With everything mastered there is nothing left to teach -> review instead.
+    s["stage"] = orch.FRICTION
+    for k in s["mastery"]:
+        s["mastery"][k] = 1.0
+    s = orch.clear_friction(s, pack)
+    assert s["stage"] == orch.CHECK

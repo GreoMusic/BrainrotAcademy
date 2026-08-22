@@ -92,7 +92,8 @@ def test_every_quiz_in_a_check_is_served(client, sid):
 
 def test_failing_a_check_returns_to_learning(client, sid):
     seen = walk(client, sid, correct=False, stop=after_first_check)
-    assert seen[: config.LEARN_CARDS_PER_ROUND] == ["flashcard"] * config.LEARN_CARDS_PER_ROUND
+    # A LEARN round mixes kinds rather than serving one kind at a time.
+    assert len(set(seen[: config.LEARN_CARDS_PER_ROUND])) > 1, seen
     assert "quiz" in seen
     assert seen[-1] in ("flashcard", "fun_fact", "podcast"), seen
     stage = client.get("/api/session/{}/progress".format(sid)).get_json()["progress"]["stage"]
@@ -135,3 +136,25 @@ def test_podcast_cards_carry_their_segment(client, sid):
                 )
             elif card["type"] in BLOCKING:
                 client.post("/api/session/{}/friction/clear".format(sid2))
+
+
+def test_learn_round_mixes_card_kinds(client, sid):
+    """A round should be a flashcard AND a fun fact AND a podcast segment -
+    weakest-first alone buried podcasts behind every flashcard."""
+    cards = client.get("/api/session/{}/next?n=3".format(sid)).get_json()["cards"]
+    kinds = [c["type"] for c in cards]
+    assert len(set(kinds)) == len(kinds), "a LEARN round repeated a kind: {}".format(kinds)
+    assert "podcast" in kinds, kinds
+
+
+def test_clearing_a_gate_returns_to_learning_while_material_remains(client, sid):
+    """The happy path must keep teaching. Sending every cleared gate straight to
+    CHECK meant new material only ever appeared by failing a quiz."""
+    seen = walk(client, sid, correct=True, stop=lambda s: s.count("math_gate") == 1)
+    after = walk(client, sid, correct=True, stop=lambda s: bool(s))
+    assert after[0] in ("flashcard", "fun_fact", "podcast"), after
+
+
+def test_podcast_is_reachable_on_the_happy_path(client, sid):
+    seen = walk(client, sid, correct=True, stop=lambda s: "podcast" in s, limit=12)
+    assert "podcast" in seen, seen

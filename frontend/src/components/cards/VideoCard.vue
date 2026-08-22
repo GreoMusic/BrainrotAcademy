@@ -4,12 +4,15 @@ const props = defineProps({ card: Object, active: Boolean })
 const el = ref(null)
 
 // The behaviour contract every media card shares: play only while on screen.
+// `immediate` + post flush so a card that mounts already active still plays:
+// a plain watcher never fires for the initial value, which left the very first
+// video in the feed frozen on frame one.
 watch(() => props.active, (a) => {
   const v = el.value
   if (!v) return
   if (a) v.play().catch(() => {})
   else { v.pause(); v.currentTime = 0 }
-})
+}, { immediate: true, flush: 'post' })
 onBeforeUnmount(() => el.value && el.value.pause())
 </script>
 
