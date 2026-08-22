@@ -179,7 +179,12 @@ def list_preset_voices() -> list[dict[str, Any]]:
     """Discover real preset voice ids rather than hardcoding guesses."""
     resp = _retry(lambda: get_client().audio.voices.list(type_="preset", limit=50), what="voices.list")
     out = []
-    for v in getattr(resp, "voices", None) or getattr(resp, "data", None) or []:
+    for v in (
+        getattr(resp, "items", None)
+        or getattr(resp, "voices", None)
+        or getattr(resp, "data", None)
+        or []
+    ):
         out.append(
             {
                 "id": getattr(v, "id", None) or getattr(v, "voice_id", None),
