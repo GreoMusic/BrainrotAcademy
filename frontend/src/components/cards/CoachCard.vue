@@ -80,6 +80,7 @@ async function askCoach(text) {
   const history = messages.value.slice()
   messages.value.push({ role: 'user', content: text })
   busy.value = true
+  let reply = null
   scrollDown()
   try {
     const res = await fetch('/api/coach/turn/stream', {
@@ -93,7 +94,7 @@ async function askCoach(text) {
     })
     if (!res.ok || !res.body) throw new Error('Coach stream unavailable')
 
-    const reply = { role: 'assistant', content: '', streaming: true }
+    reply = { role: 'assistant', content: '', streaming: true }
     messages.value.push(reply)
     streamingReply.value = true
     const reader = res.body.getReader()
@@ -101,6 +102,7 @@ async function askCoach(text) {
     let pending = ''
     let sampleRate = 24000
     let result = null
+    let voiceError = ''
 
     while (true) {
       const { value, done } = await reader.read()
@@ -115,8 +117,15 @@ async function askCoach(text) {
           reply.content += event.text
           scrollDown()
         }
-        if (event.type === 'audio') queuePcm(event.audio, sampleRate)
-        if (event.type === 'audio_error') throw new Error(event.error || 'Voxtral audio failed')
+        if (event.type === 'audio' && !voiceError) {
+          try {
+            queuePcm(event.audio, sampleRate)
+          } catch (error) {
+            voiceError = String(error?.message || error)
+            stopPlayback()
+          }
+        }
+        if (event.type === 'audio_error') voiceError = event.error || 'Voxtral audio failed'
         if (event.type === 'result') result = event
       }
       if (done) break
@@ -124,6 +133,12 @@ async function askCoach(text) {
 
     reply.streaming = false
     streamingReply.value = false
+    if (voiceError) {
+      liveStatus.value = 'Voice unavailable for this reply'
+      setTimeout(() => {
+        if (liveStatus.value === 'Voice unavailable for this reply') liveStatus.value = ''
+      }, 3000)
+    }
     const remainingMs = playbackContext
       ? Math.max(0, (nextPlaybackAt - playbackContext.currentTime) * 1000)
       : 0
@@ -137,7 +152,8 @@ async function askCoach(text) {
     if (remainingMs) await new Promise((resolve) => setTimeout(resolve, remainingMs))
   } catch (error) {
     streamingReply.value = false
-    messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
+    if (reply) reply.streaming = false
+    if (!reply?.content) messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
     stopPlayback()
   } finally {
     busy.value = false
