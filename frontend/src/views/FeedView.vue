@@ -67,10 +67,23 @@ async function fetchMore(n = 2) {
   }
 }
 
+// Called from both onAnswered/onListened/onCleared *and* the intersection
+// observer, which fire close enough together (a scroll settling while an
+// answer is still being recorded) that without this guard two overlapping
+// invocations would each run their own loop below - silently double- or
+// triple-fetching and burning through an entire stage (e.g. every SCROLL
+// video) before the user ever sees a single card of it.
+let bufferBusy = false
 async function ensureBuffer() {
-  let guard = 0
-  while (!lastIsBlocking.value && cards.value.length - activeIndex.value < 3 && guard++ < 4) {
-    await fetchMore(2)
+  if (bufferBusy) return
+  bufferBusy = true
+  try {
+    let guard = 0
+    while (!lastIsBlocking.value && cards.value.length - activeIndex.value < 3 && guard++ < 4) {
+      await fetchMore(2)
+    }
+  } finally {
+    bufferBusy = false
   }
 }
 

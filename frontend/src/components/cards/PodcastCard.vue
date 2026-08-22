@@ -67,6 +67,9 @@ function playTurn(n) {
   if (turn.audio) {
     audio = new Audio(turn.audio)
     audio.onended = () => playTurn(n + 1)
+    // A turn whose audio 404s or fails to load must not strand the segment
+    // here forever - move on, the same as the timer-based fallback would.
+    audio.onerror = () => playTurn(n + 1)
     audio.play().catch(() => {})
     // Preload N+1 during N so the swap on `ended` is not audibly gappy.
     if (next && next.audio) preload = new Audio(next.audio)
