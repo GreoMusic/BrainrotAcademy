@@ -1,0 +1,203 @@
+"""A hand-written topic pack so the feed works with no API key.
+
+Same schema the generator emits, minus rendered audio. Lets the whole frontend
+be built and the loop rehearsed before a key exists, and doubles as a fallback
+if generation fails on demo day.
+"""
+
+STUB = {
+    "topic": "photosynthesis",
+    "title": "Photosynthesis",
+    "emoji": "\U0001F331",
+    "blurb": "How plants eat sunlight and air.",
+    "items": [
+        {
+            "id": "fc1",
+            "kind": "flashcard",
+            "front": "Where does the mass of a tree actually come from?",
+            "back": "Mostly carbon pulled out of the air, not nutrients from the soil.",
+            "hook": "It is not the dirt.",
+        },
+        {
+            "id": "fc2",
+            "kind": "flashcard",
+            "front": "What are the two inputs to photosynthesis?",
+            "back": "Carbon dioxide and water, powered by light.",
+            "hook": "Two ingredients, one power source.",
+        },
+        {
+            "id": "fc3",
+            "kind": "flashcard",
+            "front": "What pigment captures the light?",
+            "back": "Chlorophyll, which absorbs red and blue and reflects green.",
+            "hook": "Why leaves look green.",
+        },
+        {
+            "id": "fc4",
+            "kind": "flashcard",
+            "front": "What is the waste product of photosynthesis?",
+            "back": "Oxygen. Every breath you take is plant exhaust.",
+            "hook": "You breathe plant garbage.",
+        },
+        {
+            "id": "fc5",
+            "kind": "flashcard",
+            "front": "Where in the cell does it happen?",
+            "back": "In chloroplasts, which have their own DNA from an ancient bacterium.",
+            "hook": "A stowaway with its own DNA.",
+        },
+        {
+            "id": "fc6",
+            "kind": "flashcard",
+            "front": "What sugar does photosynthesis produce?",
+            "back": "Glucose, which the plant burns for energy or stores as starch.",
+            "hook": "Plants make their own snacks.",
+        },
+        {
+            "id": "ff1",
+            "kind": "fun_fact",
+            "text": "A mature oak pulls roughly 22 kg of carbon dioxide out of the air every year, and most of that becomes the tree itself.",
+            "emoji": "\U0001F333",
+        },
+        {
+            "id": "ff2",
+            "kind": "fun_fact",
+            "text": "Photosynthesis converts less than 1% of the sunlight that hits a leaf into stored energy, which is worse than a cheap solar panel.",
+            "emoji": "☀️",
+        },
+        {
+            "id": "ff3",
+            "kind": "fun_fact",
+            "text": "Chloroplasts were once free-living bacteria that got swallowed and never left, which is why they still carry their own DNA.",
+            "emoji": "\U0001F9EC",
+        },
+        {"id": "pod_s1", "kind": "podcast", "segment_id": "s1", "title": "Trees are made of air"},
+        {"id": "pod_s2", "kind": "podcast", "segment_id": "s2", "title": "The green accident"},
+    ],
+    "quiz": [
+        {
+            "item_id": "fc1",
+            "q": "Most of a tree's mass comes from:",
+            "options": ["Minerals in the soil", "Carbon from the air", "Water from the roots"],
+            "correct": 1,
+            "explain": "Carbon dioxide is pulled from the air and built into the wood itself.",
+        },
+        {
+            "item_id": "fc2",
+            "q": "Which pair are the raw inputs?",
+            "options": ["Oxygen and sugar", "Carbon dioxide and water", "Nitrogen and water"],
+            "correct": 1,
+            "explain": "Light supplies the energy; CO2 and water supply the atoms.",
+        },
+        {
+            "item_id": "fc3",
+            "q": "Leaves look green because chlorophyll:",
+            "options": ["Absorbs green light", "Reflects green light", "Creates green light"],
+            "correct": 1,
+            "explain": "It absorbs red and blue and bounces green back at your eyes.",
+        },
+        {
+            "item_id": "fc4",
+            "q": "Oxygen in the atmosphere is best described as:",
+            "options": [
+                "The goal of photosynthesis",
+                "A waste product of photosynthesis",
+                "An input to photosynthesis",
+            ],
+            "correct": 1,
+            "explain": "The plant wants the sugar. Oxygen is what it throws away.",
+        },
+        {
+            "item_id": "fc5",
+            "q": "Chloroplasts have their own DNA because they:",
+            "options": [
+                "Were once independent bacteria",
+                "Copy the nucleus",
+                "Mutate faster than other organelles",
+            ],
+            "correct": 0,
+            "explain": "Endosymbiosis: one cell swallowed another and they never separated.",
+        },
+        {
+            "item_id": "fc6",
+            "q": "The sugar produced is:",
+            "options": ["Sucrose", "Glucose", "Fructose"],
+            "correct": 1,
+            "explain": "Glucose gets burned for energy or chained up into starch for storage.",
+        },
+        {
+            "item_id": "ff1",
+            "q": "Roughly how much CO2 does a mature oak absorb per year?",
+            "options": ["About 2 kg", "About 22 kg", "About 220 kg"],
+            "correct": 1,
+            "explain": "Around 22 kg, and most of it ends up as the tree's own body.",
+        },
+        {
+            "item_id": "ff2",
+            "q": "Photosynthesis captures what share of the sunlight hitting a leaf?",
+            "options": ["Under 1%", "About 15%", "About 40%"],
+            "correct": 0,
+            "explain": "Under 1%. A cheap solar panel beats a leaf handily.",
+        },
+        {
+            "item_id": "ff3",
+            "q": "Chloroplasts carry their own DNA because they:",
+            "options": ["Split from the nucleus", "Descend from swallowed bacteria", "Absorb DNA from soil"],
+            "correct": 1,
+            "explain": "They are the descendants of a bacterium that moved in permanently.",
+        },
+    ],
+    "podcast": {
+        "segments": [
+            {
+                "id": "s1",
+                "title": "Trees are made of air",
+                "turns": [
+                    {"id": "s1_t1", "speaker": "a", "text": "Okay. A tree weighs two tons. Where did the two tons come from?", "audio": None, "dur": 4.0},
+                    {"id": "s1_t2", "speaker": "b", "text": "The soil, obviously. It grew out of the ground.", "audio": None, "dur": 3.2},
+                    {"id": "s1_t3", "speaker": "a", "text": "That is what everyone says, and it is wrong. Dig up a tree and the hole is basically the same size.", "audio": None, "dur": 5.4},
+                    {"id": "s1_t4", "speaker": "b", "text": "Wait. So where is the tree coming from?", "audio": None, "dur": 2.8},
+                    {"id": "s1_t5", "speaker": "a", "text": "The air. It is pulling carbon dioxide out of the sky and building itself out of it. A tree is mostly air that stopped moving.", "audio": None, "dur": 6.5},
+                    {"id": "s1_t6", "speaker": "b", "text": "That is genuinely unsettling and I love it.", "audio": None, "dur": 3.0},
+                ],
+                "quiz_after": {
+                    "q": "So a tree's mass mostly comes from...",
+                    "options": ["The soil", "The air", "The water"],
+                    "correct": 1,
+                    "reaction_correct": "Exactly. You are standing in a forest made of sky.",
+                    "reaction_wrong": "Nope, the air. Honestly I got that wrong too the first time.",
+                    "reaction_correct_audio": None,
+                    "reaction_wrong_audio": None,
+                },
+                "dur": 24.9,
+            },
+            {
+                "id": "s2",
+                "title": "The green accident",
+                "turns": [
+                    {"id": "s2_t1", "speaker": "a", "text": "Here is the part nobody tells you. Chlorophyll is bad at its job.", "audio": None, "dur": 4.1},
+                    {"id": "s2_t2", "speaker": "b", "text": "Bad how? It runs the entire planet.", "audio": None, "dur": 3.0},
+                    {"id": "s2_t3", "speaker": "a", "text": "It throws away green light. Green is the brightest part of sunlight and the leaf just bounces it back.", "audio": None, "dur": 5.8},
+                    {"id": "s2_t4", "speaker": "b", "text": "So leaves are green because that is the light they refuse to use?", "audio": None, "dur": 4.2},
+                    {"id": "s2_t5", "speaker": "a", "text": "Correct. The colour of every plant on Earth is a rejection notice.", "audio": None, "dur": 4.4},
+                ],
+                "quiz_after": {
+                    "q": "Leaves look green because chlorophyll...",
+                    "options": ["Absorbs green", "Reflects green", "Makes green"],
+                    "correct": 1,
+                    "reaction_correct": "Right. You are looking at the light plants did not want.",
+                    "reaction_wrong": "Other way round. It reflects green, which is why you see it.",
+                    "reaction_correct_audio": None,
+                    "reaction_wrong_audio": None,
+                },
+                "dur": 21.5,
+            },
+        ]
+    },
+    "coach_system": (
+        "You are a warm, sharp tutor quizzing someone on photosynthesis. Ask ONE "
+        "short question at a time and react to their answer honestly - correct them "
+        "when they are wrong. Keep every reply under 40 words and sound like a "
+        "person, not a textbook."
+    ),
+}

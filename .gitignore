@@ -1,0 +1,9 @@
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+.env
+dist/
+backend/static/audio/*/
+backend/static/audio/_smoke.mp3
+backend/static/clips/*.mp4
