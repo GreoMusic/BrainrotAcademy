@@ -118,7 +118,10 @@ def test_scroll_budget_exhausts_into_friction():
     assert s["stage"] == orch.FRICTION
     assert gate["type"] in orch.FRICTION_KINDS
     assert gate["type"] == "math_gate", "first gate should be the offline-safe one"
-    assert gate["payload"]["answer"] == eval(gate["payload"]["question"].replace("x", "*"))
+    assert "answer" not in gate["payload"], "the expected answer must stay server-side"
+    assert s["active_friction"]["answer"] == eval(
+        gate["payload"]["question"].replace("x", "*")
+    )
 
 
 def test_reel_interleaves_clips_and_gifs():

@@ -42,6 +42,7 @@ def create_app() -> Flask:
                 "ok": True,
                 "has_key": bool(config.MISTRAL_API_KEY),
                 "chat_model": config.CHAT_MODEL,
+                "ocr_model": config.OCR_MODEL,
                 "tts_model": config.TTS_MODEL,
                 "stt_model": config.STT_MODEL,
                 "realtime_stt_model": config.REALTIME_STT_MODEL,
