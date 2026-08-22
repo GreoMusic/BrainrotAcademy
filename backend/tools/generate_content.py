@@ -166,7 +166,7 @@ def _duration(path: Path) -> float:
         return 0.0
 
 
-def render_audio(topic: str, script: dict, *, workers: int = 8) -> dict:
+def render_audio(topic: str, script: dict, *, workers: int = 8, force: bool = False) -> dict:
     """Render every turn (and both quiz reactions) to its own MP3."""
     out_dir = config.AUDIO_DIR / topic
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -195,7 +195,7 @@ def render_audio(topic: str, script: dict, *, workers: int = 8) -> dict:
 
     def render(job):
         path, text, speaker = job
-        if path.exists() and path.stat().st_size > 0:
+        if not force and path.exists() and path.stat().st_size > 0:
             return path, True  # resume: never re-pay for audio already on disk
         path.write_bytes(mc.tts(text, voice_id=_voice_for(speaker)))
         return path, False
@@ -283,6 +283,11 @@ def main() -> int:
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--stub", action="store_true", help="hand-written pack, no API calls")
     ap.add_argument("--skip-audio", action="store_true")
+    ap.add_argument(
+        "--rerender-audio",
+        action="store_true",
+        help="replace podcast MP3s in an existing topic pack using current voices",
+    )
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
 
@@ -298,9 +303,20 @@ def main() -> int:
         print("\nStub pack written - the feed works now, without an API key.")
         return 0
 
+    if args.rerender_audio:
+        if not args.topic:
+            ap.error("--rerender-audio requires --topic")
+        path = config.TOPICS_DIR / "{}.json".format(args.topic)
+        if not path.exists():
+            ap.error("topic pack does not exist: {}".format(path))
+        pack = json.loads(path.read_text(encoding="utf-8"))
+        pack["podcast"] = render_audio(args.topic, pack["podcast"], force=True)
+        write_pack(pack)
+        return 0
+
     todo = sorted(TOPICS) if args.all else ([args.topic] if args.topic else [])
     if not todo:
-        ap.error("pass --topic, --all, --stub, or --list")
+        ap.error("pass --topic, --all, --stub, --rerender-audio, or --list")
 
     for topic in todo:
         write_pack(build_topic(topic, skip_audio=args.skip_audio))
