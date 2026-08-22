@@ -94,3 +94,37 @@ def clear_cache() -> None:
     """Called after regeneration so a running server picks up new packs."""
     load_pack.cache_clear()
     _clips.cache_clear()
+
+
+def missing_audio_assets(pack: dict[str, Any]) -> bool:
+    """Whether a pack claims podcast audio that is absent from static/."""
+    sources: list[str] = []
+    for segment in pack.get("podcast", {}).get("segments", []):
+        sources.extend(turn["audio"] for turn in segment.get("turns", []) if turn.get("audio"))
+        quiz = segment.get("quiz_after") or {}
+        sources.extend(
+            quiz[key]
+            for key in ("reaction_correct_audio", "reaction_wrong_audio")
+            if quiz.get(key)
+        )
+
+    if not sources:
+        return True
+    return any(
+        not (config.STATIC_DIR / source.removeprefix("/static/")).is_file()
+        for source in sources
+    )
+
+
+def remove_missing_audio_assets(pack: dict[str, Any]) -> None:
+    """Drop stale URLs so the client waits for regenerated clips."""
+    for segment in pack.get("podcast", {}).get("segments", []):
+        for turn in segment.get("turns", []):
+            source = turn.get("audio")
+            if source and not (config.STATIC_DIR / source.removeprefix("/static/")).is_file():
+                turn.pop("audio", None)
+        quiz = segment.get("quiz_after") or {}
+        for key in ("reaction_correct_audio", "reaction_wrong_audio"):
+            source = quiz.get(key)
+            if source and not (config.STATIC_DIR / source.removeprefix("/static/")).is_file():
+                quiz.pop(key, None)
