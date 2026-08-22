@@ -9,6 +9,7 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
+import catalogue
 import content
 import orchestrator as orch
 import topics
@@ -63,26 +64,64 @@ def topic_segment(slug: str, seg_id: str):
     return jsonify({"segment": seg, "audio_ready": bool(pack.get("audio_ready"))})
 
 
+@bp.get("/catalogue")
+def catalogue_view():
+    """The two-level board, with what is spent and what is left this cycle."""
+    return jsonify(catalogue.browse())
+
+
 @bp.post("/session")
 def start():
-    """Start a session on any subject the user types.
+    """Start a session, either on a catalogue topic or on free text.
 
     Blocks for text generation (a few seconds on a new topic, instant on a
     cached one). Audio renders in the background and lands later.
     """
     body = request.get_json(silent=True) or {}
+    slug_in = (body.get("slug") or "").strip()
     topic = (body.get("topic") or "").strip()
-    if not topic:
+
+    entry = catalogue.lookup(slug_in) if slug_in else None
+    if entry is None and topic:
+        # Typing the name of a catalogue topic should select that topic, not
+        # quietly mint a parallel copy of it under a different slug.
+        entry = catalogue.find_by_title(topic)
+
+    if entry is None and not topic:
         return jsonify({"error": "topic required"}), 400
     if len(topic) > 120:
         return jsonify({"error": "topic too long"}), 400
 
+    # The no-repeats rule. Exhausting the board resets it, so a refusal here
+    # always leaves the user something else to pick.
+    if entry and catalogue.is_used(entry["slug"]):
+        return jsonify(
+            {
+                "error": "You already did {} this cycle. Pick something else.".format(
+                    entry["title"]
+                ),
+                "used": True,
+            }
+        ), 409
+
     try:
-        slug, pack = topics.ensure_pack(topic)
+        if entry:
+            meta = {
+                "title": entry["title"],
+                "emoji": entry["emoji"],
+                "blurb": "{} - {}".format(entry["subject_title"], entry["title"]),
+            }
+            slug, pack = topics.ensure_pack(
+                entry["title"], meta=meta, slug=entry["slug"]
+            )
+        else:
+            slug, pack = topics.ensure_pack(topic)
     except topics.TopicRejected as exc:
         return jsonify({"error": str(exc), "rejected": True}), 422
     except Exception as exc:  # noqa: BLE001
         return jsonify({"error": "could not build that topic: {}".format(exc)}), 502
+
+    cycle = catalogue.mark_used(slug)
 
     sid = uuid.uuid4().hex[:12]
     SESSIONS[sid] = orch.new_session(sid, slug, pack)
@@ -93,6 +132,7 @@ def start():
             "title": pack.get("title", slug),
             "emoji": pack.get("emoji", ""),
             "audio_ready": bool(pack.get("audio_ready")),
+            "cycle": cycle,
             "progress": orch.progress(SESSIONS[sid]),
         }
     )

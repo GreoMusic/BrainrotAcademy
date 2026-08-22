@@ -84,14 +84,27 @@ def _render_audio_job(slug: str) -> None:
         _set(slug, stage=STAGE_AUDIO, error=str(exc))
 
 
-def ensure_pack(topic_text: str, *, want_audio: bool = True) -> tuple[str, dict]:
-    """Return (slug, pack) for whatever the user typed, generating if needed.
+def ensure_pack(
+    topic_text: str,
+    *,
+    want_audio: bool = True,
+    meta: dict | None = None,
+    slug: str | None = None,
+) -> tuple[str, dict]:
+    """Return (slug, pack) for a topic, generating if needed.
 
     Blocks only for text generation. Audio is queued and lands later.
+
+    A catalogue entry passes its own `meta` and `slug`. That skips the gen_meta
+    round-trip entirely - about two seconds off a cold build - and, more
+    importantly, pins the slug. Left to normalise the title itself, the model
+    could turn "Grammar & Punctuation" into "Grammar and Punctuation" and
+    orphan the pack, its audio and its usage record from each other.
     """
     from tools import generate_content as gen
 
-    slug = slugify(topic_text)
+    known = meta is not None
+    slug = slug or slugify(topic_text)
 
     # Already on disk from an earlier session or run.
     if content.pack_exists(slug):
@@ -102,20 +115,23 @@ def ensure_pack(topic_text: str, *, want_audio: bool = True) -> tuple[str, dict]
 
     _set(slug, stage=STAGE_TEXT)
     try:
-        meta = gen.gen_meta(topic_text)
-        if not meta.get("ok", True):
-            _set(slug, stage=STAGE_ERROR, error=meta.get("reason") or "Not a topic.")
-            raise TopicRejected(meta.get("reason") or "That is not something I can teach.")
+        if not known:
+            meta = gen.gen_meta(topic_text)
+            if not meta.get("ok", True):
+                _set(slug, stage=STAGE_ERROR, error=meta.get("reason") or "Not a topic.")
+                raise TopicRejected(
+                    meta.get("reason") or "That is not something I can teach."
+                )
 
-        meta = {
-            "title": meta.get("title") or topic_text[:40],
-            "emoji": meta.get("emoji") or "\U0001F4DA",
-            "blurb": meta.get("blurb") or "",
-        }
-        # Re-slug from the tidied title so "ww2" and "WW2" share one pack.
-        slug = slugify(meta["title"])
-        if content.pack_exists(slug):
-            return slug, content.load_pack(slug)
+            meta = {
+                "title": meta.get("title") or topic_text[:40],
+                "emoji": meta.get("emoji") or "\U0001F4DA",
+                "blurb": meta.get("blurb") or "",
+            }
+            # Re-slug from the tidied title so "ww2" and "WW2" share one pack.
+            slug = slugify(meta["title"])
+            if content.pack_exists(slug):
+                return slug, content.load_pack(slug)
 
         _set(slug, stage=STAGE_TEXT, title=meta["title"], emoji=meta["emoji"])
         pack = gen.build_topic(slug, meta, skip_audio=True, quiet=True)

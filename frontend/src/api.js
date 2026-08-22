@@ -7,11 +7,14 @@ export const api = {
   health: () => fetch('/api/health').then(j),
   topics: () => fetch('/api/topics').then(j),
 
-  start: (topic) =>
+  catalogue: () => fetch('/api/catalogue').then(j),
+
+  // Either a catalogue slug or free text; the server resolves both.
+  start: (payload) =>
     fetch('/api/session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic }),
+      body: JSON.stringify(typeof payload === 'string' ? { topic: payload } : payload),
     }).then(j),
 
   next: (sid, n = 1) => fetch(`/api/session/${sid}/next?n=${n}`).then(j),
