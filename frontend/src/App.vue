@@ -4,6 +4,9 @@ import { api } from './api'
 import FeedView from './views/FeedView.vue'
 import TouchGrassCard from './components/cards/TouchGrassCard.vue'
 import SubjectIcon from './components/SubjectIcon.vue'
+import PresentationLanding from './views/PresentationLanding.vue'
+
+const presentationPage = window.location.pathname.replace(/\/+$/, '') === '/landingpage'
 
 const board = ref(null)
 const openSubject = ref(null)
@@ -73,7 +76,9 @@ async function resetTopics() {
   }
 }
 
-onMounted(loadBoard)
+onMounted(() => {
+  if (!presentationPage) loadBoard()
+})
 onBeforeUnmount(() => clearInterval(stepTimer))
 
 async function start(payload) {
@@ -106,7 +111,8 @@ async function start(payload) {
 </script>
 
 <template>
-  <div class="stage">
+  <PresentationLanding v-if="presentationPage" />
+  <div v-else class="stage">
     <div class="phone">
       <div class="screen">
         <div class="notch" />
