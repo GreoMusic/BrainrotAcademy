@@ -12,9 +12,21 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import config  # noqa: E402
 from app import create_app  # noqa: E402
+import catalogue  # noqa: E402
 import mistral_client  # noqa: E402
 import topics  # noqa: E402
 from routes.session import BLOCKING  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def isolated_usage(tmp_path, monkeypatch):
+    """Point topic usage at a scratch file.
+
+    Selecting a topic spends it, so without this the suite would both mutate
+    the real usage.json and 409 the moment two tests picked the same topic.
+    """
+    monkeypatch.setattr(catalogue, "USAGE_PATH", tmp_path / "usage.json")
+    yield
 
 
 @pytest.fixture
@@ -154,7 +166,9 @@ def test_podcast_cards_carry_their_segment(client, sid):
     if "podcast" not in seen:
         pytest.skip("podcast items not reached in this walk")
 
-    # Re-walk a fresh session looking at payloads.
+    # Re-walk a fresh session looking at payloads. The topic was spent by the
+    # first walk, so hand it back before selecting it again.
+    catalogue.reset(cycle_bump=False)
     sid2 = client.post("/api/session", json={"topic": "photosynthesis"}).get_json()["session_id"]
     for _ in range(40):
         cards = client.get("/api/session/{}/next?n=3".format(sid2)).get_json()["cards"]

@@ -1,0 +1,468 @@
+{
+  "topic": "entropy",
+  "title": "Entropy",
+  "emoji": "🧪",
+  "blurb": "Science - Entropy",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "Why does your room always get messier over time?",
+      "back": "Entropy increases; disorder wins.",
+      "hook": "Chaos loves your bedroom floor."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Can entropy ever decrease in a closed system?",
+      "back": "Nope, it’s a one-way street.",
+      "hook": "The universe hates clean freaks."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "Why do ice cubes melt in your drink?",
+      "back": "Entropy favours liquid over solid.",
+      "hook": "Your drink is winning, ice."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the opposite of entropy?",
+      "back": "Order, but it’s rare.",
+      "hook": "The universe’s kryptonite."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "How does life defy entropy?",
+      "back": "It exports disorder outside itself.",
+      "hook": "Life’s a rebel, not a mess."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "Why can’t you unscramble an egg?",
+      "back": "Entropy won’t let you.",
+      "hook": "Breakfast is permanent chaos."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The universe’s total entropy is constantly increasing, and it’s doomed to heat death.",
+      "emoji": "🔥"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "A single drop of ink in a glass of water can increase entropy by more than the entire Milky Way.",
+      "emoji": "💧"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Black holes have the highest entropy of any known object in the universe.",
+      "emoji": "⚫"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What is Entropy, Anyway?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "The Second Law of Thermodynamics"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Entropy in Everyday Life"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Entropy and the Heat Death of the Universe"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Entropy measures what in a system?",
+      "options": [
+        "Total energy",
+        "Degree of disorder",
+        "Temperature"
+      ],
+      "correct": 1,
+      "explain": "Entropy quantifies the randomness or disorder in a system."
+    },
+    {
+      "item_id": "fc2",
+      "q": "What law states entropy always increases in a closed system?",
+      "options": [
+        "Zeroth Law of Thermodynamics",
+        "First Law of Thermodynamics",
+        "Second Law of Thermodynamics"
+      ],
+      "correct": 2,
+      "explain": "The Second Law says entropy in an isolated system never decreases."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Melting increases what in a system?",
+      "options": [
+        "Potential energy",
+        "Entropy",
+        "Pressure"
+      ],
+      "correct": 1,
+      "explain": "Melting increases disorder, so entropy rises."
+    },
+    {
+      "item_id": "fc4",
+      "q": "A perfectly ordered system has entropy of...",
+      "options": [
+        "1",
+        "0",
+        "Infinity"
+      ],
+      "correct": 1,
+      "explain": "Zero entropy means perfect order, like a crystal at absolute zero."
+    },
+    {
+      "item_id": "fc5",
+      "q": "How do living things reduce their own entropy?",
+      "options": [
+        "By absorbing heat",
+        "By exporting waste",
+        "By freezing"
+      ],
+      "correct": 1,
+      "explain": "Living systems reduce internal entropy by expelling disorder (e.g., waste)."
+    },
+    {
+      "item_id": "fc6",
+      "q": "Scrambling an egg increases what?",
+      "options": [
+        "Volume",
+        "Entropy",
+        "Mass"
+      ],
+      "correct": 1,
+      "explain": "Scrambling increases molecular disorder, raising entropy."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What’s the ultimate fate of the universe due to entropy?",
+      "options": [
+        "Big Crunch",
+        "Heat Death",
+        "Big Rip"
+      ],
+      "correct": 1,
+      "explain": "Heat Death is the state where entropy maxes out, and everything reaches thermal equilibrium."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What’s more entropic: a drop of ink mixing in water or a galaxy?",
+      "options": [
+        "The galaxy",
+        "The ink drop",
+        "They’re equal"
+      ],
+      "correct": 1,
+      "explain": "The ink drop’s entropy increase is massive because it spreads disorder over many particles."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What has the highest entropy?",
+      "options": [
+        "A supernova",
+        "A black hole",
+        "A neutron star"
+      ],
+      "correct": 1,
+      "explain": "Black holes pack insane entropy due to their extreme mass and tiny size."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What is Entropy, Anyway?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Okay, imagine a room where everything’s perfectly organized.",
+            "id": "s1_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/entropy/s1_t1_fbeae737.mp3",
+            "dur": 2.52
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Like my desk? Because that’s never happened.",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/entropy/s1_t2_d766581c.mp3",
+            "dur": 1.64
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Exactly! Now, entropy is nature’s way of saying, 'Yeah, that won’t last.'",
+            "id": "s1_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/entropy/s1_t3_e1edee53.mp3",
+            "dur": 3.6
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So entropy’s just chaos winning? Cool, cool.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/entropy/s1_t4_2ee6b1be.mp3",
+            "dur": 3.97
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "More or less. It’s a measure of disorder in a system.",
+            "id": "s1_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/entropy/s1_t5_8a6d62bc.mp3",
+            "dur": 2.35
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Wait, so my room has high entropy?",
+            "id": "s1_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/entropy/s1_t6_ad709119.mp3",
+            "dur": 1.77
+          }
+        ],
+        "quiz_after": {
+          "q": "Entropy measures:",
+          "options": [
+            "Order in a system",
+            "Disorder in a system",
+            "Energy in a system"
+          ],
+          "correct": 1,
+          "reaction_correct": "Finally, something makes sense.",
+          "reaction_wrong": "Ugh, of course not.",
+          "reaction_correct_audio": "/static/audio/entropy/s1_rok_7a4c7f93.mp3",
+          "reaction_wrong_audio": "/static/audio/entropy/s1_rno_2d2c51c9.mp3"
+        },
+        "dur": 15.85
+      },
+      {
+        "id": "s2",
+        "title": "The Second Law of Thermodynamics",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "The second law says entropy always increases over time.",
+            "id": "s2_t1",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/entropy/s2_t1_3ae22dab.mp3",
+            "dur": 3.01
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So my laundry pile is just physics in action?",
+            "id": "s2_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/entropy/s2_t2_d6cdb8ca.mp3",
+            "dur": 2.27
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Bingo! Unless you do work to reverse it.",
+            "id": "s2_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/entropy/s2_t3_b5b494ec.mp3",
+            "dur": 2.33
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "But then wouldn’t entropy decrease?",
+            "id": "s2_t4",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/entropy/s2_t4_1e5db30f.mp3",
+            "dur": 2.05
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Only locally! The universe’s total entropy still rises.",
+            "id": "s2_t5",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/entropy/s2_t5_78a2a389.mp3",
+            "dur": 2.42
+          }
+        ],
+        "quiz_after": {
+          "q": "The second law of thermodynamics states that entropy:",
+          "options": [
+            "Decreases over time",
+            "Stays the same",
+            "Increases over time"
+          ],
+          "correct": 2,
+          "reaction_correct": "Okay, that’s actually kind of deep.",
+          "reaction_wrong": "Nope, try again.",
+          "reaction_correct_audio": "/static/audio/entropy/s2_rok_236fa47e.mp3",
+          "reaction_wrong_audio": "/static/audio/entropy/s2_rno_6e52a2b6.mp3"
+        },
+        "dur": 12.08
+      },
+      {
+        "id": "s3",
+        "title": "Entropy in Everyday Life",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Ice melting in a glass—high entropy.",
+            "id": "s3_t1",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/entropy/s3_t1_939b99c0.mp3",
+            "dur": 1.91
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "But it’s just water turning to liquid?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/entropy/s3_t2_dd1c6710.mp3",
+            "dur": 1.7
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Exactly! Molecules go from rigid to free. More disorder!",
+            "id": "s3_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/entropy/s3_t3_b8fa0aee.mp3",
+            "dur": 2.5
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So my brain after college is peak entropy.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/entropy/s3_t4_719521c5.mp3",
+            "dur": 3.62
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Metaphorically, yes.",
+            "id": "s3_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/entropy/s3_t5_ecea0629.mp3",
+            "dur": 1.29
+          }
+        ],
+        "quiz_after": {
+          "q": "Which of these has higher entropy: ice or water?",
+          "options": [
+            "Ice",
+            "Water",
+            "They’re the same"
+          ],
+          "correct": 1,
+          "reaction_correct": "Huh. That actually clicks.",
+          "reaction_wrong": "Wrong. Think harder.",
+          "reaction_correct_audio": "/static/audio/entropy/s3_rok_14ceccb5.mp3",
+          "reaction_wrong_audio": "/static/audio/entropy/s3_rno_0043d58b.mp3"
+        },
+        "dur": 11.02
+      },
+      {
+        "id": "s4",
+        "title": "Entropy and the Heat Death of the Universe",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Eventually, entropy will max out. Everything’s the same temperature.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/entropy/s4_t1_1bd06d8d.mp3",
+            "dur": 2.75
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So… the universe just dies?",
+            "id": "s4_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/entropy/s4_t2_086ceeb5.mp3",
+            "dur": 2.12
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Heat death. All energy’s evenly spread, no work can happen.",
+            "id": "s4_t3",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/entropy/s4_t3_267a1612.mp3",
+            "dur": 2.48
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Cheery thought. Thanks, physics.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/entropy/s4_t4_36f98805.mp3",
+            "dur": 1.77
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Hey, at least we’re here now!",
+            "id": "s4_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/entropy/s4_t5_e2ae46dd.mp3",
+            "dur": 1.22
+          }
+        ],
+        "quiz_after": {
+          "q": "Heat death of the universe is when:",
+          "options": [
+            "Entropy is at maximum",
+            "Entropy is at minimum",
+            "The sun explodes"
+          ],
+          "correct": 0,
+          "reaction_correct": "Ugh, why does this make sense?",
+          "reaction_wrong": "Nope. Try again.",
+          "reaction_correct_audio": "/static/audio/entropy/s4_rok_2b8032fd.mp3",
+          "reaction_wrong_audio": "/static/audio/entropy/s4_rno_3221ab79.mp3"
+        },
+        "dur": 10.34
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Entropy. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
