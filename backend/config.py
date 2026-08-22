@@ -27,7 +27,7 @@ CLIPS_DIR = STATIC_DIR / "clips"
 # read as a conversation. All remain overridable from backend/.env.
 VOICE_HOST_A = os.getenv("VOICE_HOST_A", "5de47977-6e47-4266-a938-3bc1d76b4676")  # Jane - Curious
 VOICE_HOST_B = os.getenv("VOICE_HOST_B", "390c8a2b-60a6-4882-8437-c49a8bd33b63")  # Oliver - Curious
-VOICE_COACH = os.getenv("VOICE_COACH", "cbe96cf0-85ec-4a10-accb-0b35c93b6dfd")   # Jane - Confident
+VOICE_COACH = os.getenv("VOICE_COACH", "01d985cd-5e0c-4457-bfd8-80ba31a5bc03")   # Paul - Cheerful
 
 # Transition engine tuning.
 LEARN_CARDS_PER_ROUND = 3

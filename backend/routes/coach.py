@@ -60,7 +60,10 @@ def turn():
     system += (
         "\n\nReply as JSON: {\"reply\":str,\"understood\":bool,\"done\":bool}. "
         "'understood' is whether their LAST answer showed real understanding. "
-        "'done' is true only when you have enough evidence to judge them."
+        "'done' is true only when you have enough evidence to judge them. "
+        "The reply will be spoken aloud: use one or two short, warm, conversational "
+        "sentences with natural contractions and punctuation. Never use markdown, "
+        "lists, labels, or stage directions."
     )
     if closing:
         system += " You have asked enough - set done to true this turn."

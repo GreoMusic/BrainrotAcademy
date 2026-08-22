@@ -21,6 +21,7 @@ from mistralai.client.models import (
     TranscriptionStreamDone,
     TranscriptionStreamTextDelta,
 )
+from simple_websocket.errors import ConnectionClosed
 
 import config
 
@@ -64,6 +65,8 @@ def _receive_audio(ws: Any, chunks: queue.Queue[bytes | object]) -> None:
                 continue
             if event.get("type") == "stop":
                 break
+    except ConnectionClosed:
+        pass
     finally:
         _finish_queue(chunks)
 
