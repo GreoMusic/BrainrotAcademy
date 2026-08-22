@@ -16,6 +16,7 @@ from app import create_app  # noqa: E402
 import catalogue  # noqa: E402
 import mistral_client  # noqa: E402
 import topics  # noqa: E402
+from routes import session as session_routes  # noqa: E402
 from routes.session import BLOCKING  # noqa: E402
 from routes import coach as coach_routes  # noqa: E402
 
@@ -227,6 +228,38 @@ def test_passing_a_check_unlocks_videos_then_a_gate(client, sid):
     # Videos must come after the coach conversation, never before.
     assert seen.index("coach") < seen.index("video")
     assert seen.index("video") < seen.index("math_gate")
+
+
+def test_session_start_serves_a_freshly_fetched_gif_batch(client, monkeypatch):
+    """A pack is cached and replayed across every session on that topic - if
+    the reel served straight from the pack's baked-in gifs, replaying the
+    same topic would show the exact same clips every time. Session start
+    fetches its own batch instead, so this asserts that batch is what
+    actually reaches the reel, not whatever the pack shipped with."""
+    fresh = [{"id": "fresh{}".format(i), "src": "/fresh{}.mp4".format(i)} for i in range(3)]
+    monkeypatch.setattr(session_routes.giphy_client, "brainrot", lambda **kw: fresh)
+
+    sid = client.post("/api/session", json={"topic": "photosynthesis"}).get_json()["session_id"]
+    seen_gif_ids = set()
+    for _ in range(40):
+        cards = client.get("/api/session/{}/next?n=3".format(sid)).get_json()["cards"]
+        for card in cards:
+            if card["type"] == "gif":
+                seen_gif_ids.add(card["payload"]["id"])
+            elif card["type"] == "coach":
+                client.post(
+                    "/api/session/{}/answer".format(sid),
+                    json={"card_id": card["id"], "correct": True},
+                )
+            elif card["type"] in ("math_gate", "touch_grass", "talk_to_human"):
+                if seen_gif_ids:
+                    break
+                client.post("/api/session/{}/friction/clear".format(sid))
+        if seen_gif_ids:
+            break
+
+    assert seen_gif_ids, "reel never served a gif card"
+    assert seen_gif_ids <= {g["id"] for g in fresh}, seen_gif_ids
 
 
 def test_answer_requires_fields(client, sid):
