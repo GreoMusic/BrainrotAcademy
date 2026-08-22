@@ -15,7 +15,7 @@ onMounted(async () => {
     if (!data.topics.length) {
       error.value = 'No topic packs found. Run: python -m tools.generate_content --stub'
     }
-  } catch (e) {
+  } catch {
     error.value = 'Backend unreachable. Is Flask running on :5001?'
   }
 })
@@ -25,8 +25,7 @@ async function pick(topic) {
   // This tap is the user gesture that unlocks audio playback for the whole
   // session. Browsers block unmuted autoplay without one, so spend it here.
   try {
-    const a = new Audio()
-    a.play().catch(() => {})
+    new Audio().play().catch(() => {})
   } catch {}
 
   try {
@@ -39,48 +38,48 @@ async function pick(topic) {
 </script>
 
 <template>
-  <FeedView v-if="session" :session="session" />
+  <div class="stage">
+    <div class="phone">
+      <div class="screen">
+        <div class="notch" />
 
-  <div v-else class="shell picker">
-    <div class="hero">
-      <div class="logo">🧠💀</div>
-      <h1>Brainrot<br />Academy</h1>
-      <p class="tag">Learn something. Then you may scroll.</p>
+        <FeedView v-if="session" :session="session" />
+
+        <!-- Enrollment gate, styled as the design's full-screen takeover. -->
+        <div v-else class="card reel">
+          <div class="reel-bg" style="filter: blur(6px)">🌀</div>
+
+          <div class="gate-full">
+            <div class="gate-card">
+              <div class="wordmark">Brainrot Academy</div>
+              <div class="gate-ring"><div class="inner">🎓</div></div>
+              <p class="gate-title">Enrollment check.</p>
+              <p class="gate-sub">
+                The feed is locked. Pick a subject and prove you learned something
+                to get in.
+              </p>
+
+              <div class="stack">
+                <button
+                  v-for="t in topics" :key="t.slug"
+                  class="btn btn-gradient topic" :disabled="starting" @click="pick(t)"
+                >
+                  <span class="emoji">{{ t.emoji }}</span>
+                  <span>{{ t.title }}</span>
+                </button>
+              </div>
+
+              <p v-if="error" class="err">{{ error }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="stack">
-      <button
-        v-for="t in topics" :key="t.slug"
-        class="btn topic" :disabled="starting" @click="pick(t)"
-      >
-        <span class="emoji">{{ t.emoji }}</span>
-        <span>
-          <b>{{ t.title }}</b>
-          <i>{{ t.blurb }}</i>
-        </span>
-      </button>
-    </div>
-
-    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
 <style scoped>
-.picker {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 30px 24px; gap: 34px;
-  background: radial-gradient(120% 80% at 50% 0%, #2b1055, #07060d 70%);
-}
-.hero { text-align: center; }
-.logo { font-size: 58px; }
-h1 { font-size: 42px; font-weight: 900; line-height: 1.02; letter-spacing: -0.03em; margin-top: 10px; }
-.tag { color: var(--dim); margin-top: 14px; font-size: 15px; }
-.topic { display: flex; align-items: center; gap: 15px; }
-.topic .emoji { font-size: 30px; }
-.topic b { display: block; font-size: 17px; }
-.topic i { display: block; font-style: normal; font-size: 13px; color: var(--dim); font-weight: 500; margin-top: 2px; }
-.error {
-  padding: 14px; border-radius: 12px; background: rgba(255,45,129,0.2);
-  border: 1px solid var(--hot); font-size: 14px; text-align: center;
-}
+.topic { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.topic .emoji { font-size: 16px; }
+.err { margin-top: 14px; font-size: 11.5px; color: var(--g3); line-height: 1.45; }
 </style>

@@ -63,8 +63,7 @@ function toggle() {
 }
 
 function step(delta) {
-  const n = Math.min(Math.max(idx.value + delta, 0), turns.value.length - 1)
-  playTurn(n)
+  playTurn(Math.min(Math.max(idx.value + delta, 0), turns.value.length - 1))
 }
 
 function answer(i) {
@@ -76,69 +75,98 @@ function answer(i) {
     audio = new Audio(src)
     audio.play().catch(() => {})
   }
-  setTimeout(() => emit('answered', correct), 2200)
+  setTimeout(() => emit('answered', correct), 2400)
 }
 
 // Same contract as VideoCard: play only while on screen.
 // `immediate` matters: a card can mount already active (the first card in the
 // feed, or after a programmatic scroll), and a plain watcher never fires for
 // the initial value, so it would sit there silently forever.
-watch(() => props.active, (a) => {
-  if (a) playTurn(0)
-  else { stopAudio(); playing.value = false; idx.value = 0; showQuiz.value = false; picked.value = null }
-}, { immediate: true, flush: 'post' })
+watch(
+  () => props.active,
+  (a) => {
+    if (a) playTurn(0)
+    else {
+      stopAudio()
+      playing.value = false
+      idx.value = 0
+      showQuiz.value = false
+      picked.value = null
+    }
+  },
+  { immediate: true, flush: 'post' },
+)
 
 onBeforeUnmount(stopAudio)
 </script>
 
 <template>
-  <div class="card pod" :style="{ '--hue': (card.payload.index || 0) * 47 }">
-    <div class="card-gradient pod-bg" />
+  <div class="card lightscreen">
+    <div class="content">
+      <span class="pill grad">learning round</span>
 
-    <!-- Story-style dots: honest about how much is left. -->
-    <div class="dots">
-      <span v-for="(t, i) in turns" :key="i" :class="{ on: i <= idx }" />
-    </div>
-
-    <div class="eyebrow">podcast · {{ card.payload.title }}</div>
-
-    <div class="hosts">
-      <div class="host" :class="{ live: playing && current.speaker === 'a' }">
-        <div class="blob a">🎙️</div><span>ARI</span>
+      <div class="tabs">
+        <div class="tab">flashcard</div>
+        <div class="tab">fun facts</div>
+        <div class="tab on">podcast</div>
       </div>
-      <div class="host" :class="{ live: playing && current.speaker === 'b' }">
-        <div class="blob b">🤨</div><span>BEX</span>
+
+      <!-- Turn-level progress: honest about how much is left. -->
+      <div class="dashes">
+        <div v-for="(t, i) in turns" :key="i" class="d" :class="{ on: i <= idx }" />
       </div>
-    </div>
 
-    <!-- Captions are not optional: most people scroll muted. -->
-    <transition name="fade">
-      <div class="caption" :key="idx">{{ current.text }}</div>
-    </transition>
+      <div class="learn-card pod">
+        <div class="k">{{ card.payload.title }}</div>
 
-    <div class="wave" :class="{ on: playing }">
-      <i v-for="n in 22" :key="n" :style="{ animationDelay: n * 0.055 + 's' }" />
-    </div>
+        <div class="hosts">
+          <div class="host" :class="{ live: playing && current.speaker === 'a' }">
+            <div class="ring"><div class="inner">🎙️</div></div>
+            <span>ARI</span>
+          </div>
+          <div class="host" :class="{ live: playing && current.speaker === 'b' }">
+            <div class="ring"><div class="inner">🤨</div></div>
+            <span>BEX</span>
+          </div>
+        </div>
 
-    <div v-if="!showQuiz" class="controls">
-      <button class="ctl" @click="step(-1)">◀◀</button>
-      <button class="ctl big-ctl" @click="toggle">{{ playing ? '❚❚' : '▶' }}</button>
-      <button class="ctl" @click="step(1)">▶▶</button>
+        <!-- Captions are not optional: most people watch muted. -->
+        <transition name="fade">
+          <div class="q line" :key="idx">{{ current.text }}</div>
+        </transition>
+
+        <div class="wave" :class="{ on: playing }">
+          <i v-for="n in 20" :key="n" :style="{ animationDelay: n * 0.055 + 's' }" />
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctl" @click="step(-1)">◀◀</button>
+        <button class="btn btn-primary play" @click="toggle">
+          {{ playing ? 'Pause' : 'Play' }}
+        </button>
+        <button class="ctl" @click="step(1)">▶▶</button>
+      </div>
     </div>
 
     <!-- Scripted interjection: the reliable backbone of the interactivity. -->
     <transition name="fade">
-      <div v-if="showQuiz" class="sheet">
-        <div class="sheet-q">{{ quiz.q }}</div>
-        <div class="stack">
-          <button
-            v-for="(o, i) in quiz.options" :key="i" class="btn"
-            :class="picked === null ? '' : (i === quiz.correct ? 'correct' : (i === picked ? 'wrong' : ''))"
-            :disabled="picked !== null" @click="answer(i)"
-          >{{ o }}</button>
-        </div>
-        <div v-if="picked !== null" class="reaction">
-          {{ picked === quiz.correct ? quiz.reaction_correct : quiz.reaction_wrong }}
+      <div v-if="showQuiz" class="sheet-overlay">
+        <div class="sheet">
+          <div class="sheet-handle" />
+          <p class="gate-title" style="text-align: center">{{ quiz.q }}</p>
+          <div class="stack" style="margin-top: 14px">
+            <button
+              v-for="(o, i) in quiz.options" :key="i" class="btn"
+              :class="picked === null
+                ? 'btn-outline'
+                : (i === quiz.correct ? 'opt-correct' : (i === picked ? 'opt-wrong' : 'btn-outline muted'))"
+              :disabled="picked !== null" @click="answer(i)"
+            >{{ o }}</button>
+          </div>
+          <div v-if="picked !== null" class="reaction">
+            {{ picked === quiz.correct ? quiz.reaction_correct : quiz.reaction_wrong }}
+          </div>
         </div>
       </div>
     </transition>
@@ -146,48 +174,38 @@ onBeforeUnmount(stopAudio)
 </template>
 
 <style scoped>
-.pod { justify-content: flex-start; padding-top: 96px; }
-.pod-bg {
-  background: linear-gradient(165deg,
-    hsl(calc(265 + var(--hue)) 70% 22%),
-    hsl(calc(300 + var(--hue)) 60% 8%));
+.pod { justify-content: flex-start; }
+.hosts { display: flex; gap: 22px; margin: 6px 0 16px; }
+.host { display: grid; justify-items: center; gap: 5px; opacity: 0.42; transition: opacity 0.25s, transform 0.25s; }
+.host.live { opacity: 1; transform: scale(1.06); }
+.host span { font-size: 9px; font-weight: 800; letter-spacing: 0.12em; color: #666; }
+.ring {
+  width: 48px; height: 48px; border-radius: 50%; padding: 2.5px;
+  background: #e6e6e6; display: flex; align-items: center; justify-content: center;
 }
-.dots { position: absolute; top: 68px; left: 20px; right: 20px; display: flex; gap: 4px; }
-.dots span { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.22); transition: background 0.3s; }
-.dots span.on { background: #fff; }
-
-.hosts { display: flex; gap: 30px; margin: 10px 0 26px; }
-.host { display: grid; justify-items: center; gap: 6px; opacity: 0.4; transition: opacity 0.25s, transform 0.25s; }
-.host.live { opacity: 1; transform: scale(1.07); }
-.host span { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; }
-.blob {
-  width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center;
-  font-size: 28px; background: rgba(255,255,255,0.14); border: 2px solid rgba(255,255,255,0.2);
+.host.live .ring { background: var(--ig-gradient); }
+.ring .inner {
+  width: 100%; height: 100%; border-radius: 50%; background: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 21px;
 }
-.host.live .blob { animation: pulse 1.1s ease-in-out infinite; border-color: var(--accent-2); }
-@keyframes pulse { 50% { box-shadow: 0 0 0 11px rgba(0,229,192,0.12) } }
 
-.caption { font-size: clamp(20px, 5.6vw, 27px); font-weight: 700; line-height: 1.32; min-height: 120px; }
+.line { flex: 1; display: flex; align-items: center; font-size: 15px; }
 
-.wave { display: flex; align-items: flex-end; gap: 3px; height: 34px; margin-top: 22px; opacity: 0.3; }
+.wave { display: flex; align-items: flex-end; gap: 2.5px; height: 22px; margin-top: 10px; opacity: 0.28; }
 .wave.on { opacity: 1; }
-.wave i { flex: 1; background: var(--accent-2); border-radius: 2px; height: 20%; }
+.wave i { flex: 1; background: var(--g3); border-radius: 2px; height: 22%; }
 .wave.on i { animation: bar 0.85s ease-in-out infinite; }
 @keyframes bar { 50% { height: 100% } }
 
-.controls { display: flex; gap: 14px; align-items: center; margin-top: 26px; }
+.controls { display: flex; gap: 8px; align-items: center; }
 .ctl {
-  padding: 11px 15px; border-radius: 12px; background: rgba(255,255,255,0.12);
-  font-weight: 800; font-size: 13px;
+  padding: 13px 14px; border-radius: 11px; background: #f2f2f2;
+  font-weight: 700; font-size: 12px; color: #444; flex: none;
 }
-.big-ctl { font-size: 17px; padding: 11px 24px; }
+.play { flex: 1; }
 
-.sheet {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 26px 22px calc(30px + env(safe-area-inset-bottom));
-  background: rgba(8,4,18,0.94); backdrop-filter: blur(16px);
-  border-radius: 26px 26px 0 0; border-top: 1.5px solid rgba(255,255,255,0.14);
-}
-.sheet-q { font-size: 20px; font-weight: 800; margin-bottom: 16px; }
-.reaction { margin-top: 15px; font-size: 15px; font-style: italic; color: var(--accent-2); }
+.opt-correct { background: rgba(0, 149, 246, 0.1); color: var(--blue); border: 1.5px solid var(--blue); }
+.opt-wrong { background: #fff0f3; color: var(--g3); border: 1.5px solid var(--g3); }
+.muted { opacity: 0.55; }
+.reaction { margin-top: 13px; font-size: 12.5px; font-style: italic; color: var(--dim); text-align: center; }
 </style>

@@ -1,54 +1,62 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 const props = defineProps({ card: Object, active: Boolean })
 const emit = defineEmits(['answered'])
 
 const picked = ref(null)
 const done = ref(false)
+const correct = computed(() => picked.value === props.card.payload.correct)
 
 function choose(i) {
   if (done.value) return
   picked.value = i
   done.value = true
-  // Let the result land visually before the feed moves on.
-  setTimeout(() => emit('answered', i === props.card.payload.correct), 1400)
+  // Let the verdict land visually before the feed moves on.
+  setTimeout(() => emit('answered', i === props.card.payload.correct), 1900)
 }
 
-const cls = (i) => {
-  if (!done.value) return ''
-  if (i === props.card.payload.correct) return 'correct'
-  return i === picked.value ? 'wrong' : ''
+function cls(i) {
+  if (!done.value) return 'btn-outline'
+  if (i === props.card.payload.correct) return 'opt-correct'
+  return i === picked.value ? 'opt-wrong' : 'btn-outline muted'
 }
 </script>
 
 <template>
-  <div class="card is-gate">
-    <div class="card-gradient" style="--g1:#003b33; --g2:#06131a" />
-    <div class="eyebrow">prove it to keep scrolling</div>
+  <div class="card lightscreen">
+    <div class="content">
+      <span class="pill blue">enrollment check</span>
+      <p class="screen-title">{{ card.payload.q }}</p>
+      <p class="screen-sub">Prove it to get back in the feed.</p>
 
-    <div class="big q">{{ card.payload.q }}</div>
-
-    <div class="stack">
-      <button
-        v-for="(opt, i) in card.payload.options" :key="i"
-        class="btn" :class="cls(i)" :disabled="done" @click="choose(i)"
-      >{{ opt }}</button>
-    </div>
-
-    <transition name="fade">
-      <div v-if="done" class="explain">
-        <b>{{ picked === card.payload.correct ? 'Correct.' : 'Not quite.' }}</b>
-        {{ card.payload.explain }}
+      <div class="stack">
+        <button
+          v-for="(opt, i) in card.payload.options" :key="i"
+          class="btn" :class="cls(i)" :disabled="done" @click="choose(i)"
+        >{{ opt }}</button>
       </div>
-    </transition>
+
+      <div class="spacer" />
+
+      <transition name="fade">
+        <div v-if="done" class="explain" :class="{ good: correct }">
+          <b>{{ correct ? 'Correct.' : 'Not quite.' }}</b>
+          {{ card.payload.explain }}
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.q { margin-bottom: 26px; }
+.spacer { flex: 1; min-height: 12px; }
+.opt-correct { background: rgba(0, 149, 246, 0.1); color: var(--blue); border: 1.5px solid var(--blue); }
+.opt-wrong { background: #fff0f3; color: var(--g3); border: 1.5px solid var(--g3); }
+.muted { opacity: 0.55; }
 .explain {
-  margin-top: 20px; padding: 15px; border-radius: 14px;
-  background: rgba(0,0,0,0.35); font-size: 15px; line-height: 1.5;
+  padding: 13px 14px; border-radius: 12px; background: #f7f7f7;
+  font-size: 12.5px; line-height: 1.5; color: #555;
 }
-.explain b { display: block; margin-bottom: 4px; }
+.explain.good { background: rgba(0, 149, 246, 0.08); }
+.explain b { display: block; margin-bottom: 3px; color: var(--ink); }
 </style>

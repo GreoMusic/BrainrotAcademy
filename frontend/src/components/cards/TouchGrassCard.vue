@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-const props = defineProps({ card: Object, sessionId: String })
+const props = defineProps({ card: Object })
 const emit = defineEmits(['cleared'])
 
 const busy = ref(false)
@@ -19,9 +19,9 @@ async function onFile(e) {
     fd.append('photo', file)
     const res = await fetch('/api/friction/touch-grass', { method: 'POST', body: fd })
     verdict.value = await res.json()
-    if (verdict.value.pass) setTimeout(() => emit('cleared'), 1600)
-  } catch (err) {
-    verdict.value = { pass: false, reason: 'Could not reach the judge. Skip for now?' }
+    if (verdict.value.pass) setTimeout(() => emit('cleared'), 1500)
+  } catch {
+    verdict.value = { pass: false, reason: 'Could not reach the judge.' }
   } finally {
     busy.value = false
   }
@@ -29,36 +29,43 @@ async function onFile(e) {
 </script>
 
 <template>
-  <div class="card is-gate">
-    <div class="card-gradient" style="--g1:#0c3b12; --g2:#04140a" />
-    <div class="eyebrow">friction</div>
-    <div class="big">Go outside. Photograph something alive.</div>
+  <div class="card reel">
+    <div class="reel-bg" style="filter: blur(6px)">🌱</div>
+    <div class="reel-scrim-top" />
 
-    <div class="frame" @click="fileEl.click()">
-      <img v-if="preview" :src="preview" />
-      <div v-else class="ph">📷<span>tap to open camera</span></div>
-    </div>
-    <input ref="fileEl" type="file" accept="image/*" capture="environment" hidden @change="onFile" />
-
-    <div v-if="busy" class="status">Checking…</div>
-    <div v-else-if="verdict" class="status" :class="{ good: verdict.pass }">
-      {{ verdict.reason }}
+    <div class="budget">
+      <div class="budget-row"><span>SCROLL BUDGET</span><span>0 left</span></div>
+      <div class="budget-track"><div class="budget-fill" style="width: 0%" /></div>
     </div>
 
-    <button class="skip" @click="emit('cleared')">I am indoors, let me through</button>
+    <div class="sheet-overlay">
+      <div class="sheet">
+        <div class="sheet-handle" />
+        <p class="gate-title" style="text-align: center">Quick toll before you continue</p>
+        <p class="gate-sub" style="text-align: center">
+          Go outside and photograph something alive. The camera checks it is real.
+        </p>
+
+        <div class="cam-box" @click="fileEl.click()">
+          <img v-if="preview" :src="preview" />
+          <span v-else>📷 point at grass</span>
+        </div>
+        <input ref="fileEl" type="file" accept="image/*" capture="environment" hidden @change="onFile" />
+
+        <div v-if="busy || verdict" class="status" :class="{ good: verdict && verdict.pass }">
+          {{ busy ? 'Checking…' : verdict.reason }}
+        </div>
+
+        <button class="btn btn-gradient" style="margin-top: 12px" @click="fileEl.click()">
+          {{ preview ? 'Retake photo' : 'Open camera' }}
+        </button>
+        <div class="link-row"><span @click="emit('cleared')">I am indoors — let me through</span></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.frame {
-  margin: 24px 0 16px; aspect-ratio: 4/3; border-radius: var(--card-r); overflow: hidden;
-  background: rgba(0,0,0,0.35); border: 2px dashed rgba(255,255,255,0.24);
-  display: grid; place-items: center;
-}
-.frame img { width: 100%; height: 100%; object-fit: cover; }
-.ph { display: grid; justify-items: center; gap: 8px; font-size: 44px; }
-.ph span { font-size: 13px; color: var(--dim); }
-.status { padding: 13px; border-radius: 12px; background: rgba(0,0,0,0.4); font-size: 15px; }
-.status.good { background: rgba(0,229,192,0.22); }
-.skip { margin-top: 20px; font-size: 13px; color: var(--dim); text-decoration: underline; }
+.status { margin-top: 12px; padding: 11px; border-radius: 10px; background: #f7f7f7; font-size: 12.5px; color: #555; text-align: center; }
+.status.good { background: rgba(0, 149, 246, 0.09); color: var(--blue); font-weight: 600; }
 </style>

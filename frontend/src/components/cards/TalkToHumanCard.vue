@@ -10,7 +10,11 @@ let recorder = null
 let chunks = []
 
 async function toggle() {
-  if (recording.value) return stop()
+  if (recording.value) {
+    recording.value = false
+    if (recorder && recorder.state !== 'inactive') recorder.stop()
+    return
+  }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     recorder = new MediaRecorder(stream)
@@ -27,11 +31,6 @@ async function toggle() {
   }
 }
 
-function stop() {
-  recording.value = false
-  if (recorder && recorder.state !== 'inactive') recorder.stop()
-}
-
 async function send(blob) {
   busy.value = true
   try {
@@ -40,7 +39,7 @@ async function send(blob) {
     fd.append('topic', props.card.payload.topic)
     const res = await fetch('/api/friction/talk', { method: 'POST', body: fd })
     result.value = await res.json()
-    if (result.value.pass) setTimeout(() => emit('cleared'), 2000)
+    if (result.value.pass) setTimeout(() => emit('cleared'), 1900)
   } catch {
     result.value = { pass: false, reason: 'Could not reach the transcriber.' }
   } finally {
@@ -48,41 +47,56 @@ async function send(blob) {
   }
 }
 
-onBeforeUnmount(stop)
+onBeforeUnmount(() => {
+  if (recorder && recorder.state !== 'inactive') recorder.stop()
+})
 </script>
 
 <template>
-  <div class="card is-gate">
-    <div class="card-gradient" style="--g1:#3a0d2c; --g2:#15040f" />
-    <div class="eyebrow">friction</div>
-    <div class="big">Find a human. Explain {{ card.payload.topic.replace('-', ' ') }} out loud.</div>
-    <p class="sub">Record it. We only check that a real conversation happened.</p>
+  <div class="card reel">
+    <div class="reel-bg" style="filter: blur(6px)">🗣️</div>
+    <div class="reel-scrim-top" />
 
-    <button class="mic" :class="{ rec: recording }" @click="toggle">
-      {{ recording ? '■' : '🎤' }}
-    </button>
-    <div class="label">{{ recording ? 'recording — tap to stop' : busy ? 'transcribing…' : 'tap to record' }}</div>
-
-    <div v-if="result" class="status" :class="{ good: result.pass }">
-      <div>{{ result.reason }}</div>
-      <div v-if="result.transcript" class="tx">“{{ result.transcript }}”</div>
+    <div class="budget">
+      <div class="budget-row"><span>SCROLL BUDGET</span><span>0 left</span></div>
+      <div class="budget-track"><div class="budget-fill" style="width: 0%" /></div>
     </div>
 
-    <button class="skip" @click="emit('cleared')">Skip this one</button>
+    <div class="sheet-overlay">
+      <div class="sheet">
+        <div class="sheet-handle" />
+        <p class="gate-title" style="text-align: center">Go say it to a real person</p>
+        <p class="gate-sub" style="text-align: center">
+          Explain {{ card.payload.topic.replace('-', ' ') }} out loud to someone. Record it here.
+        </p>
+
+        <button class="mic" :class="{ rec: recording }" :disabled="busy" @click="toggle">
+          {{ recording ? '■' : '🎤' }}
+        </button>
+        <div class="label">
+          {{ recording ? 'recording — tap to stop' : busy ? 'transcribing…' : 'tap to record' }}
+        </div>
+
+        <div v-if="result" class="status" :class="{ good: result.pass }">
+          <div>{{ result.reason }}</div>
+          <div v-if="result.transcript" class="tx">“{{ result.transcript }}”</div>
+        </div>
+
+        <div class="link-row"><span @click="emit('cleared')">Skip this one</span></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.sub { color: var(--dim); margin-top: 12px; font-size: 15px; }
 .mic {
-  width: 96px; height: 96px; border-radius: 50%; margin: 30px auto 12px; font-size: 36px;
-  background: rgba(255,255,255,0.13); border: 2px solid rgba(255,255,255,0.22); display: block;
+  width: 74px; height: 74px; border-radius: 50%; margin: 16px auto 10px; display: block;
+  font-size: 28px; background: #f2f2f2; border: 1px solid var(--border);
 }
-.mic.rec { background: var(--hot); border-color: transparent; animation: p 1.1s infinite; }
-@keyframes p { 50% { box-shadow: 0 0 0 18px rgba(255,45,129,0.16) } }
-.label { text-align: center; font-size: 13px; color: var(--dim); }
-.status { margin-top: 20px; padding: 14px; border-radius: 12px; background: rgba(0,0,0,0.4); font-size: 15px; }
-.status.good { background: rgba(0,229,192,0.22); }
-.tx { margin-top: 8px; font-style: italic; color: var(--dim); font-size: 14px; }
-.skip { margin-top: 18px; font-size: 13px; color: var(--dim); text-decoration: underline; }
+.mic.rec { background: var(--ig-gradient); border-color: transparent; color: #fff; animation: p 1.1s infinite; }
+@keyframes p { 50% { box-shadow: 0 0 0 14px rgba(214, 41, 118, 0.12) } }
+.label { text-align: center; font-size: 11.5px; color: var(--dim); }
+.status { margin-top: 14px; padding: 11px; border-radius: 10px; background: #f7f7f7; font-size: 12.5px; color: #555; }
+.status.good { background: rgba(0, 149, 246, 0.09); color: var(--blue); }
+.tx { margin-top: 6px; font-style: italic; color: var(--dim); font-size: 11.5px; }
 </style>
