@@ -20,6 +20,11 @@ LEARN, CHECK, SCROLL, FRICTION = "LEARN", "CHECK", "SCROLL", "FRICTION"
 # Rotated through so a long session does not repeat the same gate.
 FRICTION_KINDS = ["math_gate", "touch_grass", "talk_to_human"]
 
+# Every Nth CHECK swaps multiple choice for a spoken/typed coach conversation.
+# 2 means the user meets the coach on their second check - early enough to
+# demo, not so early that the quiz mechanic never lands.
+COACH_EVERY = 2
+
 MASTERY_UP = 0.34
 MASTERY_DOWN = 0.25
 # An item counts as "known" past this, and stops being drawn for LEARN.
@@ -70,7 +75,22 @@ def _items_by_need(state: dict, pack: dict) -> list[dict]:
             state["served_count"].get(it["id"], 0),
         )
     )
-    return missed + rest
+
+    # Round-robin across kinds so one LEARN round is a flashcard AND a fun fact
+    # AND a podcast segment. Plain weakest-first would serve all six flashcards
+    # before the first podcast ever appeared.
+    buckets: dict[str, list[dict]] = {}
+    for it in rest:
+        buckets.setdefault(it.get("kind", "flashcard"), []).append(it)
+
+    mixed = []
+    while buckets:
+        for kind in list(buckets):
+            mixed.append(buckets[kind].pop(0))
+            if not buckets[kind]:
+                del buckets[kind]
+
+    return missed + mixed
 
 
 def _card_for_item(item: dict, pack: dict) -> dict:
@@ -108,6 +128,26 @@ def _quiz_cards(state: dict, pack: dict, n: int) -> list[dict]:
         {"type": "quiz", "id": "quiz:" + i, "payload": dict(quizzes[i], item_id=i)}
         for i in ordered[:n]
     ]
+
+
+def _coach_card(state: dict, pack: dict) -> dict:
+    """A conversation instead of a quiz. Counts as a whole CHECK on its own."""
+    weakest = sorted(state["mastery"], key=lambda k: state["mastery"].get(k, 0.0))
+    focus = next(
+        (i for i in pack.get("items", []) if weakest and i["id"] == weakest[0]), None
+    )
+    subject = (focus or {}).get("front") or (focus or {}).get("text") or pack.get("title", "")
+    return {
+        "type": "coach",
+        "id": "coach:{}".format(state["round"]),
+        "payload": {
+            "topic": state["topic"],
+            "focus": subject,
+            "opener": "Alright — no multiple choice this time. {}".format(
+                "In your own words: {}".format(subject) if subject else "Tell me what you remember."
+            ),
+        },
+    }
 
 
 def _video_card(state: dict, pack: dict) -> dict:
@@ -183,6 +223,8 @@ def _refill(state: dict, pack: dict) -> None:
     elif stage == CHECK:
         if state["check_answers"]:
             _resolve_check(state)
+        elif state["round"] > 0 and state["round"] % COACH_EVERY == 0:
+            state["pending"] = [_coach_card(state, pack)]
         else:
             state["pending"] = _quiz_cards(state, pack, config.QUIZ_CARDS_PER_CHECK)
             if not state["pending"]:
@@ -232,17 +274,30 @@ def record_answer(
 
     if state["stage"] == CHECK:
         state["check_answers"].append(correct)
+        # A coach conversation IS the whole check, so resolve it immediately
+        # rather than waiting for peers that will never arrive.
+        if card_id.startswith("coach:"):
+            state["pending"] = []
         if not correct and item_id not in state["missed"]:
             state["missed"].append(item_id)
 
     return state
 
 
-def clear_friction(state: dict) -> dict:
-    """A passed friction gate sends the user into a review CHECK."""
-    if state["stage"] == FRICTION:
-        state["stage"] = CHECK
-        state["pending"] = []
+def clear_friction(state: dict, pack: dict | None = None) -> dict:
+    """A passed friction gate resumes the loop.
+
+    Back to LEARN while there is still material to teach, otherwise into a
+    review CHECK. Always going to CHECK meant the happy path taught three cards
+    and then never taught anything again - you only saw new material by failing.
+    """
+    if state["stage"] != FRICTION:
+        return state
+
+    state["pending"] = []
+    has_more = bool(pack and _items_by_need(state, pack))
+    state["stage"] = LEARN if has_more else CHECK
+    state["learn_dealt"] = False
     return state
 
 

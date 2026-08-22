@@ -10,6 +10,7 @@ import MathGateCard from '../components/cards/MathGateCard.vue'
 import PodcastCard from '../components/cards/PodcastCard.vue'
 import TouchGrassCard from '../components/cards/TouchGrassCard.vue'
 import TalkToHumanCard from '../components/cards/TalkToHumanCard.vue'
+import CoachCard from '../components/cards/CoachCard.vue'
 
 const props = defineProps({ session: Object })
 
@@ -18,6 +19,7 @@ const CARD_FOR = {
   fun_fact: FunFactCard,
   video: VideoCard,
   quiz: QuizCard,
+  coach: CoachCard,
   podcast: PodcastCard,
   math_gate: MathGateCard,
   touch_grass: TouchGrassCard,
@@ -27,7 +29,7 @@ const CARD_FOR = {
 // Cards the user must resolve before the feed may grow past them.
 // This is what makes a gate a gate: it blocks simply by being the last card,
 // so there is no scroll-locking hack anywhere.
-const BLOCKING = new Set(['quiz', 'math_gate', 'touch_grass', 'talk_to_human'])
+const BLOCKING = new Set(['quiz', 'coach', 'math_gate', 'touch_grass', 'talk_to_human'])
 
 const cards = ref([])
 const activeIndex = ref(0)
