@@ -15,6 +15,7 @@ spliced in mid-stream, and drives captions without word-level timestamps.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -51,17 +52,30 @@ N_SEGMENTS = 4
 # ---------------------------------------------------------------------------
 # generation steps
 # ---------------------------------------------------------------------------
-def gen_items(topic: str, meta: dict) -> list[dict]:
-    """Flashcards + fun facts, as one call so they do not overlap."""
+def gen_items(topic: str, meta: dict) -> tuple[list[dict], list[dict]]:
+    """Study items and their quiz questions, in one call.
+
+    Generating the quiz separately meant a second round-trip that could not
+    start until the items came back - the single biggest chunk of the wait on a
+    cold topic. Asking for both together also removes the need for the model to
+    echo item ids correctly, since each question is paired to its item by
+    position here.
+    """
     out = mc.chat_json(
         "Topic: {} ({}).\n\n"
         "Produce study material for a Gen-Z learning app that looks like TikTok.\n"
-        "Return JSON: {{\"flashcards\":[{{\"front\":str,\"back\":str,\"hook\":str}}],"
-        "\"fun_facts\":[{{\"text\":str,\"emoji\":str}}]}}\n"
-        "- exactly {} flashcards and {} fun facts\n"
+        'Return JSON: {{"flashcards":[{{"front":str,"back":str,"hook":str,'
+        '"quiz":{{"q":str,"options":[str,str,str],"correct":int,"explain":str}}}}],'
+        '"fun_facts":[{{"text":str,"emoji":str,'
+        '"quiz":{{"q":str,"options":[str,str,str],"correct":int,"explain":str}}}}]}}\n'
+        "- exactly {} flashcards and {} fun facts, each with its own quiz\n"
         "- 'front' is a real question, 'back' is under 20 words, 'hook' is a "
         "punchy 6-word teaser shown before the answer flips\n"
         "- fun facts must be genuinely surprising, one sentence, no preamble\n"
+        "- each quiz tests THAT item; 'correct' is the 0-based index into "
+        "options, wrong options must be plausible rather than jokes, and "
+        "'explain' is one sentence shown after answering\n"
+        "- vary which index is correct; do not always use 0\n"
         "- voice: casual and funny, but the facts must be correct\n"
         "- do not number them or repeat the topic name in every line".format(
             meta["title"], meta["blurb"], N_FLASHCARDS, N_FUN_FACTS
@@ -71,57 +85,47 @@ def gen_items(topic: str, meta: dict) -> list[dict]:
     )
 
     items: list[dict] = []
+    quiz: list[dict] = []
+
+    def add_quiz(item_id: str, raw: dict | None) -> None:
+        if not raw or len(raw.get("options", [])) < 2:
+            return
+        quiz.append(
+            {
+                "item_id": item_id,
+                "q": raw["q"],
+                "options": raw["options"],
+                "correct": max(0, min(int(raw.get("correct", 0)), len(raw["options"]) - 1)),
+                "explain": raw.get("explain", ""),
+            }
+        )
+
     for i, fc in enumerate(out.get("flashcards", [])[:N_FLASHCARDS]):
+        item_id = "fc{}".format(i + 1)
         items.append(
             {
-                "id": "fc{}".format(i + 1),
+                "id": item_id,
                 "kind": "flashcard",
                 "front": fc["front"],
                 "back": fc["back"],
                 "hook": fc.get("hook", ""),
             }
         )
+        add_quiz(item_id, fc.get("quiz"))
+
     for i, ff in enumerate(out.get("fun_facts", [])[:N_FUN_FACTS]):
+        item_id = "ff{}".format(i + 1)
         items.append(
             {
-                "id": "ff{}".format(i + 1),
+                "id": item_id,
                 "kind": "fun_fact",
                 "text": ff["text"],
                 "emoji": ff.get("emoji", "✨"),
             }
         )
-    return items
+        add_quiz(item_id, ff.get("quiz"))
 
-
-def gen_quiz(topic: str, meta: dict, items: list[dict]) -> list[dict]:
-    """One multiple-choice question per item, keyed by item id."""
-    quizzable = [i for i in items if i["kind"] in ("flashcard", "fun_fact")]
-    catalogue = "\n".join(
-        "{}: {}".format(
-            i["id"], i.get("front") or i.get("text", "")
-        )
-        for i in quizzable
-    )
-    out = mc.chat_json(
-        "Topic: {}.\n\nWrite one multiple-choice question per item below.\n\n{}\n\n"
-        'Return JSON: {{"quiz":[{{"item_id":str,"q":str,"options":[str,str,str],'
-        '"correct":int,"explain":str}}]}}\n'
-        "- 'correct' is the 0-based index into options\n"
-        "- wrong options must be plausible, not jokes\n"
-        "- 'explain' is one sentence shown after answering\n"
-        "- vary which index is correct; do not always use 0\n"
-        "- use the exact item_id strings given".format(meta["title"], catalogue),
-        system="You write fair, unambiguous quiz questions. Output JSON only.",
-        temperature=0.5,
-    )
-
-    valid = {i["id"] for i in quizzable}
-    quiz = []
-    for q in out.get("quiz", []):
-        if q.get("item_id") in valid and len(q.get("options", [])) >= 2:
-            q["correct"] = max(0, min(int(q.get("correct", 0)), len(q["options"]) - 1))
-            quiz.append(q)
-    return quiz
+    return items, quiz
 
 
 def gen_podcast_script(topic: str, meta: dict) -> dict:
@@ -130,10 +134,15 @@ def gen_podcast_script(topic: str, meta: dict) -> dict:
         "Topic: {} ({}).\n\n"
         "Write a two-host podcast that teaches this topic.\n"
         'Return JSON: {{"segments":[{{"id":"s1","title":str,'
-        '"turns":[{{"speaker":"a"|"b","text":str}}],'
+        '"turns":[{{"speaker":"a"|"b","emotion":str,"text":str}}],'
         '"quiz_after":{{"q":str,"options":[str,str,str],"correct":int,'
         '"reaction_correct":str,"reaction_wrong":str}}}}]}}\n'
         "- exactly {} segments, each 4-6 turns, each segment under 110 words TOTAL\n"
+        "- every turn needs an 'emotion' chosen for how the line is DELIVERED:\n"
+        "    host a (the explainer): neutral, curious, excited, confident, cheerful\n"
+        "    host b (the skeptic):   neutral, curious, confused, sarcasm, confident\n"
+        "  use b's confused or curious for the dumb question, and sarcasm for a "
+        "deadpan reaction. Do NOT leave every turn neutral.\n"
         "- host a explains; host b is the skeptic who asks the dumb question the "
         "listener is actually thinking. Do NOT make b a second narrator.\n"
         "- they interrupt and react to each other; this is a conversation, not "
@@ -152,8 +161,29 @@ def gen_podcast_script(topic: str, meta: dict) -> dict:
 # ---------------------------------------------------------------------------
 # audio rendering
 # ---------------------------------------------------------------------------
-def _voice_for(speaker: str) -> str:
-    return config.VOICE_HOST_A if speaker == "a" else config.VOICE_HOST_B
+def _voice_for(speaker: str, emotion: str | None = None) -> str:
+    """Cast one line.
+
+    Preset voices are <family>_<emotion> slugs, and asking a family for an
+    emotion it does not carry is a hard 404, so anything unrecognised falls
+    back to neutral rather than failing the whole render.
+    """
+    family = config.VOICE_HOST_A if speaker == "a" else config.VOICE_HOST_B
+    mood = (emotion or "").strip().lower()
+    if mood not in config.VOICE_EMOTIONS.get(family, set()):
+        mood = config.DEFAULT_EMOTION
+    return "{}_{}".format(family, mood)
+
+
+def _stem(turn_id: str, text: str, voice: str) -> str:
+    """Filename for one rendered line.
+
+    The content hash is what makes the resume-cache safe. Keyed on position
+    alone, a regenerated script would find s1_t1.mp3 already on disk and ship
+    the PREVIOUS take against the new line - stale audio, silently.
+    """
+    digest = hashlib.sha1("{}|{}".format(voice, text).encode("utf-8")).hexdigest()[:8]
+    return "{}_{}".format(turn_id, digest)
 
 
 def _duration(path: Path) -> float:
@@ -166,80 +196,158 @@ def _duration(path: Path) -> float:
         return 0.0
 
 
-def render_audio(topic: str, script: dict, *, workers: int = 8, force: bool = False) -> dict:
+def render_audio(topic: str, script: dict, *, workers: int = 8, quiet: bool = False) -> dict:
     """Render every turn (and both quiz reactions) to its own MP3."""
     out_dir = config.AUDIO_DIR / topic
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    jobs: list[tuple[Path, str, str]] = []  # (path, text, speaker)
+    jobs: list[tuple[Path, str, str]] = []  # (path, text, voice_slug)
 
     for seg in script.get("segments", []):
         for ti, turn in enumerate(seg.get("turns", [])):
             turn["id"] = "{}_t{}".format(seg["id"], ti + 1)
-            path = out_dir / "{}.mp3".format(turn["id"])
-            turn["audio"] = "/static/audio/{}/{}.mp3".format(topic, turn["id"])
-            jobs.append((path, turn["text"], turn.get("speaker", "a")))
+            turn["voice"] = _voice_for(turn.get("speaker", "a"), turn.get("emotion"))
+            stem = _stem(turn["id"], turn["text"], turn["voice"])
+            path = out_dir / "{}.mp3".format(stem)
+            turn["audio"] = "/static/audio/{}/{}.mp3".format(topic, stem)
+            jobs.append((path, turn["text"], turn["voice"]))
 
         qa = seg.get("quiz_after")
         if qa:
             # Pre-render BOTH branches so the reaction is instant at demo time
             # instead of a two-second dead-air TTS wait.
-            for key, suffix in (("reaction_correct", "ok"), ("reaction_wrong", "no")):
+            for key, suffix, mood in (
+                ("reaction_correct", "ok", "confident"),
+                ("reaction_wrong", "no", "sarcasm"),
+            ):
                 text = qa.get(key)
                 if not text:
                     continue
-                name = "{}_r{}".format(seg["id"], suffix)
-                path = out_dir / "{}.mp3".format(name)
-                qa["{}_audio".format(key)] = "/static/audio/{}/{}.mp3".format(topic, name)
-                jobs.append((path, text, "b"))
+                voice = _voice_for("b", mood)
+                stem = _stem("{}_r{}".format(seg["id"], suffix), text, voice)
+                path = out_dir / "{}.mp3".format(stem)
+                qa["{}_audio".format(key)] = "/static/audio/{}/{}.mp3".format(topic, stem)
+                jobs.append((path, text, voice))
 
     def render(job):
-        path, text, speaker = job
-        if not force and path.exists() and path.stat().st_size > 0:
+        path, text, voice = job
+        if path.exists() and path.stat().st_size > 0:
             return path, True  # resume: never re-pay for audio already on disk
-        path.write_bytes(mc.tts(text, voice_id=_voice_for(speaker)))
+        path.write_bytes(mc.tts(text, voice_id=voice))
         return path, False
 
     done = 0
     with ThreadPoolExecutor(max_workers=workers) as pool:
         for path, cached in pool.map(render, jobs):
             done += 1
-            print("  [{}/{}] {}{}".format(done, len(jobs), path.name, " (cached)" if cached else ""))
+            if not quiet:
+                print("  [{}/{}] {}{}".format(
+                    done, len(jobs), path.name, " (cached)" if cached else ""))
 
     # Durations let the UI size the progress dots and preload turn N+1.
     for seg in script.get("segments", []):
         for turn in seg.get("turns", []):
-            turn["dur"] = _duration(out_dir / "{}.mp3".format(turn["id"]))
+            # Derive from the url, not the turn id - the filename carries a
+            # content hash now, so rebuilding it from the id would miss.
+            turn["dur"] = _duration(out_dir / Path(turn["audio"]).name)
         seg["dur"] = round(sum(t.get("dur", 0) for t in seg.get("turns", [])), 2)
 
+    return script
+
+
+def rerender_existing_audio(topic: str, script: dict, *, workers: int = 8) -> dict:
+    """Replace a checked-in pack's MP3s in place using the current voice cast."""
+    out_dir = config.AUDIO_DIR / topic
+    jobs: list[tuple[Path, str, str]] = []
+
+    for seg in script.get("segments", []):
+        for turn in seg.get("turns", []):
+            voice = _voice_for(turn.get("speaker", "a"), turn.get("emotion"))
+            turn["voice"] = voice
+            path = out_dir / Path(turn["audio"]).name
+            jobs.append((path, turn["text"], voice))
+
+        qa = seg.get("quiz_after") or {}
+        for key, mood in (("reaction_correct", "confident"), ("reaction_wrong", "sarcasm")):
+            text = qa.get(key)
+            audio_url = qa.get("{}_audio".format(key))
+            if text and audio_url:
+                jobs.append((out_dir / Path(audio_url).name, text, _voice_for("b", mood)))
+
+    def render(job):
+        path, text, voice = job
+        path.write_bytes(mc.tts(text, voice_id=voice))
+        return path
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for done, path in enumerate(pool.map(render, jobs), 1):
+            print("  [{}/{}] {}".format(done, len(jobs), path.name))
+
+    for seg in script.get("segments", []):
+        for turn in seg.get("turns", []):
+            turn["dur"] = _duration(out_dir / Path(turn["audio"]).name)
+        seg["dur"] = round(sum(t.get("dur", 0) for t in seg.get("turns", [])), 2)
     return script
 
 
 # ---------------------------------------------------------------------------
 # assembly
 # ---------------------------------------------------------------------------
-def build_topic(topic: str, *, skip_audio: bool = False) -> dict:
-    meta = TOPICS[topic]
-    print("\n=== {} ===".format(meta["title"]))
+def gen_meta(topic_text: str) -> dict:
+    """Turn whatever the user typed into a presentable subject.
 
-    print("- items...")
-    items = gen_items(topic, meta)
-    print("  {} items".format(len(items)))
+    Users type "ww2", "how do black holes work?", "kreb cycle" - none of which
+    are titles. Also screens out prompts that are not a learning topic at all.
+    """
+    out = mc.chat_json(
+        'A user typed this into a learning app: "{}"\n\n'
+        'Return {{"ok":bool,"title":str,"emoji":str,"blurb":str,"reason":str}}\n'
+        "- 'ok' is false only if this is not a teachable subject (abuse, "
+        "nonsense, or a request for something other than learning)\n"
+        "- 'title' is the tidy subject name, max 4 words, properly capitalised\n"
+        "- 'emoji' is ONE emoji for it\n"
+        "- 'blurb' is a punchy 8-word description of what they will learn\n"
+        "- 'reason' explains the refusal, one friendly sentence, only when ok "
+        "is false".format(topic_text[:200]),
+        system="You normalise learning topics. Output JSON only.",
+        temperature=0.3,
+    )
+    return out
 
-    print("- quiz...")
-    quiz = gen_quiz(topic, meta, items)
-    print("  {} questions".format(len(quiz)))
 
-    print("- podcast script...")
-    script = gen_podcast_script(topic, meta)
+def build_topic(
+    topic: str, meta: dict | None = None, *, skip_audio: bool = False, quiet: bool = False
+) -> dict:
+    """Generate a full pack. `meta` defaults to the built-in demo topics.
+
+    The two independent calls (study items and the podcast script) run
+    concurrently; the quiz has to wait because it is keyed to the item ids.
+    """
+    meta = meta or TOPICS[topic]
+
+    def log(msg):
+        if not quiet:
+            print(msg)
+
+    log("\n=== {} ===".format(meta["title"]))
+    log("- items + quiz + podcast script (parallel)...")
+
+    # The only two text calls left, and they are independent of each other.
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        items_f = pool.submit(gen_items, topic, meta)
+        script_f = pool.submit(gen_podcast_script, topic, meta)
+        items, quiz = items_f.result()
+        script = script_f.result()
+
     n_turns = sum(len(s.get("turns", [])) for s in script.get("segments", []))
-    print("  {} segments / {} turns".format(len(script.get("segments", [])), n_turns))
+    log("  {} items | {} questions | {} segments / {} turns".format(
+        len(items), len(quiz), len(script.get("segments", [])), n_turns))
 
     if skip_audio:
-        print("- audio SKIPPED")
+        log("- audio SKIPPED")
     else:
-        print("- rendering audio...")
-        script = render_audio(topic, script)
+        log("- rendering audio...")
+        script = render_audio(topic, script, quiet=quiet)
 
     # Podcast segments enter the feed as ordinary LEARN items.
     for seg in script.get("segments", []):
@@ -257,6 +365,7 @@ def build_topic(topic: str, *, skip_audio: bool = False) -> dict:
         "title": meta["title"],
         "emoji": meta["emoji"],
         "blurb": meta["blurb"],
+        "audio_ready": not skip_audio,
         "items": items,
         "quiz": quiz,
         "podcast": script,
@@ -310,7 +419,7 @@ def main() -> int:
         if not path.exists():
             ap.error("topic pack does not exist: {}".format(path))
         pack = json.loads(path.read_text(encoding="utf-8"))
-        pack["podcast"] = render_audio(args.topic, pack["podcast"], force=True)
+        pack["podcast"] = rerender_existing_audio(args.topic, pack["podcast"])
         write_pack(pack)
         return 0
 

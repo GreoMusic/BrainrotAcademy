@@ -1,0 +1,459 @@
+{
+  "topic": "black-holes",
+  "title": "Black Holes",
+  "emoji": "🧪",
+  "blurb": "Science - Black Holes",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the closest known black hole to Earth?",
+      "back": "Gaia BH1, 1,560 light-years away",
+      "hook": "Spooky neighbor alert – but don’t worry"
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Can light escape a black hole?",
+      "back": "Nope, not even light",
+      "hook": "Darkness wins this round"
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What happens at a black hole’s event horizon?",
+      "back": "Spaghettification begins here",
+      "hook": "Noodle time for space objects"
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the smallest type of black hole?",
+      "back": "Primordial black holes",
+      "hook": "Tiny but mighty cosmic leftovers"
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "How do we detect black holes?",
+      "back": "By their gravitational effects",
+      "hook": "Ghostly but observable"
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s at the center of most galaxies?",
+      "back": "Supermassive black hole",
+      "hook": "Galactic CEO: dark and powerful"
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "Black holes can ‘burp’ out energy jets years after gobbling up matter.",
+      "emoji": "🤯"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "A black hole the size of a coin would weigh more than Earth.",
+      "emoji": "🪙"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Time slows down near a black hole due to extreme gravity.",
+      "emoji": "⏳"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is a Black Hole?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "How Do They Form?"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "What’s Inside a Black Hole?"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Could We Ever Visit One?"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "How far is Gaia BH1 from Earth?",
+      "options": [
+        "1,560 light-years",
+        "50 light-years",
+        "26,000 light-years"
+      ],
+      "correct": 0,
+      "explain": "Gaia BH1 is currently the closest confirmed black hole to us."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Why can’t light escape a black hole?",
+      "options": [
+        "Gravitational pull is too strong",
+        "Black holes emit anti-light",
+        "They’re made of dark matter"
+      ],
+      "correct": 0,
+      "explain": "A black hole’s gravity is so intense that not even light can break free."
+    },
+    {
+      "item_id": "fc3",
+      "q": "What is spaghettification?",
+      "options": [
+        "Being stretched into a noodle by gravity",
+        "A black hole’s way of cooking pasta",
+        "The process of a black hole collapsing"
+      ],
+      "correct": 0,
+      "explain": "Extreme gravity stretches objects into long, thin shapes as they fall in."
+    },
+    {
+      "item_id": "fc4",
+      "q": "How were primordial black holes likely formed?",
+      "options": [
+        "From dense regions in the early universe",
+        "When stars collapse today",
+        "From dark matter interactions"
+      ],
+      "correct": 0,
+      "explain": "They may have formed from extreme density fluctuations right after the Big Bang."
+    },
+    {
+      "item_id": "fc5",
+      "q": "Which of these reveals a black hole’s presence?",
+      "options": [
+        "Stars orbiting invisible points",
+        "Radio waves from black hole surfaces",
+        "Visible light from their interiors"
+      ],
+      "correct": 0,
+      "explain": "Black holes can’t be seen directly, but their gravity affects nearby stars and gas."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What’s the approximate mass of the Milky Way’s supermassive black hole?",
+      "options": [
+        "4 million solar masses",
+        "100 solar masses",
+        "1 solar mass"
+      ],
+      "correct": 0,
+      "explain": "Sagittarius A* is about 4 million times the mass of our Sun."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What causes black holes to emit energy jets?",
+      "options": [
+        "Accelerated particles near their poles",
+        "Internal nuclear fusion",
+        "Collisions with other black holes"
+      ],
+      "correct": 0,
+      "explain": "Magnetic fields twist and accelerate particles into jets as matter falls in."
+    },
+    {
+      "item_id": "ff2",
+      "q": "How much would a coin-sized black hole weigh?",
+      "options": [
+        "More than Earth",
+        "About the same as a star",
+        "Less than a mountain"
+      ],
+      "correct": 0,
+      "explain": "Compressing Earth’s mass into a coin-sized singularity would make it a tiny but super-dense black hole."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What effect causes time to slow near a black hole?",
+      "options": [
+        "Gravitational time dilation",
+        "Quantum tunneling",
+        "Relativistic Doppler shift"
+      ],
+      "correct": 0,
+      "explain": "Einstein’s relativity predicts time moves slower in stronger gravitational fields."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is a Black Hole?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Alright, black holes—these are cosmic monsters with gravity so strong not even light can escape!",
+            "id": "s1_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/black-holes/s1_t1_02213eef.mp3",
+            "dur": 4.56
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so if light can’t escape, how do we even know they exist?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/black-holes/s1_t2_7ac2e6ed.mp3",
+            "dur": 2.32
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "We see their effects—stars orbiting nothing, or gas spiraling into a dark abyss, glowing like crazy.",
+            "id": "s1_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/black-holes/s1_t3_78cf2bc3.mp3",
+            "dur": 5.19
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s like a cosmic vacuum cleaner?",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/black-holes/s1_t4_d68911af.mp3",
+            "dur": 2.36
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! But way, way more terrifying.",
+            "id": "s1_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/black-holes/s1_t5_d671bfe1.mp3",
+            "dur": 1.93
+          }
+        ],
+        "quiz_after": {
+          "q": "What makes a black hole invisible?",
+          "options": [
+            "It’s made of dark matter",
+            "Light can’t escape its gravity",
+            "It’s too far away"
+          ],
+          "correct": 1,
+          "reaction_correct": "Nailed it, space genius.",
+          "reaction_wrong": "Oof, back to astronomy class.",
+          "reaction_correct_audio": "/static/audio/black-holes/s1_rok_4ed82cc5.mp3",
+          "reaction_wrong_audio": "/static/audio/black-holes/s1_rno_830a0ab3.mp3"
+        },
+        "dur": 16.36
+      },
+      {
+        "id": "s2",
+        "title": "How Do They Form?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Most form when massive stars collapse under their own gravity.",
+            "id": "s2_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/black-holes/s2_t1_d422edb4.mp3",
+            "dur": 2.57
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So like a star just… gives up?",
+            "id": "s2_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/black-holes/s2_t2_cc55e84c.mp3",
+            "dur": 1.72
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "More like it implodes so hard it punches a hole in space-time!",
+            "id": "s2_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/black-holes/s2_t3_eda32d92.mp3",
+            "dur": 1.81
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "And this is why I don’t trust stars.",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/black-holes/s2_t4_3f3cf629.mp3",
+            "dur": 2.7
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Fair. But they’re also the universe’s recycling plants—new stars are born from their leftovers.",
+            "id": "s2_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/black-holes/s2_t5_626021f9.mp3",
+            "dur": 3.67
+          }
+        ],
+        "quiz_after": {
+          "q": "What collapse creates a black hole?",
+          "options": [
+            "A dying star’s core",
+            "A planet exploding",
+            "Two galaxies merging"
+          ],
+          "correct": 0,
+          "reaction_correct": "Bingo, star whisperer.",
+          "reaction_wrong": "Close, but no cosmic cigar.",
+          "reaction_correct_audio": "/static/audio/black-holes/s2_rok_454b072c.mp3",
+          "reaction_wrong_audio": "/static/audio/black-holes/s2_rno_5886b75b.mp3"
+        },
+        "dur": 12.47
+      },
+      {
+        "id": "s3",
+        "title": "What’s Inside a Black Hole?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Here’s the kicker—we don’t know.",
+            "id": "s3_t1",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/black-holes/s3_t1_4e047c1d.mp3",
+            "dur": 1.36
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Wait, you’re telling me we just… guess?",
+            "id": "s3_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/black-holes/s3_t2_be6bf280.mp3",
+            "dur": 2.18
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Math says there’s a singularity—a point of infinite density—but our laws of physics break there.",
+            "id": "s3_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/black-holes/s3_t3_88c3f7c0.mp3",
+            "dur": 3.22
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s where science goes to die?",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/black-holes/s3_t4_693fa7ac.mp3",
+            "dur": 1.61
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Or where new physics is born!",
+            "id": "s3_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/black-holes/s3_t5_3eb4a7f6.mp3",
+            "dur": 1.87
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s at the center of a black hole?",
+          "options": [
+            "A wormhole",
+            "A singularity",
+            "A neutron star"
+          ],
+          "correct": 1,
+          "reaction_correct": "Einstein would be proud.",
+          "reaction_wrong": "Not quite, but nice try.",
+          "reaction_correct_audio": "/static/audio/black-holes/s3_rok_3fb39048.mp3",
+          "reaction_wrong_audio": "/static/audio/black-holes/s3_rno_29f9752d.mp3"
+        },
+        "dur": 10.24
+      },
+      {
+        "id": "s4",
+        "title": "Could We Ever Visit One?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Short answer: nope. Long answer: if you got close, spaghettification would stretch you like cosmic taffy.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/black-holes/s4_t1_f396d83f.mp3",
+            "dur": 5.09
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Spaghettification? That’s a word?",
+            "id": "s4_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/black-holes/s4_t2_e25702f6.mp3",
+            "dur": 1.54
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Yep. Gravity’s so strong your feet pull faster than your head.",
+            "id": "s4_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/black-holes/s4_t3_dedeb8f8.mp3",
+            "dur": 2.65
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So I’d be a noodle. Cool.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/black-holes/s4_t4_e9d20975.mp3",
+            "dur": 1.45
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "But hey, at least you’d go out in style.",
+            "id": "s4_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/black-holes/s4_t5_b58e2eb8.mp3",
+            "dur": 1.34
+          }
+        ],
+        "quiz_after": {
+          "q": "What happens if you get too close to a black hole?",
+          "options": [
+            "You freeze instantly",
+            "You get stretched into spaghetti",
+            "You get teleported"
+          ],
+          "correct": 1,
+          "reaction_correct": "Ramen-level knowledge.",
+          "reaction_wrong": "Wrong, but the image is fun.",
+          "reaction_correct_audio": "/static/audio/black-holes/s4_rok_8012f677.mp3",
+          "reaction_wrong_audio": "/static/audio/black-holes/s4_rno_7ba9dd6d.mp3"
+        },
+        "dur": 12.07
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Black Holes. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

@@ -1,0 +1,459 @@
+{
+  "topic": "roman-concrete",
+  "title": "Roman Concrete",
+  "emoji": "⚙️",
+  "blurb": "Engineering - Roman Concrete",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "Why is Roman concrete still standing after 2,000 years?",
+      "back": "Volcanic ash + seawater = chemical magic.",
+      "hook": "The original OG concrete flex."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "What’s the name of the volcanic ash used in Roman concrete?",
+      "back": "Pozzolana, from Pozzuoli.",
+      "hook": "Italy’s gift to builders everywhere."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "How did seawater help Roman concrete?",
+      "back": "It triggered a chemical reaction.",
+      "hook": "Saltwater’s secret superpower."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What modern structure is inspired by Roman concrete?",
+      "back": "The Panama Canal.",
+      "hook": "Ancient tech, modern flex."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "How long did Roman concrete take to harden?",
+      "back": "Weeks, not hours.",
+      "hook": "Patience is a virtue."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s the key difference between Roman and modern concrete?",
+      "back": "Roman uses less lime, more ash.",
+      "hook": "Old school beats new school."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "Roman concrete actually gets stronger over time when exposed to seawater.",
+      "emoji": "🌊"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "The Pantheon’s dome is still the world’s largest unreinforced concrete dome.",
+      "emoji": "🏛️"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Modern scientists are reverse-engineering Roman concrete to build eco-friendly structures.",
+      "emoji": "🔬"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Was Roman Concrete?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Why Was It So Strong?"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "How Did They Build With It?"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Why Don’t We Use It Today?"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "What’s the secret ingredient in Roman concrete?",
+      "options": [
+        "Volcanic ash (pozzolan)",
+        "Cement",
+        "Sand"
+      ],
+      "correct": 0,
+      "explain": "Pozzolanic reactions with seawater made it ultra-strong."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Where did Romans source their pozzolan?",
+      "options": [
+        "Pozzuoli, Italy",
+        "Mount Vesuvius",
+        "The Colosseum"
+      ],
+      "correct": 0,
+      "explain": "Pozzuoli’s volcanic ash was the OG pozzolan."
+    },
+    {
+      "item_id": "fc3",
+      "q": "What did seawater do to Roman concrete?",
+      "options": [
+        "Weakened it over time",
+        "Strengthened it chemically",
+        "Turned it blue"
+      ],
+      "correct": 1,
+      "explain": "It formed aluminous tobermorite, making it tougher."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Which modern project used Roman concrete techniques?",
+      "options": [
+        "The Eiffel Tower",
+        "The Panama Canal",
+        "The Hoover Dam"
+      ],
+      "correct": 1,
+      "explain": "Engineers used pozzolan for its durability in water."
+    },
+    {
+      "item_id": "fc5",
+      "q": "How fast did Roman concrete cure?",
+      "options": [
+        "Instantly",
+        "In a few days",
+        "Over weeks"
+      ],
+      "correct": 2,
+      "explain": "Slow curing made it stronger than modern concrete."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What’s the main ingredient Roman concrete has less of?",
+      "options": [
+        "Water",
+        "Lime",
+        "Sand"
+      ],
+      "correct": 1,
+      "explain": "Less lime made it more durable in water."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What happens to Roman concrete in seawater?",
+      "options": [
+        "It dissolves",
+        "It gets weaker",
+        "It gets stronger"
+      ],
+      "correct": 2,
+      "explain": "Seawater triggers a reaction that hardens the material further."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What’s special about the Pantheon’s dome?",
+      "options": [
+        "It’s made of glass",
+        "It’s the largest unreinforced concrete dome",
+        "It’s painted gold"
+      ],
+      "correct": 1,
+      "explain": "Roman concrete allowed for this massive, lasting structure."
+    },
+    {
+      "item_id": "ff3",
+      "q": "Why are scientists studying Roman concrete today?",
+      "options": [
+        "To make it glow in the dark",
+        "To create eco-friendly alternatives",
+        "To build a time machine"
+      ],
+      "correct": 1,
+      "explain": "Its durability and low carbon footprint are inspiring new tech."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Was Roman Concrete?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Roman concrete wasn’t just any mix—it was the stuff of legends, literally. Their buildings lasted 2,000 years!",
+            "id": "s1_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/roman-concrete/s1_t1_da92f113.mp3",
+            "dur": 5.78
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, they had concrete back then? I thought they just stacked rocks!",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/roman-concrete/s1_t2_f9b3fbee.mp3",
+            "dur": 2.04
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Nope! They mixed volcanic ash, lime, and seawater. And guess what? It got stronger in water.",
+            "id": "s1_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/roman-concrete/s1_t3_dfa91407.mp3",
+            "dur": 4.73
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh great, so my modern patio cracks, but a Roman sewer’s still standing. Cool.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/roman-concrete/s1_t4_09c34171.mp3",
+            "dur": 3.91
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! The volcanic ash was the secret—it reacted with the lime to create a rock-like bond.",
+            "id": "s1_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/roman-concrete/s1_t5_fb7e89e0.mp3",
+            "dur": 4.17
+          }
+        ],
+        "quiz_after": {
+          "q": "What was the key ingredient in Roman concrete?",
+          "options": [
+            "volcanic ash",
+            "sand",
+            "cement"
+          ],
+          "correct": 0,
+          "reaction_correct": "Oh, so that’s why it lasted.",
+          "reaction_wrong": "Nope, volcanic ash was the magic.",
+          "reaction_correct_audio": "/static/audio/roman-concrete/s1_rok_998e83d8.mp3",
+          "reaction_wrong_audio": "/static/audio/roman-concrete/s1_rno_29c28348.mp3"
+        },
+        "dur": 20.63
+      },
+      {
+        "id": "s2",
+        "title": "Why Was It So Strong?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "The Romans used a specific volcanic ash called *pozzolana*. It’s why their concrete cured underwater.",
+            "id": "s2_t1",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/roman-concrete/s2_t1_4d413096.mp3",
+            "dur": 3.81
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So… water made it stronger? That sounds backwards.",
+            "id": "s2_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/roman-concrete/s2_t2_992e3ec3.mp3",
+            "dur": 3.02
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "It did! The seawater reacted with the ash to form crystals that sealed cracks.",
+            "id": "s2_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/roman-concrete/s2_t3_6fd77826.mp3",
+            "dur": 3.5
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Wow. My driveway’s jealous.",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/roman-concrete/s2_t4_49bf8b69.mp3",
+            "dur": 1.74
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Right? And less lime than modern concrete meant fewer cracks overall.",
+            "id": "s2_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/roman-concrete/s2_t5_b616348b.mp3",
+            "dur": 3.47
+          }
+        ],
+        "quiz_after": {
+          "q": "What made Roman concrete stronger underwater?",
+          "options": [
+            "pozzolana",
+            "salt",
+            "lime"
+          ],
+          "correct": 0,
+          "reaction_correct": "Ah, the ash did it.",
+          "reaction_wrong": "Nope, it was the volcanic ash.",
+          "reaction_correct_audio": "/static/audio/roman-concrete/s2_rok_20085027.mp3",
+          "reaction_wrong_audio": "/static/audio/roman-concrete/s2_rno_7bf274b9.mp3"
+        },
+        "dur": 15.54
+      },
+      {
+        "id": "s3",
+        "title": "How Did They Build With It?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "They poured it into wooden molds, often with a rubble core for stability.",
+            "id": "s3_t1",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/roman-concrete/s3_t1_feede6c9.mp3",
+            "dur": 2.12
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Rubble? Like… trash? That sounds weak.",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/roman-concrete/s3_t2_7e3781e0.mp3",
+            "dur": 2.4
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "No, it was a technique called *opus caementicium*—rubble bound by the concrete.",
+            "id": "s3_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/roman-concrete/s3_t3_88fe5bb9.mp3",
+            "dur": 3.95
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So, the Romans were the OGs of ‘junk in the trunk.’ Got it.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/roman-concrete/s3_t4_17b0fc24.mp3",
+            "dur": 3.74
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Hey, it worked! And they used it for everything—aqueducts, domes, harbors.",
+            "id": "s3_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/roman-concrete/s3_t5_b0322bd5.mp3",
+            "dur": 3.3
+          }
+        ],
+        "quiz_after": {
+          "q": "What was the core material in Roman concrete construction?",
+          "options": [
+            "rubble",
+            "steel",
+            "bricks"
+          ],
+          "correct": 0,
+          "reaction_correct": "Rubble for the win!",
+          "reaction_wrong": "Nope, it was rubble.",
+          "reaction_correct_audio": "/static/audio/roman-concrete/s3_rok_de47d439.mp3",
+          "reaction_wrong_audio": "/static/audio/roman-concrete/s3_rno_141dc464.mp3"
+        },
+        "dur": 15.51
+      },
+      {
+        "id": "s4",
+        "title": "Why Don’t We Use It Today?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "We *do* use some of the same principles! But we’ve adapted it—modern concrete sets faster.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/roman-concrete/s4_t1_7873c299.mp3",
+            "dur": 5.08
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh, because we’re in a hurry to build skyscrapers that’ll crumble in 50 years.",
+            "id": "s4_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/roman-concrete/s4_t2_ecd79b04.mp3",
+            "dur": 2.75
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Not crumble! But yes, pozzolanic materials are in high-performance concrete now.",
+            "id": "s4_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/roman-concrete/s4_t3_5c7d99c9.mp3",
+            "dur": 2.67
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so we *are* using it? Why’d you say we don’t?",
+            "id": "s4_t4",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/roman-concrete/s4_t4_a6acf545.mp3",
+            "dur": 2.07
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "We’re using the *idea*, just not the exact mix. Modern needs, modern tweaks!",
+            "id": "s4_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/roman-concrete/s4_t5_1345908c.mp3",
+            "dur": 2.85
+          }
+        ],
+        "quiz_after": {
+          "q": "What modern concrete uses Roman principles?",
+          "options": [
+            "pozzolanic concrete",
+            "gypsum mix",
+            "quick-set concrete"
+          ],
+          "correct": 0,
+          "reaction_correct": "Pozzolanic’s the one!",
+          "reaction_wrong": "Nope, it’s pozzolanic.",
+          "reaction_correct_audio": "/static/audio/roman-concrete/s4_rok_9a68a13c.mp3",
+          "reaction_wrong_audio": "/static/audio/roman-concrete/s4_rno_23ec5963.mp3"
+        },
+        "dur": 15.42
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Roman Concrete. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

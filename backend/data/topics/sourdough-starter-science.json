@@ -1,0 +1,367 @@
+{
+  "topic": "sourdough-starter-science",
+  "title": "Sourdough Starter Science",
+  "emoji": "🍞",
+  "blurb": "Learn fermentation behind sourdough starter magic",
+  "audio_ready": false,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What two things do wild yeast and bacteria need to thrive in your starter?",
+      "back": "Flour and water, plus warmth.",
+      "hook": "Feed them, they multiply like memes."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Why does sourdough starter smell tangy?",
+      "back": "Lactic and acetic acids from fermentation.",
+      "hook": "That funk? It’s alive and well."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "How often should you feed a new starter?",
+      "back": "Every 12-24 hours, consistently.",
+      "hook": "Neglect it, and it’ll ghost you."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the ideal temp for sourdough fermentation?",
+      "back": "75-80°F (24-27°C).",
+      "hook": "Too cold? It’s napping. Too hot? Spicy."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "Why does a sourdough starter bubble?",
+      "back": "Yeast and bacteria release CO2.",
+      "hook": "Those bubbles? Tiny yeast parties."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "How do you know your starter is ready to bake with?",
+      "back": "Doubles in size, smells sweet-sour.",
+      "hook": "Peak starter = peak vibes."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "Sourdough starters can outlive their bakers—some are over 100 years old.",
+      "emoji": "🎂"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Your sourdough starter’s microbiome is as unique as your fingerprint.",
+      "emoji": "👆"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Ancient Egyptians used sourdough to build pyramids—it was their daily bread.",
+      "emoji": "🏗️"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What’s in a Starter?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Why Feed It?"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "The Sour Smell"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Temperature Matters"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Which of these is NOT required for a sourdough starter?",
+      "options": [
+        "Flour",
+        "Water",
+        "Sugar"
+      ],
+      "correct": 2,
+      "explain": "Sourdough starters only need flour and water to capture wild yeast and bacteria."
+    },
+    {
+      "item_id": "fc2",
+      "q": "What acids give sourdough its signature tang?",
+      "options": [
+        "Citric and malic",
+        "Lactic and acetic",
+        "Tartaric and succinic"
+      ],
+      "correct": 1,
+      "explain": "Lactic and acetic acids are byproducts of fermentation in sourdough starters."
+    },
+    {
+      "item_id": "fc3",
+      "q": "If your starter smells like nail polish remover, what’s wrong?",
+      "options": [
+        "Overfed",
+        "Underfed",
+        "Too cold"
+      ],
+      "correct": 1,
+      "explain": "A sharp, acetone-like smell means your starter is hungry and needs feeding."
+    },
+    {
+      "item_id": "fc4",
+      "q": "What happens if your starter is too cold?",
+      "options": [
+        "Ferments faster",
+        "Ferments slower",
+        "Dies instantly"
+      ],
+      "correct": 1,
+      "explain": "Cold temperatures slow down fermentation, making your starter sluggish."
+    },
+    {
+      "item_id": "fc5",
+      "q": "What gas makes a sourdough starter rise?",
+      "options": [
+        "Oxygen",
+        "Carbon dioxide",
+        "Nitrogen"
+      ],
+      "correct": 1,
+      "explain": "Yeast metabolizes sugar and releases CO2, creating bubbles in the starter."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What’s a sign your starter is NOT ready to use?",
+      "options": [
+        "It smells slightly sour",
+        "It has bubbles on top",
+        "It hasn’t doubled in size"
+      ],
+      "correct": 2,
+      "explain": "A starter that hasn’t doubled in size isn’t strong enough for baking yet."
+    },
+    {
+      "item_id": "ff1",
+      "q": "How long can a sourdough starter last?",
+      "options": [
+        "A few weeks",
+        "A few years",
+        "Indefinitely, with care"
+      ],
+      "correct": 2,
+      "explain": "With regular feeding and care, sourdough starters can live for decades or even centuries."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What makes every sourdough starter unique?",
+      "options": [
+        "The type of flour used",
+        "The local wild yeast and bacteria",
+        "The color of the jar"
+      ],
+      "correct": 1,
+      "explain": "The wild yeast and bacteria in your environment give your starter its one-of-a-kind flavor and activity."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What did ancient Egyptians use sourdough for?",
+      "options": [
+        "Religious ceremonies",
+        "Pyramid construction fuel",
+        "Daily bread"
+      ],
+      "correct": 2,
+      "explain": "Sourdough was a staple food for ancient Egyptians, including the workers who built the pyramids."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What’s in a Starter?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Alright, wild yeast and lactic acid bacteria—that’s the magic duo in sourdough!"
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so my starter is just a tiny petri dish on my counter?"
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! Only way cooler because it makes bread rise."
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Yeah, nothing says ‘cool’ like a jar of bubbling goo."
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "That goo is alive! It eats sugars and farts CO2 to puff your loaf."
+          }
+        ],
+        "quiz_after": {
+          "q": "What produces CO2 in a sourdough starter?",
+          "options": [
+            "Wild yeast",
+            "Lactic acid bacteria",
+            "Both"
+          ],
+          "correct": 0,
+          "reaction_correct": "Damn, you’re a nerd.",
+          "reaction_wrong": "Nope, try again, bread brain."
+        }
+      },
+      {
+        "id": "s2",
+        "title": "Why Feed It?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "You’ve got to feed it flour and water to keep the microbes partying."
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So it’s like a hangry pet?"
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Yes! Starve it, and the yeast dies. Feed it, and it multiplies like crazy."
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, now I’m a baker *and* a pet owner."
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Just think of it as self-sustaining flavor."
+          }
+        ],
+        "quiz_after": {
+          "q": "What happens if you don’t feed your starter?",
+          "options": [
+            "It grows faster",
+            "It dies off",
+            "It turns purple"
+          ],
+          "correct": 1,
+          "reaction_correct": "Yep, RIP yeast.",
+          "reaction_wrong": "Not even close."
+        }
+      },
+      {
+        "id": "s3",
+        "title": "The Sour Smell",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "That tangy smell? Lactic acid bacteria throwing a party."
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So my starter’s smelling like a gym sock?"
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Only if you neglect it! Healthy starters smell fruity or vinegary."
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh good, now it’s a fancy gym sock."
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "It’s science, not a joke."
+          }
+        ],
+        "quiz_after": {
+          "q": "What causes the sour smell in a starter?",
+          "options": [
+            "Wild yeast",
+            "Lactic acid bacteria",
+            "Mold"
+          ],
+          "correct": 1,
+          "reaction_correct": "Bingo, scientist.",
+          "reaction_wrong": "Nice try, but no."
+        }
+      },
+      {
+        "id": "s4",
+        "title": "Temperature Matters",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Warmth speeds up fermentation. Cold slows it down."
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So my fridge is a sourdough spa?"
+          },
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "Exactly! Cold storage puts the microbes in slow-mo."
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Perfect, now my bread’s on a yoga retreat."
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "It’s all about control, not vacation."
+          }
+        ],
+        "quiz_after": {
+          "q": "What does cold storage do to a starter?",
+          "options": [
+            "Kills it",
+            "Speeds it up",
+            "Slows it down"
+          ],
+          "correct": 2,
+          "reaction_correct": "You’re learning!",
+          "reaction_wrong": "Wrong. Try again."
+        }
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Sourdough Starter Science. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
