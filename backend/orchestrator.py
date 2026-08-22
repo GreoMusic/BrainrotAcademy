@@ -1,6 +1,6 @@
 """The transition engine.
 
-    LEARN -> CHECK -> SCROLL -> FRICTION -> CHECK -> ...
+    LEARN -> CHECK -> SCROLL -> FRICTION -> SCROLL -> FRICTION -> LEARN -> ...
                |
                +-- fail --> LEARN (with the missed items boosted to the front)
 
@@ -47,6 +47,7 @@ def new_session(session_id: str, topic: str, pack: dict[str, Any]) -> dict[str, 
         "videos_watched": 0,
         "video_cursor": 0,
         "friction_cursor": 0,
+        "friction_passes": 0,  # gates cleared since the last CHECK - see clear_friction
         "round": 0,
         "check_answers": [],         # bools for the in-flight CHECK
         "missed": [],                # item ids to re-teach next LEARN
@@ -136,12 +137,24 @@ def _coach_card(state: dict, pack: dict) -> dict:
 
 
 def _video_card(state: dict, pack: dict) -> dict:
+    """The reel: real clips (backend/static/clips/) interleaved with GIPHY
+    clips fetched at generation time, so a mixed reel is a genuine mix
+    rather than every clip before the first gif."""
     clips = pack.get("clips", [])
-    if not clips:
+    gifs = pack.get("gifs", [])
+    if not clips and not gifs:
         return {"type": "video", "id": "video:none", "payload": {"src": None}}
-    clip = clips[state["video_cursor"] % len(clips)]
+
+    reel = []
+    for i in range(max(len(clips), len(gifs))):
+        if i < len(clips):
+            reel.append(("video", clips[i]))
+        if i < len(gifs):
+            reel.append(("gif", gifs[i]))
+
+    kind, item = reel[state["video_cursor"] % len(reel)]
     state["video_cursor"] += 1
-    return {"type": "video", "id": "video:" + str(clip["id"]), "payload": clip}
+    return {"type": kind, "id": kind + ":" + str(item["id"]), "payload": item}
 
 
 def _friction_card(state: dict) -> dict:
@@ -239,6 +252,7 @@ def _resolve_check(state: dict) -> None:
     if score >= config.PASS_THRESHOLD:
         state["stage"] = SCROLL
         state["scroll_budget"] = config.SCROLL_BUDGET
+        state["friction_passes"] = 0
     else:
         state["stage"] = LEARN
         state["learn_dealt"] = False
@@ -269,17 +283,27 @@ def record_answer(
 def clear_friction(state: dict, pack: dict | None = None) -> dict:
     """A passed friction gate resumes the loop.
 
-    Back to LEARN while there is still material to teach, otherwise into a
-    review CHECK. Always going to CHECK meant the happy path taught three cards
-    and then never taught anything again - you only saw new material by failing.
+    The first gate after a CHECK buys one more round of scrolling rather than
+    ending it outright - a single toll paid for six seconds of video reads as
+    a bad trade. The second gate in a row sends the user back to LEARN while
+    there is still material to teach, otherwise into a review CHECK. Always
+    going to CHECK meant the happy path taught three cards and then never
+    taught anything again - you only saw new material by failing.
     """
     if state["stage"] != FRICTION:
         return state
 
     state["pending"] = []
-    has_more = bool(pack and _items_by_need(state, pack))
-    state["stage"] = LEARN if has_more else CHECK
-    state["learn_dealt"] = False
+    state["friction_passes"] = state.get("friction_passes", 0) + 1
+
+    if state["friction_passes"] < 2:
+        state["stage"] = SCROLL
+        state["scroll_budget"] = config.SCROLL_BUDGET
+    else:
+        state["friction_passes"] = 0
+        has_more = bool(pack and _items_by_need(state, pack))
+        state["stage"] = LEARN if has_more else CHECK
+        state["learn_dealt"] = False
     return state
 
 
