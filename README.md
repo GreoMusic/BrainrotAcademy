@@ -19,8 +19,8 @@ Instead of just blocking brainrot (which people route around), BrainrotBouncer m
 
 ### Stack
 
-- **AI:** Mistral (content generation + learning verification) 
-- **Backend:** Python / Flask 
+- **AI:** Mistral (content generation + learning verification)
+- **Backend:** Python / Flask
 - **Frontend:** Vue.js
 
 ---

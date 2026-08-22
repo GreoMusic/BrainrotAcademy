@@ -142,6 +142,23 @@ async function onCleared(card) {
   scrollToNext()
 }
 
+/** A failed lesson explanation was followed by a completed offline reset. */
+async function onRecovered(card) {
+  card.resolved = true
+  try {
+    const res = await api.recoverCoach(
+      props.session.session_id,
+      card.id,
+      card.payload ? card.payload.item_id : undefined,
+    )
+    progress.value = res.progress
+  } catch (e) {
+    error.value = String(e.message || e)
+  }
+  await ensureBuffer()
+  scrollToNext()
+}
+
 onMounted(async () => {
   observer = new IntersectionObserver(
     (entries) => {
@@ -174,6 +191,7 @@ onBeforeUnmount(() => {
           :active="i === activeIndex"
           :session-id="session.session_id"
           @answered="(correct) => onAnswered(card, correct)"
+          @recovered="() => onRecovered(card)"
           @cleared="() => onCleared(card)"
           @listened="() => onListened(card)"
         />

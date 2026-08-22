@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { api } from './api'
 import FeedView from './views/FeedView.vue'
+import TouchGrassCard from './components/cards/TouchGrassCard.vue'
 
 const board = ref(null)
 const openSubject = ref(null)
@@ -10,6 +11,19 @@ const draft = ref('')
 const error = ref('')
 const starting = ref(false)
 const justReset = ref(false)
+const previewFriction = import.meta.env.DEV
+  && new URLSearchParams(window.location.search).get('preview') === 'friction'
+const previewFrictionDone = ref(false)
+const previewFrictionCard = {
+  id: 'preview:friction',
+  type: 'touch_grass',
+  payload: { topic: 'black-holes' },
+}
+
+function finishFrictionPreview() {
+  previewFrictionDone.value = true
+  setTimeout(() => { window.location.href = '/' }, 1400)
+}
 
 // Shown while Mistral builds the pack. These name what is actually happening
 // rather than faking a percentage.
@@ -72,7 +86,17 @@ async function start(payload) {
       <div class="screen">
         <div class="notch" />
 
-        <FeedView v-if="session" :session="session" />
+        <div v-if="previewFriction && previewFrictionDone" class="card verdict-screen">
+          <div class="verdict-ring"><div class="inner">✓</div></div>
+          <div class="verdict-title">Reset complete</div>
+          <div class="verdict-sub">Reflection reviewed. Returning to your subjects.</div>
+        </div>
+        <TouchGrassCard
+          v-else-if="previewFriction"
+          :card="previewFrictionCard"
+          @cleared="finishFrictionPreview"
+        />
+        <FeedView v-else-if="session" :session="session" />
 
         <div v-else class="card reel">
           <div class="reel-bg" style="filter: blur(6px)">🌀</div>
@@ -184,7 +208,7 @@ async function start(payload) {
 .subj b { display: block; font-size: 12px; margin-top: 3px; }
 .subj i { display: block; font-style: normal; font-size: 10px; color: var(--dim); margin-top: 1px; }
 .meter { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #eee; display: block; }
-.meter i { display: block; height: 100%; background: var(--ig-gradient); transition: width 0.4s; }
+.meter i { display: block; height: 100%; background: var(--brand-gradient); transition: width 0.4s; }
 
 .back {
   font-size: 11.5px; font-weight: 700; color: var(--blue);
@@ -225,7 +249,7 @@ async function start(payload) {
 .spin .inner { animation: spin 2.4s linear infinite reverse; }
 
 .bar { height: 3px; border-radius: 3px; background: #eee; overflow: hidden; margin-top: 18px; }
-.bar-fill { height: 100%; width: 40%; background: var(--ig-gradient); animation: slide 1.5s ease-in-out infinite; }
+.bar-fill { height: 100%; width: 40%; background: var(--brand-gradient); animation: slide 1.5s ease-in-out infinite; }
 @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
 
 .err { margin-top: 12px; font-size: 11.5px; color: var(--g3); line-height: 1.45; }

@@ -195,6 +195,22 @@ def friction_clear(sid: str):
     return jsonify({"progress": orch.progress(state), "stage": state["stage"]})
 
 
+@bp.post("/session/<sid>/coach/recover")
+def coach_recover(sid: str):
+    """A real-world reset can earn the break after a failed coach check."""
+    state, err = _get(sid)
+    if err:
+        return err
+
+    body = request.get_json(silent=True) or {}
+    card_id = body.get("card_id")
+    if not card_id:
+        return jsonify({"error": "card_id required"}), 400
+
+    state = orch.recover_failed_check(state, card_id, body.get("item_id"))
+    return jsonify({"progress": orch.progress(state), "stage": state["stage"]})
+
+
 @bp.get("/session/<sid>/progress")
 def get_progress(sid: str):
     state, err = _get(sid)
