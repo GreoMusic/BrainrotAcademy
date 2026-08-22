@@ -14,6 +14,11 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", static_url_path="/static")
     CORS(app)
 
+    from realtime import sock
+
+    app.config["SOCK_SERVER_OPTIONS"] = {"ping_interval": 25}
+    sock.init_app(app)
+
     from routes.session import bp as session_bp
 
     app.register_blueprint(session_bp)
@@ -39,6 +44,7 @@ def create_app() -> Flask:
                 "chat_model": config.CHAT_MODEL,
                 "tts_model": config.TTS_MODEL,
                 "stt_model": config.STT_MODEL,
+                "realtime_stt_model": config.REALTIME_STT_MODEL,
             }
         )
 

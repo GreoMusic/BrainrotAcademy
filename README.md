@@ -102,7 +102,8 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 | Flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
 | Touch-grass photo check | `mistral-medium-latest` (vision) |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
-| Coach mic + conversation check | `voxtral-mini-latest` |
+| Talk-to-human transcription | `voxtral-mini-latest` |
+| Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |
 
 SDK note: on `mistralai` 2.x the import is `from mistralai.client import Mistral`,
 and `audio.speech.complete(...)` returns `audio_data` as a **base64 string**.
