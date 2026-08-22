@@ -2,7 +2,7 @@
 
 **"You don't get in the club until you prove you've got something upstairs."**
 
-BrainrotBouncer is an app that gates mindless doomscrolling behind proof of real learning — turning brainrot consumption into a reward you have to earn, not a default state you fall into.
+Brainrot Academy is an app that gates mindless doomscrolling behind proof of real learning — turning brainrot consumption into a reward you have to earn, not a default state you fall into.
 
 ### The Loop
 
@@ -23,5 +23,3 @@ Instead of just blocking brainrot (which people route around), BrainrotBouncer m
 - **Frontend:** Vue.js
 
 ---
-
-Want a shorter one-liner/elevator pitch version too, for when judges only give you 15 seconds?
