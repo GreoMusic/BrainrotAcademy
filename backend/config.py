@@ -12,6 +12,7 @@ GIPHY_API_KEY = os.getenv("GIPHY_API_KEY", "")
 
 # Verified Aug 2026. See plan for the capability -> model mapping.
 CHAT_MODEL = os.getenv("CHAT_MODEL", "mistral-medium-latest")
+OCR_MODEL = os.getenv("OCR_MODEL", "mistral-ocr-latest")
 TTS_MODEL = os.getenv("TTS_MODEL", "voxtral-mini-tts-latest")
 # NB: the docs' `voxtral-mini-transcribe-*` ids are not served on this account.
 # The general audio model handles the transcriptions endpoint; verified by

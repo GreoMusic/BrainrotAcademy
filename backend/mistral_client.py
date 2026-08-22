@@ -5,6 +5,7 @@ retries, and response unwrapping live in exactly one place.
 
 SDK surface verified against mistralai 2.9.4:
   - import path is `mistralai.client`, not `mistralai`
+  - ocr.process(...) accepts base64 image URLs and document annotations
   - audio.speech.complete(...) -> SpeechResponse(audio_data=<base64 str>)
   - audio.transcriptions.complete(...) -> TranscriptionResponse(text=...)
   - audio.voices.list(type_="preset") enumerates the built-in voices
@@ -19,6 +20,7 @@ from functools import lru_cache
 from typing import Any
 
 import config
+from pydantic import BaseModel, Field
 
 _RETRIES = 2
 _BACKOFF = 1.5
@@ -143,6 +145,91 @@ def vision_json(image_bytes: bytes, prompt: str, *, mime: str = "image/jpeg") ->
 
     resp = _retry(call, what="vision")
     return _extract_json(resp.choices[0].message.content or "")
+
+
+# --------------------------------------------------------------------------
+# OCR
+# --------------------------------------------------------------------------
+class _MathAnswerAnnotation(BaseModel):
+    final_answer: str | None = Field(
+        description=(
+            "The student's explicitly written final numeric answer, without units. "
+            "A standalone handwritten number counts as the final answer even when it "
+            "is not boxed, circled, underlined, or preceded by an equals sign. Null "
+            "only when no numeric answer is visible."
+        ),
+    )
+
+
+_OCR_NUMBER_RE = re.compile(r"(?<![\w.])[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?![\w.])")
+
+
+def _answer_from_ocr_markdown(markdown: str) -> str | None:
+    """Recover a numeric answer when OCR text succeeds but annotation is empty.
+
+    Mistral can transcribe a sparse handwritten page (for example, just `35`)
+    into page markdown while returning a null document annotation. Image links
+    are removed first so digits in generated asset names cannot become answers.
+    """
+    text = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", markdown or "")
+    matches = _OCR_NUMBER_RE.findall(text.replace(",", "").replace("−", "-"))
+    return matches[-1] if matches else None
+
+
+def ocr_math_answer(
+    image_bytes: bytes,
+    question: str,
+    *,
+    mime: str = "image/jpeg",
+) -> dict[str, Any]:
+    """OCR handwritten work and identify the answer the student ended with.
+
+    The expected answer is deliberately not sent to Mistral. OCR extracts the
+    student's stated result; the route compares it with the server-side answer.
+    """
+    from mistralai.extra import response_format_from_pydantic_model
+
+    b64 = base64.b64encode(image_bytes).decode()
+    prompt = (
+        "This is a photo of handwritten work for the math problem: {}. "
+        "Read the work and extract the final answer the student explicitly wrote, "
+        "usually the last, boxed, circled, underlined, or equals-sign result. A "
+        "standalone handwritten number is also an explicit final answer: return it "
+        "even if there is no equation, box, circle, underline, or visible work. "
+        "Do not solve the problem yourself and do not infer a missing answer."
+    ).format(question)
+
+    def call():
+        return get_client().ocr.process(
+            model=config.OCR_MODEL,
+            document={
+                "type": "image_url",
+                "image_url": "data:{};base64,{}".format(mime, b64),
+            },
+            document_annotation_format=response_format_from_pydantic_model(
+                _MathAnswerAnnotation
+            ),
+            document_annotation_prompt=prompt,
+            include_image_base64=False,
+        )
+
+    resp = _retry(call, what="ocr")
+    annotation = getattr(resp, "document_annotation", None)
+    if isinstance(annotation, str):
+        annotation = _extract_json(annotation)
+    elif hasattr(annotation, "model_dump"):
+        annotation = annotation.model_dump()
+    annotation = annotation if isinstance(annotation, dict) else {}
+
+    pages = getattr(resp, "pages", None) or []
+    markdown = "\n".join(getattr(page, "markdown", "") or "" for page in pages)
+    final_answer = annotation.get("final_answer")
+    if not str(final_answer or "").strip():
+        final_answer = _answer_from_ocr_markdown(markdown)
+    return {
+        "final_answer": final_answer,
+        "markdown": markdown.strip(),
+    }
 
 
 # --------------------------------------------------------------------------

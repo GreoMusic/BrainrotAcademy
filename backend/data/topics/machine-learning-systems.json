@@ -1,0 +1,459 @@
+{
+  "topic": "machine-learning-systems",
+  "title": "Machine Learning Systems",
+  "emoji": "💻",
+  "blurb": "Coding - Machine Learning Systems",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the difference between overfitting and underfitting?",
+      "back": "Overfitting memorizes, underfitting generalizes poorly.",
+      "hook": "Your model’s either a genius or a dummy."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "What’s a simple way to prevent overfitting?",
+      "back": "Regularization or more training data.",
+      "hook": "Keep your model on a leash."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s the purpose of a validation set?",
+      "back": "Tune hyperparameters without cheating.",
+      "hook": "Your model’s practice test, no peeking."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the difference between batch and stochastic gradient descent?",
+      "back": "Batch uses all data, stochastic uses one sample.",
+      "hook": "One’s a crowd, one’s a loner."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What’s a confusion matrix used for?",
+      "back": "Visualize classifier performance metrics.",
+      "hook": "True or false, but make it fancy."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s the curse of dimensionality?",
+      "back": "Data gets sparse in high dimensions.",
+      "hook": "More features, more problems."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The first neural network was inspired by the human brain in 1943.",
+      "emoji": "🧠"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Deep learning models can have over 175 billion parameters.",
+      "emoji": "🤯"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Machine learning can predict your personality just from your Spotify playlists.",
+      "emoji": "🎵"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is Machine Learning?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Supervised vs. Unsupervised Learning"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Neural Networks: The Brainy Bit"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Why Do We Even Need This?"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Which describes overfitting?",
+      "options": [
+        "High bias, low variance",
+        "Low bias, high variance",
+        "High bias, high variance"
+      ],
+      "correct": 1,
+      "explain": "Overfitting happens when the model is too complex, leading to low bias and high variance."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Which regularization penalizes large weights?",
+      "options": [
+        "L1",
+        "L2",
+        "Dropout"
+      ],
+      "correct": 1,
+      "explain": "L2 regularization adds the squared magnitude of weights to the loss function."
+    },
+    {
+      "item_id": "fc3",
+      "q": "When do you use the validation set?",
+      "options": [
+        "During training",
+        "For final evaluation",
+        "To tune hyperparameters"
+      ],
+      "correct": 2,
+      "explain": "The validation set is used to adjust hyperparameters before final testing."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Which is more computationally expensive per iteration?",
+      "options": [
+        "Stochastic Gradient Descent",
+        "Batch Gradient Descent",
+        "Mini-batch Gradient Descent"
+      ],
+      "correct": 1,
+      "explain": "Batch Gradient Descent uses the entire dataset in each iteration, making it more expensive."
+    },
+    {
+      "item_id": "fc5",
+      "q": "Which metric is calculated as TP / (TP + FP)?",
+      "options": [
+        "Precision",
+        "Recall",
+        "F1-score"
+      ],
+      "correct": 0,
+      "explain": "Precision measures the accuracy of positive predictions."
+    },
+    {
+      "item_id": "fc6",
+      "q": "Which technique helps reduce dimensionality?",
+      "options": [
+        "PCA",
+        "k-NN",
+        "Random Forest"
+      ],
+      "correct": 0,
+      "explain": "Principal Component Analysis (PCA) is a common dimensionality reduction technique."
+    },
+    {
+      "item_id": "ff1",
+      "q": "Who proposed the first neural network model?",
+      "options": [
+        "Geoffrey Hinton",
+        "Warren McCulloch and Walter Pitts",
+        "Andrew Ng"
+      ],
+      "correct": 1,
+      "explain": "McCulloch and Pitts created the first computational model of a neural network in 1943."
+    },
+    {
+      "item_id": "ff2",
+      "q": "Which model holds the record for the largest number of parameters?",
+      "options": [
+        "BERT",
+        "GPT-3",
+        "Megatron-LM"
+      ],
+      "correct": 2,
+      "explain": "Megatron-LM, developed by NVIDIA and Microsoft, has over 530 billion parameters."
+    },
+    {
+      "item_id": "ff3",
+      "q": "Which personality trait is most strongly linked to music preferences?",
+      "options": [
+        "Extroversion",
+        "Openness to Experience",
+        "Neuroticism"
+      ],
+      "correct": 1,
+      "explain": "Openness to Experience is most strongly correlated with diverse music tastes."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is Machine Learning?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Alright, imagine your phone predicts your next word before you type it. That’s machine learning in action!",
+            "id": "s1_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/machine-learning-systems/s1_t1_5cc11990.mp3",
+            "dur": 3.09
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So, my phone’s spying on me and guessing I’ll say ‘pizza’ next?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/machine-learning-systems/s1_t2_c3055f0a.mp3",
+            "dur": 3.09
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Not spying—learning! It studies patterns in what you’ve typed before.",
+            "id": "s1_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/machine-learning-systems/s1_t3_45cef8d6.mp3",
+            "dur": 3.37
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, so now my phone thinks I’m a pizza-obsessed maniac.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/machine-learning-systems/s1_t4_1391cdba.mp3",
+            "dur": 2.92
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly! It’s just recognizing trends, not judging your life choices.",
+            "id": "s1_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/machine-learning-systems/s1_t5_2112dd9c.mp3",
+            "dur": 3.13
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the core idea behind machine learning?",
+          "options": [
+            "It memorizes all your data",
+            "It recognizes patterns in data",
+            "It makes random guesses"
+          ],
+          "correct": 1,
+          "reaction_correct": "Wow, you’re smarter than my phone.",
+          "reaction_wrong": "Oof, maybe stick to typing ‘pizza’.",
+          "reaction_correct_audio": "/static/audio/machine-learning-systems/s1_rok_0c15e54f.mp3",
+          "reaction_wrong_audio": "/static/audio/machine-learning-systems/s1_rno_004efc8f.mp3"
+        },
+        "dur": 15.6
+      },
+      {
+        "id": "s2",
+        "title": "Supervised vs. Unsupervised Learning",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Ever hear of supervised learning? It’s like training a dog with treats.",
+            "id": "s2_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/machine-learning-systems/s2_t1_ba2d3075.mp3",
+            "dur": 2.58
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So, my data gets a biscuit every time it does a good job?",
+            "id": "s2_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/machine-learning-systems/s2_t2_2632de78.mp3",
+            "dur": 2.63
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Close! You give it labeled data—like ‘this is a cat’—to learn from.",
+            "id": "s2_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/machine-learning-systems/s2_t3_a0fc9223.mp3",
+            "dur": 3.39
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "And unsupervised? No treats?",
+            "id": "s2_t4",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/machine-learning-systems/s2_t4_da87873f.mp3",
+            "dur": 2.08
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "No labels. It finds patterns on its own, like grouping similar data.",
+            "id": "s2_t5",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/machine-learning-systems/s2_t5_685bb72b.mp3",
+            "dur": 3.08
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the difference between supervised and unsupervised learning?",
+          "options": [
+            "One uses treats, the other doesn’t",
+            "One uses labeled data, the other doesn’t",
+            "One is for cats, the other for dogs"
+          ],
+          "correct": 1,
+          "reaction_correct": "Nailed it! No treats required.",
+          "reaction_wrong": "Nope, but at least you tried.",
+          "reaction_correct_audio": "/static/audio/machine-learning-systems/s2_rok_19c76410.mp3",
+          "reaction_wrong_audio": "/static/audio/machine-learning-systems/s2_rno_d7da9ab2.mp3"
+        },
+        "dur": 13.76
+      },
+      {
+        "id": "s3",
+        "title": "Neural Networks: The Brainy Bit",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Neural networks are like a web of brain cells, but for your computer.",
+            "id": "s3_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/machine-learning-systems/s3_t1_74434ecc.mp3",
+            "dur": 2.13
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So my laptop’s growing neurons now?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/machine-learning-systems/s3_t2_eb708a71.mp3",
+            "dur": 2.03
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Not growing—mimicking! Layers of nodes process data like neurons do.",
+            "id": "s3_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/machine-learning-systems/s3_t3_439228b3.mp3",
+            "dur": 3.82
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Cool, so my computer’s about to develop a personality disorder.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/machine-learning-systems/s3_t4_bda887da.mp3",
+            "dur": 2.5
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Not yet, but give it time.",
+            "id": "s3_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/machine-learning-systems/s3_t5_eb13c0be.mp3",
+            "dur": 1.36
+          }
+        ],
+        "quiz_after": {
+          "q": "What do neural networks mimic?",
+          "options": [
+            "Human brain cells",
+            "A spider web",
+            "A pizza delivery service"
+          ],
+          "correct": 0,
+          "reaction_correct": "Finally, someone gets it!",
+          "reaction_wrong": "Not quite, but close-ish.",
+          "reaction_correct_audio": "/static/audio/machine-learning-systems/s3_rok_485bc15f.mp3",
+          "reaction_wrong_audio": "/static/audio/machine-learning-systems/s3_rno_24a1a522.mp3"
+        },
+        "dur": 11.84
+      },
+      {
+        "id": "s4",
+        "title": "Why Do We Even Need This?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Machine learning powers things like fraud detection and recommendations.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/machine-learning-systems/s4_t1_3747dafb.mp3",
+            "dur": 2.28
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So Netflix knows I’ll binge-watch bad 80s movies?",
+            "id": "s4_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/machine-learning-systems/s4_t2_358255e5.mp3",
+            "dur": 3.54
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Yep! It learns what you like and suggests more of it.",
+            "id": "s4_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/machine-learning-systems/s4_t3_168416ae.mp3",
+            "dur": 1.55
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "But what if I don’t want it to know that?",
+            "id": "s4_t4",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/machine-learning-systems/s4_t4_967744b5.mp3",
+            "dur": 1.3
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "That’s the trade-off: convenience vs. privacy.",
+            "id": "s4_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/machine-learning-systems/s4_t5_3ab45e67.mp3",
+            "dur": 2.76
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s a common use of machine learning?",
+          "options": [
+            "Writing poetry",
+            "Fraud detection",
+            "Growing gardens"
+          ],
+          "correct": 1,
+          "reaction_correct": "Bingo! Now go watch some 80s movies.",
+          "reaction_wrong": "Nope, but fraud detection *would* catch that.",
+          "reaction_correct_audio": "/static/audio/machine-learning-systems/s4_rok_0e0deb49.mp3",
+          "reaction_wrong_audio": "/static/audio/machine-learning-systems/s4_rno_8cdfc623.mp3"
+        },
+        "dur": 11.43
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Machine Learning Systems. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
