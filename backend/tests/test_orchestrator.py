@@ -304,6 +304,29 @@ def test_failing_the_coach_returns_to_learning():
     assert nxt["type"] in ("flashcard", "fun_fact", "podcast")
 
 
+def test_real_world_recovery_unlocks_scroll_without_passing_lesson():
+    pack = make_pack()
+    s = orch.new_session("s1", "test", pack)
+    s["stage"] = orch.CHECK
+    for item_id in s["mastery"]:
+        s["mastery"][item_id] = 0.8
+    s["mastery"]["i0"] = 0.5
+
+    card, s = orch.next_card(s, pack)
+    assert card["type"] == "coach"
+    assert card["payload"]["item_id"] == "i0"
+
+    s = orch.recover_failed_check(s, card["id"], card["payload"]["item_id"])
+    assert s["stage"] == orch.SCROLL
+    assert s["scroll_budget"] == config.SCROLL_BUDGET
+    assert s["last_score"] == 0.0
+    assert s["mastery"]["i0"] < 0.5
+    assert "i0" in s["missed"]
+
+    nxt, s = orch.next_card(s, pack)
+    assert nxt["type"] == "video"
+
+
 def test_a_learn_round_mixes_kinds():
     """A LEARN round always teaches flashcard, then fun fact, then podcast -
     weakest-first alone buried podcast segments behind every flashcard, and

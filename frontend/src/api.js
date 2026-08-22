@@ -32,4 +32,11 @@ export const api = {
 
   clearFriction: (sid) =>
     fetch(`/api/session/${sid}/friction/clear`, { method: 'POST' }).then(j),
+
+  recoverCoach: (sid, cardId, itemId) =>
+    fetch(`/api/session/${sid}/coach/recover`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ card_id: cardId, item_id: itemId }),
+    }).then(j),
 }

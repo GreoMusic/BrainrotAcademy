@@ -258,7 +258,7 @@ onBeforeUnmount(() => {
   width: 48px; height: 48px; border-radius: 50%; padding: 2.5px;
   background: #e6e6e6; display: flex; align-items: center; justify-content: center;
 }
-.host.live .ring { background: var(--ig-gradient); }
+.host.live .ring { background: var(--brand-gradient); }
 .ring .inner {
   width: 100%; height: 100%; border-radius: 50%; background: #fff;
   display: flex; align-items: center; justify-content: center; font-size: 21px;

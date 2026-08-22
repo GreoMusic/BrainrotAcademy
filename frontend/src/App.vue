@@ -208,7 +208,7 @@ async function start(payload) {
 .subj b { display: block; font-size: 12px; margin-top: 3px; }
 .subj i { display: block; font-style: normal; font-size: 10px; color: var(--dim); margin-top: 1px; }
 .meter { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #eee; display: block; }
-.meter i { display: block; height: 100%; background: var(--ig-gradient); transition: width 0.4s; }
+.meter i { display: block; height: 100%; background: var(--brand-gradient); transition: width 0.4s; }
 
 .back {
   font-size: 11.5px; font-weight: 700; color: var(--blue);
@@ -249,7 +249,7 @@ async function start(payload) {
 .spin .inner { animation: spin 2.4s linear infinite reverse; }
 
 .bar { height: 3px; border-radius: 3px; background: #eee; overflow: hidden; margin-top: 18px; }
-.bar-fill { height: 100%; width: 40%; background: var(--ig-gradient); animation: slide 1.5s ease-in-out infinite; }
+.bar-fill { height: 100%; width: 40%; background: var(--brand-gradient); animation: slide 1.5s ease-in-out infinite; }
 @keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
 
 .err { margin-top: 12px; font-size: 11.5px; color: var(--g3); line-height: 1.45; }
