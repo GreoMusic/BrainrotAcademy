@@ -1,7 +1,10 @@
 """Session routes - the feed's only critical path.
 
-Deliberately does no network I/O: every card served here comes from a
-pre-generated pack on disk, so the feed keeps working on bad wifi.
+`/next` deliberately does no network I/O: every card it serves comes from a
+pre-generated pack on disk (plus this session's own gif batch, fetched once
+at start), so the feed keeps working on bad wifi. `/session` already blocks
+on Mistral for a new topic's text, so a GIPHY call there for a fresh reel
+costs nothing the user does not already tolerate.
 """
 from __future__ import annotations
 
@@ -11,6 +14,7 @@ from flask import Blueprint, jsonify, request
 
 import catalogue
 import content
+import giphy_client
 import orchestrator as orch
 import topics
 
@@ -123,8 +127,15 @@ def start():
 
     cycle = catalogue.mark_used(slug)
 
+    # A pack is cached and replayed across every session on that topic, so
+    # serving straight from its baked-in gifs would show the exact same reel
+    # every time. A fresh batch here means every session opens on a reel
+    # nobody has seen yet - this is the one network call session start
+    # already tolerates (same as text generation), never the scroll path.
+    fresh_gifs = giphy_client.brainrot(limit=16)
+
     sid = uuid.uuid4().hex[:12]
-    SESSIONS[sid] = orch.new_session(sid, slug, pack)
+    SESSIONS[sid] = orch.new_session(sid, slug, pack, gifs=fresh_gifs)
     return jsonify(
         {
             "session_id": sid,

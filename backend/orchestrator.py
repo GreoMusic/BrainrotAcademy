@@ -34,8 +34,24 @@ KNOWN_AT = 0.67
 # ---------------------------------------------------------------------------
 # state
 # ---------------------------------------------------------------------------
-def new_session(session_id: str, topic: str, pack: dict[str, Any]) -> dict[str, Any]:
-    """Fresh session state. pack is the pre-generated topic content."""
+def new_session(
+    session_id: str,
+    topic: str,
+    pack: dict[str, Any],
+    *,
+    gifs: list[dict] | None = None,
+) -> dict[str, Any]:
+    """Fresh session state. pack is the pre-generated topic content.
+
+    `gifs` lets the caller hand in a freshly-fetched GIPHY batch instead of
+    whatever got baked into the pack at generation time - the pack is
+    cached and reused across every session on that topic, so serving straight
+    from `pack["gifs"]` would show the exact same reel, in the exact same
+    order, every single time the topic is played. Shuffled either way, so
+    even a repeat of the pack's own gifs is not the same sequence twice.
+    """
+    reel_gifs = list(gifs) if gifs else list(pack.get("gifs", []))
+    random.shuffle(reel_gifs)
     return {
         "id": session_id,
         "topic": topic,
@@ -46,6 +62,7 @@ def new_session(session_id: str, topic: str, pack: dict[str, Any]) -> dict[str, 
         "scroll_budget": 0,
         "videos_watched": 0,
         "video_cursor": 0,
+        "gifs": reel_gifs,           # this session's own shuffled reel batch
         "friction_cursor": 0,
         "friction_passes": 0,  # gates cleared since the last CHECK - see clear_friction
         "round": 0,
@@ -138,11 +155,13 @@ def _coach_card(state: dict, pack: dict) -> dict:
 
 
 def _video_card(state: dict, pack: dict) -> dict:
-    """The reel: real clips (backend/static/clips/) interleaved with GIPHY
-    clips fetched at generation time, so a mixed reel is a genuine mix
-    rather than every clip before the first gif."""
+    """The reel: real clips (backend/static/clips/) interleaved with this
+    session's own shuffled GIPHY batch, so a mixed reel is a genuine mix
+    rather than every clip before the first gif. Gifs come from session
+    state, not the pack, so a replayed topic does not reshow the exact
+    same clips in the exact same order every time - see new_session."""
     clips = pack.get("clips", [])
-    gifs = pack.get("gifs", [])
+    gifs = state.get("gifs") or pack.get("gifs", [])
     if not clips and not gifs:
         return {"type": "video", "id": "video:none", "payload": {"src": None}}
 
