@@ -26,6 +26,7 @@ function scrollDown() {
 function handle(data) {
   if (data.error) {
     messages.value.push({ role: 'assistant', content: 'Coach is offline: ' + data.error })
+    scrollDown()
     return
   }
   if (data.transcript) messages.value.push({ role: 'user', content: data.transcript })
@@ -36,10 +37,9 @@ function handle(data) {
     audioEl = new Audio(data.audio)
     audioEl.play().catch(() => {})
   }
-
   if (data.done) {
-    verdict.value = data.understood
-    setTimeout(() => emit('answered', !!data.understood), 2600)
+    verdict.value = !!data.understood
+    setTimeout(() => emit('answered', !!data.understood), 2800)
   }
 }
 
@@ -99,7 +99,7 @@ async function toggleMic() {
     recorder.start()
     recording.value = true
   } catch {
-    messages.value.push({ role: 'assistant', content: 'Microphone blocked - type instead.' })
+    messages.value.push({ role: 'assistant', content: 'Microphone blocked — type instead.' })
   }
 }
 
@@ -110,91 +110,75 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="card is-gate coach">
-    <div class="card-gradient" style="--g1: #1d0b3d; --g2: #07040f" />
-    <div class="eyebrow">talk it through to keep scrolling</div>
+  <!-- Passing the coach is the moment worth celebrating, so it takes over the
+       whole screen the way the design's verdict view does. -->
+  <div v-if="verdict !== null" class="card verdict-screen">
+    <div class="verdict-ring">
+      <div class="inner">{{ verdict ? '✓' : '↺' }}</div>
+    </div>
+    <div class="verdict-title">{{ verdict ? "You're verified" : 'Not yet' }}</div>
+    <div class="verdict-sub">
+      {{ verdict
+        ? 'Real understanding, not a bluff. Back to the feed.'
+        : 'Close, but the idea is not there yet. One more learning round.' }}
+    </div>
+  </div>
 
-    <div class="thread" ref="scroller">
-      <div v-for="(m, i) in messages" :key="i" class="msg" :class="m.role">
-        <span>{{ m.content }}</span>
+  <div v-else class="card lightscreen">
+    <div class="appbar">
+      <div class="who">
+        <div class="pfp">🤖</div>
+        <div>
+          <div class="name">coach</div>
+          <div class="status">active now</div>
+        </div>
       </div>
-      <div v-if="busy" class="msg assistant typing"><span>· · ·</span></div>
+      <span class="pill blue" style="margin: 0">enrollment check</span>
     </div>
 
-    <transition name="fade">
-      <div v-if="verdict !== null" class="verdict" :class="{ good: verdict }">
-        {{ verdict ? 'You have got it. Scroll on.' : 'Not quite yet — back to the cards.' }}
+    <div class="content">
+      <div class="chat-area" ref="scroller">
+        <div v-for="(m, i) in messages" :key="i" class="bubble" :class="m.role === 'user' ? 'me' : 'them'">
+          {{ m.content }}
+        </div>
+        <div v-if="busy" class="bubble them typing">· · ·</div>
       </div>
-    </transition>
 
-    <div v-if="verdict === null" class="composer">
-      <input
-        v-model="draft" class="in" placeholder="say it in your own words…"
-        :disabled="busy" @keyup.enter="sendText"
-      />
-      <button class="mic" :class="{ rec: recording }" :disabled="busy" @click="toggleMic">
-        {{ recording ? '■' : '🎤' }}
-      </button>
-      <button class="send" :disabled="busy || !draft.trim()" @click="sendText">↑</button>
+      <div class="composer">
+        <input
+          v-model="draft" class="in" placeholder="say it in your own words…"
+          :disabled="busy" @keyup.enter="sendText"
+        />
+        <button class="round" :class="{ rec: recording }" :disabled="busy" @click="toggleMic">
+          {{ recording ? '■' : '🎤' }}
+        </button>
+        <button class="round send" :disabled="busy || !draft.trim()" @click="sendText">↑</button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.coach { justify-content: flex-start; padding-top: 92px; }
-.thread {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 8px 0 14px;
-  scrollbar-width: none;
+.who { display: flex; align-items: center; gap: 10px; }
+.pfp {
+  width: 32px; height: 32px; border-radius: 50%; background: #eee;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
 }
-.thread::-webkit-scrollbar { display: none; }
-.msg { display: flex; }
-.msg span {
-  max-width: 84%;
-  padding: 12px 15px;
-  border-radius: 18px;
-  font-size: 16px;
-  line-height: 1.4;
-}
-.msg.assistant { justify-content: flex-start; }
-.msg.assistant span {
-  background: rgba(255, 255, 255, 0.13);
-  border-bottom-left-radius: 5px;
-}
-.msg.user { justify-content: flex-end; }
-.msg.user span {
-  background: var(--accent);
-  border-bottom-right-radius: 5px;
-}
-.typing span { opacity: 0.6; letter-spacing: 3px; }
+.name { font-size: 13px; font-weight: 700; }
+.status { font-size: 10.5px; color: var(--dim); }
+.typing { opacity: 0.65; letter-spacing: 3px; }
 
-.composer { display: flex; gap: 8px; align-items: center; }
+.composer { display: flex; gap: 7px; align-items: center; }
 .in {
-  flex: 1;
-  padding: 14px 16px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  color: var(--fg);
-  font-size: 15px;
+  flex: 1; padding: 11px 14px; border-radius: 999px;
+  background: #fff; border: 1px solid var(--border); font-size: 13px;
 }
-.mic, .send {
-  width: 46px; height: 46px; border-radius: 50%; flex: none;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  font-size: 17px; font-weight: 800;
+.in:focus { outline: none; border-color: var(--blue); }
+.round {
+  width: 40px; height: 40px; border-radius: 50%; flex: none; font-size: 15px; font-weight: 700;
+  background: #f2f2f2; border: 1px solid var(--border);
 }
-.mic.rec { background: var(--hot); border-color: transparent; animation: p 1.1s infinite; }
-@keyframes p { 50% { box-shadow: 0 0 0 14px rgba(255, 45, 129, 0.15) } }
-.send:disabled, .mic:disabled { opacity: 0.4; }
-
-.verdict {
-  padding: 15px; border-radius: 14px; font-weight: 700;
-  background: rgba(255, 45, 129, 0.22); border: 1.5px solid var(--hot);
-}
-.verdict.good { background: rgba(0, 229, 192, 0.2); border-color: var(--accent-2); }
+.round.send { background: var(--blue); color: #fff; border-color: transparent; }
+.round.rec { background: var(--ig-gradient); color: #fff; border-color: transparent; }
+.round:disabled { opacity: 0.45; }
 </style>

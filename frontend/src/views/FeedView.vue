@@ -139,7 +139,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="shell">
+  <div class="screen-inner">
     <ProgressHud :progress="progress" />
 
     <div class="feed" ref="feedEl">
@@ -154,10 +154,11 @@ onBeforeUnmount(() => {
         />
       </div>
 
-      <div v-if="!cards.length" class="card">
-        <div class="card-gradient" style="--g1: #1a1030; --g2: #07060d" />
-        <div class="eyebrow">loading</div>
-        <div class="big">Warming up your feed…</div>
+      <div v-if="!cards.length" class="card lightscreen">
+        <div class="content" style="justify-content: center; align-items: center">
+          <span class="pill gray">generating</span>
+          <p class="screen-title" style="text-align: center">Building your round…</p>
+        </div>
       </div>
     </div>
 
@@ -166,15 +167,19 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.screen-inner { position: relative; height: 100%; }
 .err {
   position: absolute;
   bottom: 16px;
-  left: 16px;
-  right: 16px;
-  padding: 12px 14px;
+  left: 14px;
+  right: 14px;
+  padding: 11px 13px;
   border-radius: 12px;
-  background: rgba(255, 45, 129, 0.92);
-  font-size: 13px;
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  color: var(--g3);
+  font-size: 12px;
   font-weight: 600;
   z-index: 50;
 }

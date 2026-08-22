@@ -1,45 +1,98 @@
 <script setup>
-import { ref, watch, onBeforeUnmount } from 'vue'
+import { ref, watch, computed, onBeforeUnmount } from 'vue'
+
 const props = defineProps({ card: Object, active: Boolean })
 const el = ref(null)
+const liked = ref(false)
+
+// Stable fake engagement per clip - a reel with no numbers reads as a mockup.
+const HANDLES = [
+  { avatar: '🥣', user: 'cerealtok' },
+  { avatar: '🐶', user: 'theo.does.tricks' },
+  { avatar: '🐸', user: 'wildliferizz' },
+  { avatar: '🎧', user: 'quantum_chill' },
+  { avatar: '🛹', user: 'concretegoblin' },
+]
+
+function hash(s) {
+  let h = 0
+  for (let i = 0; i < String(s).length; i++) h = (h * 31 + String(s).charCodeAt(i)) | 0
+  return Math.abs(h)
+}
+
+const seed = computed(() => hash(props.card.id))
+const handle = computed(() => HANDLES[seed.value % HANDLES.length])
+const likes = computed(() => {
+  const n = 200 + (seed.value % 4600)
+  return n > 999 ? (n / 1000).toFixed(1) + 'M' : n + 'K'
+})
+const comments = computed(() => {
+  const n = (seed.value % 380) + 4
+  return n >= 100 ? n + 'K' : (n + (seed.value % 10) / 10).toFixed(1) + 'K'
+})
+const caption = computed(() => props.card.payload.caption || 'brainrot')
 
 // The behaviour contract every media card shares: play only while on screen.
 // `immediate` + post flush so a card that mounts already active still plays:
 // a plain watcher never fires for the initial value, which left the very first
 // video in the feed frozen on frame one.
-watch(() => props.active, (a) => {
-  const v = el.value
-  if (!v) return
-  if (a) v.play().catch(() => {})
-  else { v.pause(); v.currentTime = 0 }
-}, { immediate: true, flush: 'post' })
-onBeforeUnmount(() => el.value && el.value.pause())
+watch(
+  () => props.active,
+  (a) => {
+    const v = el.value
+    if (!v) return
+    if (a) v.play().catch(() => {})
+    else {
+      v.pause()
+      v.currentTime = 0
+    }
+  },
+  { immediate: true, flush: 'post' },
+)
+
+onBeforeUnmount(() => {
+  if (el.value) el.value.pause()
+})
 </script>
 
 <template>
-  <div class="card vid">
-    <div class="card-gradient" style="--g1:#1b0620; --g2:#000" />
-    <video
-      v-if="card.payload.src"
-      ref="el" :src="card.payload.src"
-      muted loop playsinline preload="metadata"
-    />
-    <div v-else class="placeholder">
-      <div class="emoji">📱</div>
-      <div class="body">Drop .mp4 files into <code>backend/static/clips/</code></div>
+  <div class="card reel">
+    <div class="reel-bg">
+      <video
+        v-if="card.payload.src"
+        ref="el"
+        :src="card.payload.src"
+        muted
+        loop
+        playsinline
+        preload="metadata"
+      />
+      <span v-else>🌀</span>
     </div>
-    <div class="caption">{{ card.payload.caption || 'brainrot' }}</div>
+
+    <div class="reel-scrim-top" />
+    <div class="reel-scrim-bottom" />
+
+    <div class="reel-actions">
+      <div class="act" @click="liked = !liked">
+        <span class="ic">{{ liked ? '❤️' : '♡' }}</span>
+        <span class="n">{{ likes }}</span>
+      </div>
+      <div class="act"><span class="ic">💬</span><span class="n">{{ comments }}</span></div>
+      <div class="act"><span class="ic">✈</span><span class="n">Share</span></div>
+      <div class="act"><span class="ic">⋯</span></div>
+    </div>
+
+    <div class="reel-caption">
+      <div class="user-row">
+        <div class="avatar">{{ handle.avatar }}</div>
+        <span class="uname">{{ handle.user }}</span>
+        <span class="follow">Follow</span>
+      </div>
+      <div class="cap">{{ caption }}</div>
+      <div class="music">♪ <span>original audio — {{ handle.user }}</span></div>
+    </div>
+
+    <div class="tap-hint"><span>swipe up to keep scrolling</span></div>
   </div>
 </template>
-
-<style scoped>
-.vid { padding: 0; justify-content: flex-end; }
-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.placeholder { position: absolute; inset: 0; display: grid; place-content: center; gap: 14px; text-align: center; padding: 30px; }
-.emoji { font-size: 64px; }
-code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 6px; font-size: 14px; }
-.caption {
-  position: relative; padding: 22px; padding-bottom: 108px; font-weight: 700;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
-}
-</style>

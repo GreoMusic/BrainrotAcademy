@@ -7,28 +7,33 @@ watch(() => props.active, (a) => { if (!a) flipped.value = false })
 </script>
 
 <template>
-  <div class="card" @click="flipped = !flipped">
-    <div class="card-gradient" style="--g1:#2b1055; --g2:#0d0620" />
-    <div class="eyebrow">flashcard</div>
+  <div class="card lightscreen">
+    <div class="content">
+      <span class="pill grad">learning round</span>
 
-    <div class="big">{{ card.payload.front }}</div>
+      <div class="tabs">
+        <div class="tab on">flashcard</div>
+        <div class="tab">fun facts</div>
+        <div class="tab">podcast</div>
+      </div>
 
-    <transition name="fade">
-      <div v-if="flipped" class="answer">{{ card.payload.back }}</div>
-      <div v-else-if="card.payload.hook" class="hook">{{ card.payload.hook }}</div>
-    </transition>
+      <div class="learn-card" @click="flipped = !flipped">
+        <div class="k">flashcard</div>
+        <div class="q">{{ card.payload.front }}</div>
+        <transition name="fade" mode="out-in">
+          <div v-if="flipped" class="a" key="a">{{ card.payload.back }}</div>
+          <div v-else class="a hook" key="h">{{ card.payload.hook || 'Tap to reveal.' }}</div>
+        </transition>
+      </div>
 
-    <div class="tap">{{ flipped ? 'tap to hide' : 'tap to reveal' }}</div>
-    <div class="hint">swipe up ↑</div>
+      <button class="btn btn-ghost" @click="flipped = !flipped">
+        {{ flipped ? 'Hide answer' : 'Reveal answer' }}
+      </button>
+      <div class="link-row"><span>swipe up to continue</span></div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.answer {
-  margin-top: 22px; padding: 18px; border-radius: var(--card-r);
-  background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.18);
-  font-size: 19px; font-weight: 600;
-}
-.hook { margin-top: 22px; font-size: 15px; color: var(--dim); font-style: italic; }
-.tap { margin-top: 20px; font-size: 12px; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.hook { font-style: italic; color: var(--dim); }
 </style>
