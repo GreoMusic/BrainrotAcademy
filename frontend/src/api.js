@@ -9,6 +9,9 @@ export const api = {
 
   catalogue: () => fetch('/api/catalogue').then(j),
 
+  resetCatalogue: () =>
+    fetch('/api/catalogue/reset', { method: 'POST' }).then(j),
+
   // Either a catalogue slug or free text; the server resolves both.
   start: (payload) =>
     fetch('/api/session', {
@@ -39,4 +42,24 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ card_id: cardId, item_id: itemId }),
     }).then(j),
+
+  gradeMathPhoto: (sid, cardId, photo) => {
+    const body = new FormData()
+    body.append('card_id', cardId)
+    body.append('photo', photo)
+    return fetch(`/api/session/${sid}/friction/math`, {
+      method: 'POST',
+      body,
+    }).then(j)
+  },
+
+  gradeMathAnswer: (sid, cardId, answer) => {
+    const body = new FormData()
+    body.append('card_id', cardId)
+    body.append('answer', answer)
+    return fetch(`/api/session/${sid}/friction/math`, {
+      method: 'POST',
+      body,
+    }).then(j)
+  },
 }

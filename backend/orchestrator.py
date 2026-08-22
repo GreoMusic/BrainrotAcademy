@@ -65,6 +65,7 @@ def new_session(
         "gifs": reel_gifs,           # this session's own shuffled reel batch
         "friction_cursor": 0,
         "friction_passes": 0,  # gates cleared since the last CHECK - see clear_friction
+        "active_friction": None,
         "round": 0,
         "check_answers": [],         # bools for the in-flight CHECK
         "missed": [],                # item ids to re-teach next LEARN
@@ -181,9 +182,18 @@ def _friction_card(state: dict) -> dict:
     kind = FRICTION_KINDS[state["friction_cursor"] % len(FRICTION_KINDS)]
     state["friction_cursor"] += 1
     payload: dict[str, Any] = {"kind": kind, "topic": state["topic"]}
+    answer = None
     if kind == "math_gate":
-        payload.update(make_math_problem(state["round"]))
+        problem = make_math_problem(state["round"])
+        payload["question"] = problem["question"]
+        answer = problem["answer"]
     card_id = "friction:{}:{}".format(kind, state["friction_cursor"])
+    state["active_friction"] = {
+        "card_id": card_id,
+        "kind": kind,
+        "question": payload.get("question"),
+        "answer": answer,
+    }
     return {"type": kind, "id": card_id, "payload": payload}
 
 
@@ -314,6 +324,7 @@ def clear_friction(state: dict, pack: dict | None = None) -> dict:
         return state
 
     state["pending"] = []
+    state["active_friction"] = None
     state["friction_passes"] = state.get("friction_passes", 0) + 1
 
     if state["friction_passes"] < 2:

@@ -24,6 +24,7 @@ function finishFrictionPreview() {
   previewFrictionDone.value = true
   setTimeout(() => { window.location.href = '/' }, 1400)
 }
+const resetting = ref(false)
 
 // Shown while Mistral builds the pack. These name what is actually happening
 // rather than faking a percentage.
@@ -45,6 +46,20 @@ async function loadBoard() {
     board.value = await api.catalogue()
   } catch {
     error.value = 'Backend unreachable. Is Flask running on :5001?'
+  }
+}
+
+async function resetTopics() {
+  if (resetting.value || !window.confirm('Unlock every learned topic and start a new cycle?')) return
+  resetting.value = true
+  error.value = ''
+  try {
+    board.value = await api.resetCatalogue()
+    justReset.value = true
+  } catch (e) {
+    error.value = String(e.message || e)
+  } finally {
+    resetting.value = false
   }
 }
 
@@ -140,6 +155,11 @@ async function start(payload) {
                 </button>
               </div>
 
+              <button
+                v-if="subject.used" class="reset-link subject-reset" :disabled="resetting"
+                @click="resetTopics"
+              >{{ resetting ? 'Resetting…' : 'Reset learned topics' }}</button>
+
               <p v-if="error" class="err">{{ error }}</p>
             </div>
 
@@ -152,7 +172,7 @@ async function start(payload) {
               </p>
 
               <div v-if="justReset" class="reset-note">
-                🎉 You cleared the whole board. Everything is unlocked again.
+                Everything is unlocked again. Pick any topic.
               </div>
 
               <div class="subjects" v-if="board">
@@ -167,6 +187,11 @@ async function start(payload) {
                   <span class="meter"><i :style="{ width: (s.used / s.total) * 100 + '%' }" /></span>
                 </button>
               </div>
+
+              <button
+                v-if="board?.used" class="reset-link" :disabled="resetting"
+                @click="resetTopics"
+              >{{ resetting ? 'Resetting…' : 'Reset learned topics' }}</button>
 
               <details class="own">
                 <summary>or learn something else</summary>
@@ -230,6 +255,13 @@ async function start(payload) {
   font-size: 11.5px; line-height: 1.45; padding: 9px 11px; margin-bottom: 12px;
   border-radius: 10px; background: rgba(0, 149, 246, 0.09); color: var(--blue);
 }
+
+.reset-link {
+  display: block; margin: -3px auto 12px; color: var(--dim);
+  font-size: 10.5px; text-decoration: underline;
+}
+.reset-link:disabled { opacity: 0.55; }
+.subject-reset { margin-top: 12px; margin-bottom: 0; }
 
 .own { margin-top: 4px; }
 .own summary {

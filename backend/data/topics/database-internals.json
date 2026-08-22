@@ -1,0 +1,459 @@
+{
+  "topic": "database-internals",
+  "title": "Database Internals",
+  "emoji": "💻",
+  "blurb": "Coding - Database Internals",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the fastest way to find a row in a B-tree?",
+      "back": "Logarithmic time via binary search",
+      "hook": "Speedrun your database queries now"
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Why use a B+ tree over a B-tree?",
+      "back": "Faster range queries, no key duplication",
+      "hook": "B-tree’s cooler cousin wins again"
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s a database index’s job?",
+      "back": "Speed up row lookups",
+      "hook": "The cheat code for queries"
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "WAL means what in databases?",
+      "back": "Write-Ahead Logging",
+      "hook": "The database’s safety net"
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What’s ACID’s ‘I’ stand for?",
+      "back": "Isolation",
+      "hook": "Keep transactions from party crashing"
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s a buffer pool in DBs?",
+      "back": "Cache for hot data",
+      "hook": "Speed without the SSD wait"
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "PostgreSQL uses a multiversion concurrency control system to avoid locks",
+      "emoji": "🔓"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "SQLite is embedded in every Android phone by default",
+      "emoji": "📱"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Google’s Spanner database syncs time globally with atomic clocks",
+      "emoji": "⏰"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What’s a Database Anyway?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "How Does Storage Work?"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Indexing: The Secret Sauce"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Transactions: All or Nothing"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "What’s the time complexity of a B-tree search?",
+      "options": [
+        "O(1)",
+        "O(log n)",
+        "O(n)"
+      ],
+      "correct": 1,
+      "explain": "B-trees are balanced, so searching is O(log n)."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Where are all keys stored in a B+ tree?",
+      "options": [
+        "Internal nodes",
+        "Leaf nodes",
+        "Both nodes"
+      ],
+      "correct": 1,
+      "explain": "B+ trees store all keys in leaf nodes for efficient range scans."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Which data structure is commonly used for indexing?",
+      "options": [
+        "Hash table",
+        "Linked list",
+        "B-tree"
+      ],
+      "correct": 2,
+      "explain": "B-trees are often used for indexes due to their balance and efficiency."
+    },
+    {
+      "item_id": "fc4",
+      "q": "What does WAL prevent?",
+      "options": [
+        "Data loss",
+        "Slow queries",
+        "Deadlocks"
+      ],
+      "correct": 0,
+      "explain": "WAL logs changes before they’re written to disk, preventing data loss on crashes."
+    },
+    {
+      "item_id": "fc5",
+      "q": "Which ACID property ensures transactions don’t interfere?",
+      "options": [
+        "Atomicity",
+        "Isolation",
+        "Durability"
+      ],
+      "correct": 1,
+      "explain": "Isolation prevents concurrent transactions from interfering with each other."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What’s stored in a database buffer pool?",
+      "options": [
+        "Index files",
+        "Frequently accessed pages",
+        "User queries"
+      ],
+      "correct": 1,
+      "explain": "Buffer pools cache frequently accessed data pages to reduce disk I/O."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What does MVCC do in PostgreSQL?",
+      "options": [
+        "Prevents deadlocks",
+        "Avoids locks",
+        "Boosts speed"
+      ],
+      "correct": 1,
+      "explain": "MVCC allows concurrent reads and writes without locking, improving performance."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What’s SQLite’s primary use case?",
+      "options": [
+        "Cloud databases",
+        "Embedded systems",
+        "High-frequency trading"
+      ],
+      "correct": 1,
+      "explain": "SQLite is designed for embedded use, like in mobile apps."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What’s Spanner’s trick for global consistency?",
+      "options": [
+        "Sharding",
+        "Atomic clocks",
+        "Replication"
+      ],
+      "correct": 1,
+      "explain": "Spanner uses atomic clocks and GPS for globally synchronized timestamps."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What’s a Database Anyway?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "A database is just a fancy way to store data so you can find it fast—like a library with a genius librarian.",
+            "id": "s1_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/database-internals/s1_t1_f0f09a65.mp3",
+            "dur": 4.05
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So... it’s like a spreadsheet?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/database-internals/s1_t2_1749791f.mp3",
+            "dur": 1.38
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Sort of, but way smarter. Spreadsheets are like sticky notes—databases are the filing cabinet.",
+            "id": "s1_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/database-internals/s1_t3_fcc059da.mp3",
+            "dur": 3.75
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, so now my sticky notes feel inadequate.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/database-internals/s1_t4_c291606c.mp3",
+            "dur": 2.46
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly! And databases handle millions of sticky notes at once.",
+            "id": "s1_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/database-internals/s1_t5_b4eb0326.mp3",
+            "dur": 2.56
+          }
+        ],
+        "quiz_after": {
+          "q": "Is a database like a spreadsheet?",
+          "options": [
+            "Yes, exactly the same",
+            "No, it’s smarter and handles more data",
+            "Only if you color-code it"
+          ],
+          "correct": 1,
+          "reaction_correct": "Finally, someone gets it.",
+          "reaction_wrong": "Oh come on, really?",
+          "reaction_correct_audio": "/static/audio/database-internals/s1_rok_2fc712c1.mp3",
+          "reaction_wrong_audio": "/static/audio/database-internals/s1_rno_174a04d6.mp3"
+        },
+        "dur": 14.2
+      },
+      {
+        "id": "s2",
+        "title": "How Does Storage Work?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Ever wonder how a database stores all that data? It uses tables, rows, columns—like a grid.",
+            "id": "s2_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/database-internals/s2_t1_a2a1cff6.mp3",
+            "dur": 4.22
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "But how does it not get mixed up?",
+            "id": "s2_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/database-internals/s2_t2_506d2f7b.mp3",
+            "dur": 1.36
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Keys! Each row has a unique key, like a social security number.",
+            "id": "s2_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/database-internals/s2_t3_31c84e30.mp3",
+            "dur": 2.35
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So now my data has a government ID?",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/database-internals/s2_t4_450fecc0.mp3",
+            "dur": 1.96
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Yep. No two rows are the same.",
+            "id": "s2_t5",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/database-internals/s2_t5_e8081c2a.mp3",
+            "dur": 1.01
+          }
+        ],
+        "quiz_after": {
+          "q": "What ensures no two rows in a database are identical?",
+          "options": [
+            "Magic",
+            "A unique key",
+            "A really fast computer"
+          ],
+          "correct": 1,
+          "reaction_correct": "Nailed it.",
+          "reaction_wrong": "Wow, that’s just sad.",
+          "reaction_correct_audio": "/static/audio/database-internals/s2_rok_4aba33d6.mp3",
+          "reaction_wrong_audio": "/static/audio/database-internals/s2_rno_44dc220b.mp3"
+        },
+        "dur": 10.9
+      },
+      {
+        "id": "s3",
+        "title": "Indexing: The Secret Sauce",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Indexes are like a book’s table of contents. They let the database find data without reading every row.",
+            "id": "s3_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/database-internals/s3_t1_d61ad8f9.mp3",
+            "dur": 4.13
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So why not index everything?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/database-internals/s3_t2_2fba87d2.mp3",
+            "dur": 1.48
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Because indexes take up space and slow down writes.",
+            "id": "s3_t3",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/database-internals/s3_t3_861f372a.mp3",
+            "dur": 2.25
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So it’s a trade-off, like my will to live vs. this conversation.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/database-internals/s3_t4_fc985901.mp3",
+            "dur": 4.14
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! Balance is key.",
+            "id": "s3_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/database-internals/s3_t5_1baee351.mp3",
+            "dur": 1.55
+          }
+        ],
+        "quiz_after": {
+          "q": "Why don’t databases index every column?",
+          "options": [
+            "It’s illegal",
+            "It slows down writes and uses extra space",
+            "The database gets bored"
+          ],
+          "correct": 1,
+          "reaction_correct": "You’re on fire.",
+          "reaction_wrong": "Oh, that hurt.",
+          "reaction_correct_audio": "/static/audio/database-internals/s3_rok_7d251ede.mp3",
+          "reaction_wrong_audio": "/static/audio/database-internals/s3_rno_1c339b37.mp3"
+        },
+        "dur": 13.55
+      },
+      {
+        "id": "s4",
+        "title": "Transactions: All or Nothing",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Transactions group operations so they all succeed or all fail—no partial changes.",
+            "id": "s4_t1",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/database-internals/s4_t1_a0259aee.mp3",
+            "dur": 4.03
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Like buying a house and a car at the same time?",
+            "id": "s4_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/database-internals/s4_t2_8bcdf672.mp3",
+            "dur": 2.03
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Exactly. If the house falls through, the car purchase rolls back too.",
+            "id": "s4_t3",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/database-internals/s4_t3_1865af66.mp3",
+            "dur": 2.89
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So databases have better commitment issues than me?",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/database-internals/s4_t4_fcbda8b6.mp3",
+            "dur": 2.36
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Yep, and they’re way more reliable.",
+            "id": "s4_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/database-internals/s4_t5_4fd1c1c4.mp3",
+            "dur": 1.55
+          }
+        ],
+        "quiz_after": {
+          "q": "What happens if one part of a transaction fails?",
+          "options": [
+            "The whole transaction rolls back",
+            "It keeps trying forever",
+            "The database panics"
+          ],
+          "correct": 0,
+          "reaction_correct": "You’re a natural.",
+          "reaction_wrong": "Oof, that’s rough.",
+          "reaction_correct_audio": "/static/audio/database-internals/s4_rok_b62825db.mp3",
+          "reaction_wrong_audio": "/static/audio/database-internals/s4_rno_9ae8d21c.mp3"
+        },
+        "dur": 12.86
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Database Internals. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
