@@ -1,4 +1,4 @@
-## Brainrot Academy
+## Brainrot Academy (powered by Mistral)
 
 **"What if learning could be dynamic?"**
 
@@ -19,9 +19,36 @@ Instead of just blocking brainrot (which people route around), BrainrotBouncer m
 
 ### Stack
 
-- **AI:** Mistral (content generation + learning verification)
+- **AI:** Mistral (mistral-medium-latest, mistral-ocr-latest, voxtral-mini-tts-latest, voxtral-mini-latest, voxtral-mini-transcribe-realtime-2602)
 - **Backend:** Python / Flask
 - **Frontend:** Vue.js
+
+
+## Mistral surface
+
+| Job | Model |
+|---|---|
+| Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
+| Touch-grass | `mistral-medium-latest` (vision) |
+| Handwritten math-gate answer extraction | `mistral-ocr-latest` |
+| Podcast + coach speech | `voxtral-mini-tts-latest` |
+| Talk-to-human transcription | `voxtral-mini-latest` |
+| Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |
+
+Voices are presets from `audio.voices.list(type_="preset")`, which ship as
+`<family>_<emotion>` slugs. A host is a voice family and each line picks an
+emotion, so the skeptic can actually sound confused and then sarcastic — that
+is most of what stops a two-hander sounding like one narrator reading both
+parts. Asking a family for an emotion it lacks is a hard 404, hence the
+fallback table in `config.py`.
+
+SDK notes for `mistralai` 2.x, where the docs and the API disagree:
+
+- the import is `from mistralai.client import Mistral`, not `from mistralai import …`
+- `audio.speech.complete(...)` returns `audio_data` as a **base64 string**
+- `voices.list(...)` paginates under `items` — there is no `voices` or `data`
+- the documented `voxtral-mini-transcribe-*` ids are **not served**; the general
+  `voxtral-mini-latest` handles the transcriptions endpoint
 
 ---
 
@@ -88,15 +115,6 @@ cd backend && .venv/Scripts/python.exe -m tools.generate_content --all
 `--stub` still writes a hand-authored photosynthesis pack with no API calls, as
 an offline fallback.
 
-## Tests
-
-```bash
-cd backend && .venv/bin/python -m pytest tests/ -q
-```
-
-`test_orchestrator.py` drives the transition engine directly — no server, no
-network. `test_api.py` proves the HTTP wiring. If the first is green, the core
-of the app works and any bug is in the wiring.
 
 ## How it fits together
 
@@ -125,28 +143,3 @@ session state for a card the client never shows, silently skipping questions.
 A friction gate stops the feed simply by being the final card, since the client
 will not fetch more until it is cleared. There is no scroll-locking anywhere.
 
-## Mistral surface
-
-| Job | Model |
-|---|---|
-| Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
-| Touch-grass / math-work photo checks | `mistral-medium-latest` (vision) |
-| Handwritten math-gate answer extraction | `mistral-ocr-latest` |
-| Podcast + coach speech | `voxtral-mini-tts-latest` |
-| Talk-to-human transcription | `voxtral-mini-latest` |
-| Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |
-
-Voices are presets from `audio.voices.list(type_="preset")`, which ship as
-`<family>_<emotion>` slugs. A host is a voice family and each line picks an
-emotion, so the skeptic can actually sound confused and then sarcastic — that
-is most of what stops a two-hander sounding like one narrator reading both
-parts. Asking a family for an emotion it lacks is a hard 404, hence the
-fallback table in `config.py`.
-
-SDK notes for `mistralai` 2.x, where the docs and the API disagree:
-
-- the import is `from mistralai.client import Mistral`, not `from mistralai import …`
-- `audio.speech.complete(...)` returns `audio_data` as a **base64 string**
-- `voices.list(...)` paginates under `items` — there is no `voices` or `data`
-- the documented `voxtral-mini-transcribe-*` ids are **not served**; the general
-  `voxtral-mini-latest` handles the transcriptions endpoint
