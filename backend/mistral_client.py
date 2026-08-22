@@ -163,6 +163,22 @@ def tts(text: str, *, voice_id: str, fmt: str = "mp3") -> bytes:
     return base64.b64decode(resp.audio_data)
 
 
+def tts_stream(text: str, *, voice_id: str):
+    """Yield raw float32 little-endian PCM chunks as Voxtral produces them."""
+    events = get_client().audio.speech.complete(
+        model=config.TTS_MODEL,
+        input=text,
+        voice_id=voice_id,
+        response_format="pcm",
+        stream=True,
+    )
+    with events as stream:
+        for event in stream:
+            audio_data = getattr(getattr(event, "data", None), "audio_data", None)
+            if audio_data:
+                yield base64.b64decode(audio_data)
+
+
 def transcribe(audio_bytes: bytes, *, filename: str = "clip.webm", language: str | None = None) -> str:
     def call():
         return get_client().audio.transcriptions.complete(

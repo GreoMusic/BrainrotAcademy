@@ -255,6 +255,41 @@ def render_audio(topic: str, script: dict, *, workers: int = 8, quiet: bool = Fa
     return script
 
 
+def rerender_existing_audio(topic: str, script: dict, *, workers: int = 8) -> dict:
+    """Replace a checked-in pack's MP3s in place using the current voice cast."""
+    out_dir = config.AUDIO_DIR / topic
+    jobs: list[tuple[Path, str, str]] = []
+
+    for seg in script.get("segments", []):
+        for turn in seg.get("turns", []):
+            voice = _voice_for(turn.get("speaker", "a"), turn.get("emotion"))
+            turn["voice"] = voice
+            path = out_dir / Path(turn["audio"]).name
+            jobs.append((path, turn["text"], voice))
+
+        qa = seg.get("quiz_after") or {}
+        for key, mood in (("reaction_correct", "confident"), ("reaction_wrong", "sarcasm")):
+            text = qa.get(key)
+            audio_url = qa.get("{}_audio".format(key))
+            if text and audio_url:
+                jobs.append((out_dir / Path(audio_url).name, text, _voice_for("b", mood)))
+
+    def render(job):
+        path, text, voice = job
+        path.write_bytes(mc.tts(text, voice_id=voice))
+        return path
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for done, path in enumerate(pool.map(render, jobs), 1):
+            print("  [{}/{}] {}".format(done, len(jobs), path.name))
+
+    for seg in script.get("segments", []):
+        for turn in seg.get("turns", []):
+            turn["dur"] = _duration(out_dir / Path(turn["audio"]).name)
+        seg["dur"] = round(sum(t.get("dur", 0) for t in seg.get("turns", [])), 2)
+    return script
+
+
 # ---------------------------------------------------------------------------
 # assembly
 # ---------------------------------------------------------------------------
@@ -357,6 +392,11 @@ def main() -> int:
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--stub", action="store_true", help="hand-written pack, no API calls")
     ap.add_argument("--skip-audio", action="store_true")
+    ap.add_argument(
+        "--rerender-audio",
+        action="store_true",
+        help="replace podcast MP3s in an existing topic pack using current voices",
+    )
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
 
@@ -372,9 +412,20 @@ def main() -> int:
         print("\nStub pack written - the feed works now, without an API key.")
         return 0
 
+    if args.rerender_audio:
+        if not args.topic:
+            ap.error("--rerender-audio requires --topic")
+        path = config.TOPICS_DIR / "{}.json".format(args.topic)
+        if not path.exists():
+            ap.error("topic pack does not exist: {}".format(path))
+        pack = json.loads(path.read_text(encoding="utf-8"))
+        pack["podcast"] = rerender_existing_audio(args.topic, pack["podcast"])
+        write_pack(pack)
+        return 0
+
     todo = sorted(TOPICS) if args.all else ([args.topic] if args.topic else [])
     if not todo:
-        ap.error("pass --topic, --all, --stub, or --list")
+        ap.error("pass --topic, --all, --stub, --rerender-audio, or --list")
 
     for topic in todo:
         write_pack(build_topic(topic, skip_audio=args.skip_audio))
