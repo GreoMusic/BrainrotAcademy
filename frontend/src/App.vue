@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { api } from './api'
 import FeedView from './views/FeedView.vue'
 import TouchGrassCard from './components/cards/TouchGrassCard.vue'
+import SubjectIcon from './components/SubjectIcon.vue'
 
 const board = ref(null)
 const openSubject = ref(null)
@@ -11,6 +12,7 @@ const draft = ref('')
 const error = ref('')
 const starting = ref(false)
 const justReset = ref(false)
+const enteredAcademy = ref(false)
 const previewFriction = import.meta.env.DEV
   && new URLSearchParams(window.location.search).get('preview') === 'friction'
 const previewFrictionDone = ref(false)
@@ -121,12 +123,34 @@ async function start(payload) {
         />
         <FeedView v-else-if="session" :session="session" />
 
-        <div v-else class="card reel">
-          <div class="reel-bg" style="filter: blur(6px)">🌀</div>
+        <div
+          v-else
+          class="card reel"
+          :class="{ 'landing-reel': !enteredAcademy && !starting && !subject }"
+        >
+          <div v-if="enteredAcademy || starting || subject" class="reel-bg" style="filter: blur(6px)">🌀</div>
 
           <div class="gate-full">
+            <!-- Landing: a Vue/CSS adaptation of the supplied lamp concept. -->
+            <div v-if="!enteredAcademy && !starting && !subject" class="landing-shell">
+              <div class="mistral-lamp" aria-hidden="true">
+                <div class="lamp-beam" />
+                <div class="lamp-haze" />
+                <div class="lamp-glow" />
+              </div>
+
+              <div class="landing-copy">
+                <div class="landing-wordmark">Brainrot Academy</div>
+                <h1>What if learning<br /><span>can be dynamic?</span></h1>
+                <p>Learn it. Explain it. Earn the scroll.</p>
+                <button class="landing-cta" @click="enteredAcademy = true">
+                  Start learning <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Building -->
-            <div v-if="starting" class="gate-card">
+            <div v-else-if="starting" class="gate-card">
               <div class="wordmark">Brainrot Academy</div>
               <div class="gate-ring spin"><div class="inner">✍️</div></div>
               <p class="gate-title">Building your round.</p>
@@ -140,7 +164,7 @@ async function start(payload) {
             <div v-else-if="subject" class="gate-card">
               <button class="back" @click="openSubject = null">‹ subjects</button>
               <div class="subj-head">
-                <span class="subj-emoji">{{ subject.emoji }}</span>
+                <SubjectIcon :slug="subject.slug" class="subject-mark large" />
                 <div>
                   <p class="gate-title" style="margin: 0">{{ subject.title }}</p>
                   <p class="tiny">{{ subject.used }} of {{ subject.total }} done</p>
@@ -189,7 +213,7 @@ async function start(payload) {
                   class="subj" :class="{ done: s.used === s.total }"
                   @click="openSubject = s.slug"
                 >
-                  <span class="subj-emoji">{{ s.emoji }}</span>
+                  <SubjectIcon :slug="s.slug" class="subject-mark" />
                   <b>{{ s.title }}</b>
                   <i>{{ s.used }}/{{ s.total }}</i>
                   <span class="meter"><i :style="{ width: (s.used / s.total) * 100 + '%' }" /></span>
@@ -226,6 +250,77 @@ async function start(payload) {
 </template>
 
 <style scoped>
+.landing-reel { background: #fff; }
+.landing-reel .gate-full { padding: 0; }
+.landing-shell {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 216, 0, 0.13), transparent 34%),
+    #fff;
+}
+.mistral-lamp {
+  position: absolute; top: 0; left: 0; width: 100%; height: 390px;
+  overflow: hidden; pointer-events: none;
+}
+.lamp-beam {
+  position: absolute; top: -18px; left: 50%; width: 310px; height: 282px;
+  transform: translateX(-50%) scaleX(0.56); transform-origin: center top;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse 74% 88% at 50% 0%, rgba(255, 175, 0, 0.31) 0%, rgba(255, 130, 5, 0.15) 43%, rgba(250, 80, 15, 0.04) 66%, transparent 82%);
+  filter: blur(11px);
+  animation:
+    beam-open 1.45s 100ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    beam-breathe 5.8s 1.55s ease-in-out infinite;
+}
+.lamp-haze {
+  position: absolute; top: -62px; left: 50%; width: 292px; height: 224px;
+  transform: translateX(-50%); border-radius: 50%;
+  background: rgba(255, 130, 5, 0.16); filter: blur(44px);
+  animation: haze-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.lamp-glow {
+  position: absolute; top: -28px; left: 50%; width: 184px; height: 94px;
+  transform: translateX(-50%); border-radius: 50%;
+  background: rgba(255, 175, 0, 0.48); filter: blur(22px);
+  animation: glow-in 1.35s 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.landing-copy {
+  position: relative; z-index: 2; width: 100%; margin-top: 46px; padding: 0 24px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  animation: copy-rise 800ms 260ms ease-out both;
+}
+.landing-wordmark {
+  margin-bottom: 15px; color: #c65125; font-family: "Grand Hotel", cursive;
+  font-size: 22px; font-weight: 400; line-height: 1; letter-spacing: 0;
+}
+.landing-copy h1 {
+  color: #191919; font-size: 31px; line-height: 1.05; letter-spacing: -0.045em;
+  font-weight: 780;
+}
+.landing-copy h1 span {
+  color: #d75a24;
+}
+.landing-copy p { margin-top: 15px; color: #777; font-size: 12px; letter-spacing: -0.01em; }
+.landing-cta {
+  min-width: 174px; margin-top: 27px; padding: 12px 18px;
+  display: flex; align-items: center; justify-content: center; gap: 11px;
+  border-radius: 999px; color: #fff; background: #e9480b;
+  font-size: 12px; font-weight: 750; box-shadow: 0 9px 24px rgba(233, 72, 11, 0.2);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.landing-cta:active { transform: translateY(1px) scale(0.99); box-shadow: 0 5px 14px rgba(233, 72, 11, 0.18); }
+.landing-cta span { font-size: 15px; line-height: 1; }
+@keyframes beam-open {
+  from { opacity: 0; transform: translateX(-50%) scaleX(0.56); }
+  to { opacity: 0.86; transform: translateX(-50%) scaleX(1); }
+}
+@keyframes beam-breathe { 0%, 100% { opacity: 0.68; } 50% { opacity: 0.88; } }
+@keyframes haze-in { from { opacity: 0; transform: translateX(-50%) scale(0.6); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
+@keyframes glow-in { from { opacity: 0; transform: translateX(-50%) scaleX(0.45); } to { opacity: 1; transform: translateX(-50%) scaleX(1); } }
+@keyframes copy-rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+
 .subjects { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 14px; }
 .subj {
   position: relative;
@@ -237,7 +332,7 @@ async function start(payload) {
   overflow: hidden;
 }
 .subj.done { opacity: 0.5; }
-.subj-emoji { font-size: 21px; display: block; }
+.subject-mark { margin: 0 auto 2px; }
 .subj b { display: block; font-size: 12px; margin-top: 3px; }
 .subj i { display: block; font-style: normal; font-size: 10px; color: var(--dim); margin-top: 1px; }
 .meter { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #eee; display: block; }
@@ -248,7 +343,7 @@ async function start(payload) {
   display: block; margin-bottom: 10px;
 }
 .subj-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; text-align: left; }
-.subj-head .subj-emoji { font-size: 26px; }
+.subj-head .subject-mark { margin: 0; flex: none; }
 .tiny { font-size: 11px; color: var(--dim); margin-top: 2px; }
 
 .topic-row {

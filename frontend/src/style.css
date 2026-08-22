@@ -154,7 +154,7 @@ button { border: 0; background: none; cursor: pointer; }
   margin-bottom: 14px;
   text-transform: uppercase;
 }
-.pill.grad { background: var(--brand-gradient); color: #fff; }
+.pill.grad { background: #d75a24; color: #fff; }
 .pill.blue { background: rgba(0, 149, 246, 0.1); color: var(--blue); }
 .pill.gray { background: #f2f2f2; color: #666; }
 
