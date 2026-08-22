@@ -540,8 +540,8 @@ onBeforeUnmount(() => {
           </svg>
         </div>
         <div>
-          <div class="name">coach</div>
-          <div class="status">active now</div>
+          <div class="name">Coach</div>
+          <div class="status">Active Now</div>
         </div>
       </div>
       <button class="end-button" @click="endCoaching">End coaching</button>
