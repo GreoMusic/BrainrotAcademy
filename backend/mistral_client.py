@@ -177,7 +177,11 @@ def transcribe(audio_bytes: bytes, *, filename: str = "clip.webm", language: str
 
 def list_preset_voices() -> list[dict[str, Any]]:
     """Discover real preset voice ids rather than hardcoding guesses."""
-    resp = _retry(lambda: get_client().audio.voices.list(type_="preset", limit=50), what="voices.list")
+    resp = _retry(
+        lambda: get_client().audio.voices.list(type_="preset", limit=50), what="voices.list"
+    )
+    # The live response paginates under `items`; the getattr chain keeps this
+    # working if a future SDK renames it again.
     out = []
     for v in (
         getattr(resp, "items", None)
@@ -188,6 +192,8 @@ def list_preset_voices() -> list[dict[str, Any]]:
         out.append(
             {
                 "id": getattr(v, "id", None) or getattr(v, "voice_id", None),
+                # tts takes either, but the slug is what composes with an emotion
+                "slug": getattr(v, "slug", None),
                 "name": getattr(v, "name", None),
                 "gender": getattr(v, "gender", None),
                 "languages": getattr(v, "languages", None),

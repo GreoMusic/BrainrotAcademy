@@ -1,0 +1,468 @@
+{
+  "topic": "cat-purring",
+  "title": "Cat Purring",
+  "emoji": "🐱",
+  "blurb": "Understand why cats purr and its meaning",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "Why do cats purr when they're happy?",
+      "back": "Purring signals contentment, but also healing and stress relief.",
+      "hook": "Happy vibes or secret superpower?"
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "Can cats purr when they're in pain?",
+      "back": "Yes! Purring releases endorphins, their natural painkillers.",
+      "hook": "Purr-therapy is real."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "How do cats actually purr?",
+      "back": "Rapid muscle twitches in their larynx vibrate.",
+      "hook": "Built-in motor in their throat."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "Do big cats like lions purr?",
+      "back": "Only on exhale—domestic cats purr both ways.",
+      "hook": "Big cats are half-purrless."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "Can a cat's purr heal bones?",
+      "back": "Yes! 25-50 Hz purrs may speed up healing.",
+      "hook": "Purr-fect doctor’s prescription."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "Why do kittens purr as newborns?",
+      "back": "They’re born blind/deaf—purring helps mom find them.",
+      "hook": "Tiny meows, loud purrs."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "A cat’s purr vibrates at the same frequency that promotes bone density in humans.",
+      "emoji": "🦴"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Cats purr during labor to self-soothe and release calming hormones.",
+      "emoji": "😌"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "Some cats purr so loud they hit 60 decibels—like a vacuum cleaner.",
+      "emoji": "🔊"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "The Basics of Purring"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Purring Beyond Happiness"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "The Science of Purr Frequencies"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Purring in the Wild"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "What is the primary reason cats purr when they are happy?",
+      "options": [
+        "To communicate contentment and relaxation",
+        "To scare away predators",
+        "To regulate their body temperature"
+      ],
+      "correct": 0,
+      "explain": "Cats often purr as a sign of contentment and relaxation, similar to a human smile."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Can cats purr when they are in pain or distress?",
+      "options": [
+        "No, purring only occurs when cats are happy",
+        "Yes, cats may purr to self-soothe or signal they need help",
+        "Only kittens purr in pain, not adult cats"
+      ],
+      "correct": 1,
+      "explain": "Cats may purr when in pain or distress as a self-soothing mechanism or to solicit care."
+    },
+    {
+      "item_id": "fc3",
+      "q": "How do cats produce their purring sound?",
+      "options": [
+        "By rapidly moving their vocal cords using their laryngeal muscles",
+        "By vibrating their whiskers",
+        "By exhaling air through their nose"
+      ],
+      "correct": 0,
+      "explain": "Cats purr by rapidly contracting their laryngeal muscles, which causes their vocal cords to separate and snap back together."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Do big cats like lions and tigers purr continuously like domestic cats?",
+      "options": [
+        "Yes, all big cats purr just like house cats",
+        "No, only some big cats like cheetahs and cougars can purr continuously",
+        "Big cats roar instead of purring"
+      ],
+      "correct": 1,
+      "explain": "Only smaller big cats, such as cheetahs and cougars, can purr continuously like domestic cats, while larger ones like lions and tigers cannot."
+    },
+    {
+      "item_id": "fc5",
+      "q": "Is there evidence that a cat’s purr can help heal bones or tissues?",
+      "options": [
+        "No, this is purely a myth with no scientific basis",
+        "Yes, the frequency of a cat’s purr can promote bone density and healing",
+        "Only in very rare cases with specific breeds"
+      ],
+      "correct": 1,
+      "explain": "Studies suggest that the frequency of a cat’s purr (20-140 Hz) may promote bone density and accelerate healing."
+    },
+    {
+      "item_id": "fc6",
+      "q": "Why do newborn kittens purr almost immediately after birth?",
+      "options": [
+        "To communicate with their mother and siblings",
+        "To scare off potential threats",
+        "To regulate their body temperature"
+      ],
+      "correct": 0,
+      "explain": "Newborn kittens purr to communicate with their mother and littermates, often during nursing."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What is true about the frequency of a cat’s purr in relation to human health?",
+      "options": [
+        "It matches the frequency that can promote bone density in humans",
+        "It is too low to have any effect on human bones",
+        "It is harmful to human hearing over time"
+      ],
+      "correct": 0,
+      "explain": "A cat’s purr vibrates at frequencies (20-140 Hz) that have been shown to promote bone density and healing in humans."
+    },
+    {
+      "item_id": "ff2",
+      "q": "Why might a cat purr during labor or stressful situations?",
+      "options": [
+        "To release calming hormones and self-soothe",
+        "To attract a mate",
+        "To signal aggression"
+      ],
+      "correct": 0,
+      "explain": "Cats may purr during labor or stress to release calming hormones and self-soothe."
+    },
+    {
+      "item_id": "ff3",
+      "q": "How loud can some cats purr?",
+      "options": [
+        "Up to 40 decibels, like a quiet library",
+        "Up to 60 decibels, like a vacuum cleaner",
+        "Up to 80 decibels, like a busy street"
+      ],
+      "correct": 1,
+      "explain": "Some cats can purr as loudly as 60 decibels, comparable to the sound of a vacuum cleaner."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "The Basics of Purring",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "You ever notice how cats just... vibrate when they're happy?",
+            "id": "s1_t1",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/cat-purring/s1_t1_2f85304a.mp3",
+            "dur": 2.6
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Yeah, but why do they do that? Are they, like, charging up or something?",
+            "id": "s1_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/cat-purring/s1_t2_f00b8441.mp3",
+            "dur": 2.97
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Haha, no! Purring’s actually a muscle twitch in their larynx. Starts when they’re kittens.",
+            "id": "s1_t3",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/cat-purring/s1_t3_2d64d480.mp3",
+            "dur": 3.71
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so their throat’s just a tiny motor?",
+            "id": "s1_t4",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/cat-purring/s1_t4_b082787a.mp3",
+            "dur": 2.52
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Exactly. Neural signals make their vocal cords spasm 25 to 150 times a second.",
+            "id": "s1_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/cat-purring/s1_t5_e5fd987e.mp3",
+            "dur": 3.29
+          }
+        ],
+        "quiz_after": {
+          "q": "What causes a cat’s purr?",
+          "options": [
+            "Muscle twitches in the larynx",
+            "A tiny motor in their throat",
+            "Vibrating whiskers"
+          ],
+          "correct": 0,
+          "reaction_correct": "Okay, you’re smarter than me.",
+          "reaction_wrong": "Wow, my theory was better.",
+          "reaction_correct_audio": "/static/audio/cat-purring/s1_rok_3be70ee8.mp3",
+          "reaction_wrong_audio": "/static/audio/cat-purring/s1_rno_c1b89b14.mp3"
+        },
+        "dur": 15.09
+      },
+      {
+        "id": "s2",
+        "title": "Purring Beyond Happiness",
+        "turns": [
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So they only purr when they’re happy, right?",
+            "id": "s2_t1",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/cat-purring/s2_t1_bc2ccace.mp3",
+            "dur": 1.96
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Nope! They purr when they’re stressed, healing, or even in pain.",
+            "id": "s2_t2",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/cat-purring/s2_t2_4abcc1c0.mp3",
+            "dur": 3.2
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Wait, that’s the opposite of happy. What’s the point?",
+            "id": "s2_t3",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/cat-purring/s2_t3_a1c179d6.mp3",
+            "dur": 2.48
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "It’s a self-soothing thing. The vibrations might even promote healing!",
+            "id": "s2_t4",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/cat-purring/s2_t4_e5ca3017.mp3",
+            "dur": 2.81
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So purring’s like cat therapy?",
+            "id": "s2_t5",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/cat-purring/s2_t5_41160016.mp3",
+            "dur": 2.09
+          },
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "Yep. And it’s also how kittens communicate with their moms.",
+            "id": "s2_t6",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/cat-purring/s2_t6_8e5777fe.mp3",
+            "dur": 2.1
+          }
+        ],
+        "quiz_after": {
+          "q": "When else might a cat purr besides being happy?",
+          "options": [
+            "When stressed or healing",
+            "When hungry",
+            "When asleep"
+          ],
+          "correct": 0,
+          "reaction_correct": "Fine, you win this time.",
+          "reaction_wrong": "Pfft, even my cat knows better.",
+          "reaction_correct_audio": "/static/audio/cat-purring/s2_rok_2218ccab.mp3",
+          "reaction_wrong_audio": "/static/audio/cat-purring/s2_rno_13464a86.mp3"
+        },
+        "dur": 14.64
+      },
+      {
+        "id": "s3",
+        "title": "The Science of Purr Frequencies",
+        "turns": [
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Okay, but why does it sound so... weird?",
+            "id": "s3_t1",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/cat-purring/s3_t1_6d5f5408.mp3",
+            "dur": 3.25
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "The frequency range is between 25 and 150 Hz.",
+            "id": "s3_t2",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/cat-purring/s3_t2_4b279a5e.mp3",
+            "dur": 3.33
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Hz? Like, music notes?",
+            "id": "s3_t3",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/cat-purring/s3_t3_95eeae9e.mp3",
+            "dur": 1.32
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Yes! And some of those frequencies might help bones and tissues heal faster.",
+            "id": "s3_t4",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/cat-purring/s3_t4_fb345f19.mp3",
+            "dur": 2.94
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So cats are basically walking medicine?",
+            "id": "s3_t5",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/cat-purring/s3_t5_cba748f6.mp3",
+            "dur": 1.97
+          }
+        ],
+        "quiz_after": {
+          "q": "What frequency range does a cat’s purr fall into?",
+          "options": [
+            "25 to 150 Hz",
+            "50 to 200 Hz",
+            "10 to 50 Hz"
+          ],
+          "correct": 0,
+          "reaction_correct": "Ugh, stop being right.",
+          "reaction_wrong": "At least I’m consistent.",
+          "reaction_correct_audio": "/static/audio/cat-purring/s3_rok_67bbb1b9.mp3",
+          "reaction_wrong_audio": "/static/audio/cat-purring/s3_rno_d683f3b9.mp3"
+        },
+        "dur": 12.81
+      },
+      {
+        "id": "s4",
+        "title": "Purring in the Wild",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "Wild cats purr too, you know. Big cats like cheetahs and pumas.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/cat-purring/s4_t1_69774aad.mp3",
+            "dur": 2.06
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So lions just rumble like a truck engine?",
+            "id": "s4_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/cat-purring/s4_t2_76bcb694.mp3",
+            "dur": 2.78
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "No, lions roar. But cheetahs? They purr like house cats.",
+            "id": "s4_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/cat-purring/s4_t3_5d2cdc07.mp3",
+            "dur": 3.16
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Why don’t all big cats purr?",
+            "id": "s4_t4",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/cat-purring/s4_t4_f4668d6f.mp3",
+            "dur": 1.86
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Their larynx structure’s different. Only cats with a flexible hyoid bone can purr continuously.",
+            "id": "s4_t5",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/cat-purring/s4_t5_1e95406c.mp3",
+            "dur": 3.92
+          }
+        ],
+        "quiz_after": {
+          "q": "Which big cat can purr like a house cat?",
+          "options": [
+            "Cheetah",
+            "Lion",
+            "Tiger"
+          ],
+          "correct": 0,
+          "reaction_correct": "Fine, you’re on fire.",
+          "reaction_wrong": "Even my goldfish knew that.",
+          "reaction_correct_audio": "/static/audio/cat-purring/s4_rok_0662cc6b.mp3",
+          "reaction_wrong_audio": "/static/audio/cat-purring/s4_rno_e66f85bb.mp3"
+        },
+        "dur": 13.78
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Cat Purring. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

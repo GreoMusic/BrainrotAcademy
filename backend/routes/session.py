@@ -11,6 +11,7 @@ from flask import Blueprint, jsonify, request
 
 import content
 import orchestrator as orch
+import topics
 
 bp = Blueprint("session", __name__, url_prefix="/api")
 
@@ -32,28 +33,66 @@ def _get(session_id: str):
 
 
 @bp.get("/topics")
-def topics():
-    return jsonify({"topics": content.list_topics()})
+def list_topics():
+    return jsonify({"topics": topics.suggestions()})
+
+
+@bp.get("/topics/<slug>/status")
+def topic_status(slug: str):
+    """Polled by the podcast card while voices render in the background."""
+    return jsonify(topics.status(slug))
+
+
+@bp.get("/topics/<slug>/segment/<seg_id>")
+def topic_segment(slug: str, seg_id: str):
+    """Re-read one podcast segment.
+
+    Lets a podcast card that started on captions alone pick up its audio once
+    the background render finishes, without restarting the session.
+    """
+    try:
+        pack = content.load_pack(slug)
+    except content.TopicNotFound as exc:
+        return jsonify({"error": str(exc)}), 404
+
+    seg = next(
+        (s for s in pack.get("podcast", {}).get("segments", []) if s["id"] == seg_id), None
+    )
+    if seg is None:
+        return jsonify({"error": "no such segment"}), 404
+    return jsonify({"segment": seg, "audio_ready": bool(pack.get("audio_ready"))})
 
 
 @bp.post("/session")
 def start():
+    """Start a session on any subject the user types.
+
+    Blocks for text generation (a few seconds on a new topic, instant on a
+    cached one). Audio renders in the background and lands later.
+    """
     body = request.get_json(silent=True) or {}
-    topic = body.get("topic")
+    topic = (body.get("topic") or "").strip()
     if not topic:
         return jsonify({"error": "topic required"}), 400
+    if len(topic) > 120:
+        return jsonify({"error": "topic too long"}), 400
+
     try:
-        pack = content.load_pack(topic)
-    except content.TopicNotFound as exc:
-        return jsonify({"error": str(exc)}), 404
+        slug, pack = topics.ensure_pack(topic)
+    except topics.TopicRejected as exc:
+        return jsonify({"error": str(exc), "rejected": True}), 422
+    except Exception as exc:  # noqa: BLE001
+        return jsonify({"error": "could not build that topic: {}".format(exc)}), 502
 
     sid = uuid.uuid4().hex[:12]
-    SESSIONS[sid] = orch.new_session(sid, topic, pack)
+    SESSIONS[sid] = orch.new_session(sid, slug, pack)
     return jsonify(
         {
             "session_id": sid,
-            "topic": topic,
-            "title": pack.get("title", topic),
+            "topic": slug,
+            "title": pack.get("title", slug),
+            "emoji": pack.get("emoji", ""),
+            "audio_ready": bool(pack.get("audio_ready")),
             "progress": orch.progress(SESSIONS[sid]),
         }
     )
