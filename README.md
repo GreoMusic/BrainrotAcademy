@@ -123,7 +123,8 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 | Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
 | Touch-grass photo check | `mistral-medium-latest` (vision) |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
-| Coach mic + conversation check | `voxtral-mini-latest` |
+| Talk-to-human transcription | `voxtral-mini-latest` |
+| Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |
 
 Voices are presets from `audio.voices.list(type_="preset")`, which ship as
 `<family>_<emotion>` slugs. A host is a voice family and each line picks an

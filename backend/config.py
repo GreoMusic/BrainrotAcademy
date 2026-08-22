@@ -16,6 +16,9 @@ TTS_MODEL = os.getenv("TTS_MODEL", "voxtral-mini-tts-latest")
 # The general audio model handles the transcriptions endpoint; verified by
 # round-tripping our own TTS output back through it in tools/smoke_test.py.
 STT_MODEL = os.getenv("STT_MODEL", "voxtral-mini-latest")
+REALTIME_STT_MODEL = os.getenv(
+    "REALTIME_STT_MODEL", "voxtral-mini-transcribe-realtime-2602"
+)
 
 DATA_DIR = BASE_DIR / "data"
 TOPICS_DIR = DATA_DIR / "topics"
@@ -31,12 +34,11 @@ CLIPS_DIR = STATIC_DIR / "clips"
 # then curious. The slug and the uuid are interchangeable as a voice_id; slugs
 # are used here because they compose with the emotion.
 #
-# Casting follows main's choice of Jane + Oliver. The skeptic has to be Jane -
-# Oliver's family carries no `confused` or `sarcasm`, which are exactly the
-# registers that role needs.
-VOICE_HOST_A = os.getenv("VOICE_HOST_A", "gb_oliver")  # the explainer
+# Paul gives the explainer a warm American delivery; Jane keeps the skeptic a
+# genuinely different person and carries the confused/sarcastic registers.
+VOICE_HOST_A = os.getenv("VOICE_HOST_A", "en_paul")    # the explainer
 VOICE_HOST_B = os.getenv("VOICE_HOST_B", "gb_jane")    # the skeptic
-VOICE_COACH = os.getenv("VOICE_COACH", "gb_jane_confident")
+VOICE_COACH = os.getenv("VOICE_COACH", "en_paul_cheerful")
 
 # Each family carries a different emotion set; asking for one it lacks 404s.
 VOICE_EMOTIONS = {

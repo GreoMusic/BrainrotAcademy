@@ -3,6 +3,7 @@
 Complements test_orchestrator.py: that one proves the engine, this one proves
 the wiring between the engine and HTTP.
 """
+import json
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ import catalogue  # noqa: E402
 import mistral_client  # noqa: E402
 import topics  # noqa: E402
 from routes.session import BLOCKING  # noqa: E402
+from routes import coach as coach_routes  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -75,7 +77,48 @@ def after_first_check(seen):
 
 
 def test_health(client):
-    assert client.get("/api/health").get_json()["ok"] is True
+    health = client.get("/api/health").get_json()
+    assert health["ok"] is True
+    assert health["realtime_stt_model"] == config.REALTIME_STT_MODEL
+
+
+def test_realtime_coach_websocket_is_registered(client):
+    rules = {rule.rule for rule in client.application.url_map.iter_rules() if rule.websocket}
+    assert "/api/coach/realtime" in rules
+
+
+def test_coach_reply_stream_interleaves_text_and_pcm(client, monkeypatch):
+    monkeypatch.setattr(
+        coach_routes,
+        "_coach_payload",
+        lambda *_args: {
+            "transcript": "Plants use light.",
+            "reply": "Good start. What comes next?",
+            "understood": True,
+            "done": False,
+        },
+    )
+    monkeypatch.setattr(
+        coach_routes.mc,
+        "tts_stream",
+        lambda *_args, **_kwargs: iter((b"\0" * 16, b"\1" * 16)),
+    )
+
+    response = client.post(
+        "/api/coach/turn/stream",
+        json={"text": "Plants use light.", "topic": "photosynthesis", "history": []},
+    )
+    events = [json.loads(line) for line in response.get_data(as_text=True).splitlines()]
+
+    assert response.status_code == 200
+    assert "".join(e["text"] for e in events if e["type"] == "text_delta") == (
+        "Good start. What comes next?"
+    )
+    assert sum(e["type"] == "audio" for e in events) == 2
+    assert next(i for i, e in enumerate(events) if e["type"] == "audio") < max(
+        i for i, e in enumerate(events) if e["type"] == "text_delta"
+    )
+    assert events[-1] == {"type": "result", "understood": True, "done": False}
 
 
 def test_unknown_session_404s(client):
