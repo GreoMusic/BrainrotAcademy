@@ -1,6 +1,6 @@
 ## Brainrot Academy
 
-**"You don't get in the club until you prove you've got something upstairs."**
+**"What if learning could be dynamic?"**
 
 Brainrot Academy is an app that gates mindless doomscrolling behind proof of real learning — turning brainrot consumption into a reward you have to earn, not a default state you fall into.
 
