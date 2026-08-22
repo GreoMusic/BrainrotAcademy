@@ -8,7 +8,7 @@ Brainrot Academy is an app that gates mindless doomscrolling behind proof of rea
 
 1. **Learn** — Mistral dynamically generates bite-sized learning content on a topic: an interactive podcast, flashcards, and fun facts, so every session feels fresh instead of reused material.
 2. **Prove it** — An AI conversational coach quizzes you, talking through what you just learned like a real study partner. Mistral judges whether your answers show genuine understanding or you're just bluffing. Fail, and you're sent back to the learning stage. Pass, and the gate opens.
-3. **Scroll (briefly)** — Once you're "worthy," you get timed access to a TikTok-style feed — same addictive scroll mechanic, but built on static/curated content instead of an infinite algorithmic pit.
+3. **Scroll (briefly)** — Once you're "worthy," you get listed access to a TikTok-style feed — same addictive scroll mechanic, but built on static/curated content instead of an infinite algorithmic pit.
 4. **Hit friction** — Just as you settle in, the app throws up a wall: solve a math problem (and photograph your actual work — a correct number alone proves nothing) or go talk to a real person nearby (with live transcription) before you can keep scrolling.
 5. **Scroll again** — Clearing that first wall buys one more round of scroll, not an instant trip back to lessons.
 6. **Hit friction again, then back to learning** — The second wall in a row resets the loop, pulling you back toward learning instead of letting the scroll spiral continue indefinitely.
