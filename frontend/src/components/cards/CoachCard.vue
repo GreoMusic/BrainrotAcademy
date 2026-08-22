@@ -25,9 +25,11 @@ let silentGain = null
 let audioEl = null
 let silenceTimer = null
 let finishTimer = null
+let animationTimer = null
 let heardSpeech = false
 let lastSpeechAt = 0
 let ended = false
+let normalSocketClose = false
 
 const SILENCE_MS = 3000
 
@@ -37,15 +39,32 @@ function scrollDown() {
   })
 }
 
-function handle(data) {
+async function streamReply(text) {
+  const message = { role: 'assistant', content: '', streaming: true }
+  messages.value.push(message)
+  scrollDown()
+
+  const words = text.match(/\S+\s*/g) || [text]
+  for (const word of words) {
+    if (ended) return
+    message.content += word
+    scrollDown()
+    await new Promise((resolve) => {
+      animationTimer = setTimeout(resolve, 42)
+    })
+  }
+  message.streaming = false
+}
+
+async function handle(data) {
   if (ended) return
   if (data.error) {
     messages.value.push({ role: 'assistant', content: 'Coach is offline: ' + data.error })
     scrollDown()
     return
   }
-  messages.value.push({ role: 'assistant', content: data.reply })
-  scrollDown()
+  await streamReply(data.reply)
+  if (ended) return
 
   if (data.audio) {
     audioEl = new Audio(data.audio)
@@ -74,7 +93,7 @@ async function askCoach(text) {
         audio_reply: true,
       }),
     })
-    handle(await res.json())
+    await handle(await res.json())
   } catch {
     messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
   } finally {
@@ -133,6 +152,7 @@ async function startLiveMic() {
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
     socket = new WebSocket(`${protocol}//${location.host}/api/coach/realtime`)
     socket.binaryType = 'arraybuffer'
+    normalSocketClose = false
     liveTranscript.value = ''
     heardSpeech = false
     lastSpeechAt = 0
@@ -176,6 +196,7 @@ async function startLiveMic() {
         liveStatus.value = ''
         const text = (data.text || liveTranscript.value).trim()
         liveTranscript.value = ''
+        normalSocketClose = true
         socket.close()
         if (text) await askCoach(text)
       }
@@ -186,12 +207,14 @@ async function startLiveMic() {
         finalizing.value = false
         liveStatus.value = ''
         messages.value.push({ role: 'assistant', content: `Live transcription failed: ${data.error}` })
+        normalSocketClose = true
         socket.close()
         scrollDown()
       }
     }
 
     socket.onerror = () => {
+      if (normalSocketClose) return
       releaseAudio()
       connecting.value = false
       recording.value = false
@@ -217,14 +240,17 @@ function endCoaching() {
   ended = true
   if (audioEl) audioEl.pause()
   releaseAudio()
+  normalSocketClose = true
   if (socket && socket.readyState < WebSocket.CLOSING) socket.close()
   emit('answered', false)
 }
 
 onBeforeUnmount(() => {
   if (finishTimer) clearTimeout(finishTimer)
+  if (animationTimer) clearTimeout(animationTimer)
   if (audioEl) audioEl.pause()
   releaseAudio()
+  normalSocketClose = true
   if (socket && socket.readyState < WebSocket.CLOSING) socket.close()
 })
 </script>
@@ -258,7 +284,10 @@ onBeforeUnmount(() => {
 
     <div class="content">
       <div class="chat-area" ref="scroller">
-        <div v-for="(m, i) in messages" :key="i" class="bubble" :class="m.role === 'user' ? 'me' : 'them'">
+        <div
+          v-for="(m, i) in messages" :key="i" class="bubble"
+          :class="[m.role === 'user' ? 'me' : 'them', { streaming: m.streaming }]"
+        >
           {{ m.content }}
         </div>
         <div v-if="recording || finalizing" class="bubble me live-transcript">
@@ -305,6 +334,12 @@ onBeforeUnmount(() => {
 }
 .end-button:active { transform: scale(0.97); }
 .typing { opacity: 0.65; letter-spacing: 3px; }
+.bubble.streaming::after {
+  content: ''; display: inline-block; width: 2px; height: 1em; margin-left: 3px;
+  vertical-align: -2px; border-radius: 2px; background: currentColor;
+  animation: cursorBlink 0.8s steps(1) infinite;
+}
+@keyframes cursorBlink { 50% { opacity: 0; } }
 .live-transcript { position: relative; min-width: 74px; font-style: italic; }
 .live-dot {
   display: inline-block; width: 6px; height: 6px; margin-left: 5px;
