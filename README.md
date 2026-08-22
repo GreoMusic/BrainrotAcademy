@@ -9,8 +9,9 @@ Brainrot Academy is an app that gates mindless doomscrolling behind proof of rea
 1. **Learn** — Mistral dynamically generates bite-sized learning content on a topic: an interactive podcast, flashcards, and fun facts, so every session feels fresh instead of reused material.
 2. **Prove it** — An AI conversational coach quizzes you, talking through what you just learned like a real study partner. Mistral judges whether your answers show genuine understanding or you're just bluffing. Fail, and you're sent back to the learning stage. Pass, and the gate opens.
 3. **Scroll (briefly)** — Once you're "worthy," you get timed access to a TikTok-style feed — same addictive scroll mechanic, but built on static/curated content instead of an infinite algorithmic pit.
-4. **Hit friction** — Just as you settle in, the app throws up a wall: solve a quick math problem, or go talk to a real person nearby (with live transcription) before you can keep scrolling.
-5. **Back to learning** — The loop resets, pulling you back toward learning instead of letting the scroll spiral continue.
+4. **Hit friction** — Just as you settle in, the app throws up a wall: solve a math problem (and photograph your actual work — a correct number alone proves nothing) or go talk to a real person nearby (with live transcription) before you can keep scrolling.
+5. **Scroll again** — Clearing that first wall buys one more round of scroll, not an instant trip back to lessons.
+6. **Hit friction again, then back to learning** — The second wall in a row resets the loop, pulling you back toward learning instead of letting the scroll spiral continue indefinitely.
 
 ### Why It Works
 
@@ -18,8 +19,8 @@ Instead of just blocking brainrot (which people route around), BrainrotBouncer m
 
 ### Stack
 
-- **AI:** Mistral (content generation + learning verification) 
-- **Backend:** Python / Flask 
+- **AI:** Mistral (content generation + learning verification)
+- **Backend:** Python / Flask
 - **Frontend:** Vue.js
 
 ---
@@ -44,15 +45,22 @@ Open http://localhost:5173.
 cd backend
 python -m venv .venv
 .venv/Scripts/python.exe -m pip install -r requirements.txt
-cp .env.example .env      # then put your Mistral key in it
+cp .env.example .env      # then put your Mistral (and optionally GIPHY) key in it
 .venv/Scripts/python.exe -m tools.smoke_test
 ```
 
 `smoke_test` verifies chat, TTS and transcription in one shot and prints the
 real preset voice ids. Everything else is generated on demand.
 
-Drop any vertical `.mp4` files into `backend/static/clips/` and they become the
-doomscroll reel automatically.
+The doomscroll reel is built from two sources, interleaved: any vertical
+`.mp4` files dropped into `backend/static/clips/`, and actual GIPHY brainrot
+(skibidi, subway surfers, sigma, and the rest of `BRAINROT_QUERIES` in
+`backend/giphy_client.py` — not generic trending, which skews toward normal
+meme content) if `GIPHY_API_KEY` is set (free key at
+https://developers.giphy.com/). Both are optional — with neither, the reel
+falls back to a placeholder card. GIPHY clips are fetched once per topic at
+generation time, same as the podcast audio, so nothing on the scroll path
+ever calls an API.
 
 ### Topics are generated on demand
 
@@ -97,7 +105,8 @@ of the app works and any bug is in the wiring.
 | `backend/orchestrator.py` | The transition engine. Pure functions over a dict. |
 | `backend/routes/session.py` | The feed's only critical path. Does no network I/O. |
 | `backend/mistral_client.py` | Every Mistral call: chat, vision, TTS, transcription. |
-| `backend/tools/generate_content.py` | Offline. Writes topic packs + podcast MP3s. |
+| `backend/giphy_client.py` | GIPHY reel clips. Best-effort - no key or a failure just means fewer clips. |
+| `backend/tools/generate_content.py` | Offline. Writes topic packs + podcast MP3s + reel gifs. |
 | `frontend/src/views/FeedView.vue` | Scroll-snap feed, server-driven card switch. |
 | `frontend/src/components/cards/` | One component per card type. |
 
@@ -121,7 +130,7 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 | Job | Model |
 |---|---|
 | Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
-| Touch-grass photo check | `mistral-medium-latest` (vision) |
+| Touch-grass / math-work photo checks | `mistral-medium-latest` (vision) |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
 | Talk-to-human transcription | `voxtral-mini-latest` |
 | Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |

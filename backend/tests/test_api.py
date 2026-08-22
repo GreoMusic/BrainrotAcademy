@@ -320,11 +320,18 @@ def test_learn_round_mixes_card_kinds(client, sid):
 
 
 def test_clearing_a_gate_returns_to_learning_while_material_remains(client, sid):
-    """The happy path must keep teaching. Sending every cleared gate straight to
-    CHECK meant new material only ever appeared by failing a quiz."""
-    seen = walk(client, sid, correct=True, stop=lambda s: s.count("math_gate") == 1)
-    after = walk(client, sid, correct=True, stop=lambda s: bool(s))
-    assert after[0] in ("flashcard", "fun_fact", "podcast"), after
+    """The happy path must keep teaching. The first gate after a CHECK buys
+    another round of scroll rather than ending it outright - one toll for six
+    videos would be a bad trade. Only the second gate in a row hands back new
+    material - never straight to CHECK, which would mean new material only
+    ever appeared by failing a quiz."""
+    walk(client, sid, correct=True, stop=lambda s: "math_gate" in s)
+    after_first_gate = walk(client, sid, correct=True, stop=lambda s: bool(s))
+    assert after_first_gate[0] == "video", after_first_gate
+
+    walk(client, sid, correct=True, stop=lambda s: "touch_grass" in s)
+    after_second_gate = walk(client, sid, correct=True, stop=lambda s: bool(s))
+    assert after_second_gate[0] in ("flashcard", "fun_fact", "podcast"), after_second_gate
 
 
 def test_podcast_is_reachable_on_the_happy_path(client, sid):

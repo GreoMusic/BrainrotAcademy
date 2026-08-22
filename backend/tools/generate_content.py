@@ -24,6 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import config  # noqa: E402
+import giphy_client  # noqa: E402
 import mistral_client as mc  # noqa: E402
 
 TOPICS = {
@@ -351,18 +352,21 @@ def build_topic(
             print(msg)
 
     log("\n=== {} ===".format(meta["title"]))
-    log("- items + quiz + podcast script (parallel)...")
+    log("- items + quiz + podcast script + reel gifs (parallel)...")
 
-    # The only two text calls left, and they are independent of each other.
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    # Independent calls, run together. GIPHY is best-effort: no key or a
+    # flaky network just means an empty reel, never a failed build.
+    with ThreadPoolExecutor(max_workers=3) as pool:
         items_f = pool.submit(gen_items, topic, meta)
         script_f = pool.submit(gen_podcast_script, topic, meta)
+        gifs_f = pool.submit(giphy_client.brainrot)
         items, quiz = items_f.result()
         script = script_f.result()
+        gifs = gifs_f.result()
 
     n_turns = sum(len(s.get("turns", [])) for s in script.get("segments", []))
-    log("  {} items | {} questions | {} segments / {} turns".format(
-        len(items), len(quiz), len(script.get("segments", [])), n_turns))
+    log("  {} items | {} questions | {} segments / {} turns | {} gifs".format(
+        len(items), len(quiz), len(script.get("segments", [])), n_turns, len(gifs)))
 
     if skip_audio:
         log("- audio SKIPPED")
@@ -390,6 +394,7 @@ def build_topic(
         "items": items,
         "quiz": quiz,
         "podcast": script,
+        "gifs": gifs,
         "coach_system": (
             "You are a warm, sharp tutor quizzing someone on {}. Ask ONE short "
             "question at a time and react to their answer honestly - correct them "
