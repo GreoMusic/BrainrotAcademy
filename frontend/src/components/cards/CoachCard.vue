@@ -8,6 +8,7 @@ const messages = ref([
   { role: 'assistant', content: props.card.payload.opener || 'Explain it to me in your own words.' },
 ])
 const busy = ref(false)
+const streamingReply = ref(false)
 const recording = ref(false)
 const connecting = ref(false)
 const finalizing = ref(false)
@@ -22,14 +23,15 @@ let audioContext = null
 let sourceNode = null
 let processorNode = null
 let silentGain = null
-let audioEl = null
 let silenceTimer = null
 let finishTimer = null
-let animationTimer = null
 let heardSpeech = false
 let lastSpeechAt = 0
 let ended = false
 let normalSocketClose = false
+let playbackContext = null
+let nextPlaybackAt = 0
+const playbackSources = new Set()
 
 const SILENCE_MS = 3000
 
@@ -39,41 +41,38 @@ function scrollDown() {
   })
 }
 
-async function streamReply(text) {
-  const message = { role: 'assistant', content: '', streaming: true }
-  messages.value.push(message)
-  scrollDown()
-
-  const words = text.match(/\S+\s*/g) || [text]
-  for (const word of words) {
-    if (ended) return
-    message.content += word
-    scrollDown()
-    await new Promise((resolve) => {
-      animationTimer = setTimeout(resolve, 42)
-    })
+function queuePcm(encoded, sampleRate) {
+  if (!playbackContext) {
+    playbackContext = new AudioContext()
+    nextPlaybackAt = playbackContext.currentTime
   }
-  message.streaming = false
+  playbackContext.resume().catch(() => {})
+
+  const raw = atob(encoded)
+  const bytes = new Uint8Array(raw.length)
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
+  const samples = new Float32Array(bytes.buffer)
+  const buffer = playbackContext.createBuffer(1, samples.length, sampleRate)
+  buffer.copyToChannel(samples)
+
+  const source = playbackContext.createBufferSource()
+  source.buffer = buffer
+  source.connect(playbackContext.destination)
+  const startsAt = Math.max(nextPlaybackAt, playbackContext.currentTime + 0.06)
+  source.start(startsAt)
+  nextPlaybackAt = startsAt + buffer.duration
+  playbackSources.add(source)
+  source.onended = () => playbackSources.delete(source)
 }
 
-async function handle(data) {
-  if (ended) return
-  if (data.error) {
-    messages.value.push({ role: 'assistant', content: 'Coach is offline: ' + data.error })
-    scrollDown()
-    return
-  }
-  await streamReply(data.reply)
-  if (ended) return
-
-  if (data.audio) {
-    audioEl = new Audio(data.audio)
-    audioEl.play().catch(() => {})
-  }
-  if (data.done) {
-    verdict.value = !!data.understood
-    finishTimer = setTimeout(() => emit('answered', !!data.understood), 2800)
-  }
+function stopPlayback() {
+  playbackSources.forEach((source) => {
+    try { source.stop() } catch {}
+  })
+  playbackSources.clear()
+  if (playbackContext) playbackContext.close().catch(() => {})
+  playbackContext = null
+  nextPlaybackAt = 0
 }
 
 async function askCoach(text) {
@@ -83,19 +82,63 @@ async function askCoach(text) {
   busy.value = true
   scrollDown()
   try {
-    const res = await fetch('/api/coach/turn', {
+    const res = await fetch('/api/coach/turn/stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text,
         topic: props.card.payload.topic,
         history,
-        audio_reply: true,
       }),
     })
-    await handle(await res.json())
-  } catch {
+    if (!res.ok || !res.body) throw new Error('Coach stream unavailable')
+
+    const reply = { role: 'assistant', content: '', streaming: true }
+    messages.value.push(reply)
+    streamingReply.value = true
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let pending = ''
+    let sampleRate = 24000
+    let result = null
+
+    while (true) {
+      const { value, done } = await reader.read()
+      pending += decoder.decode(value || new Uint8Array(), { stream: !done })
+      const lines = pending.split('\n')
+      pending = lines.pop() || ''
+      for (const line of lines) {
+        if (!line.trim()) continue
+        const event = JSON.parse(line)
+        if (event.type === 'start') sampleRate = event.sample_rate || sampleRate
+        if (event.type === 'text_delta') {
+          reply.content += event.text
+          scrollDown()
+        }
+        if (event.type === 'audio') queuePcm(event.audio, sampleRate)
+        if (event.type === 'audio_error') throw new Error(event.error || 'Voxtral audio failed')
+        if (event.type === 'result') result = event
+      }
+      if (done) break
+    }
+
+    reply.streaming = false
+    streamingReply.value = false
+    const remainingMs = playbackContext
+      ? Math.max(0, (nextPlaybackAt - playbackContext.currentTime) * 1000)
+      : 0
+    if (result?.done) {
+      verdict.value = !!result.understood
+      finishTimer = setTimeout(
+        () => emit('answered', !!result.understood),
+        remainingMs + 1200,
+      )
+    }
+    if (remainingMs) await new Promise((resolve) => setTimeout(resolve, remainingMs))
+  } catch (error) {
+    streamingReply.value = false
     messages.value.push({ role: 'assistant', content: 'Could not reach the coach.' })
+    stopPlayback()
   } finally {
     busy.value = false
   }
@@ -238,7 +281,7 @@ function toggleMic() {
 function endCoaching() {
   if (ended) return
   ended = true
-  if (audioEl) audioEl.pause()
+  stopPlayback()
   releaseAudio()
   normalSocketClose = true
   if (socket && socket.readyState < WebSocket.CLOSING) socket.close()
@@ -247,8 +290,7 @@ function endCoaching() {
 
 onBeforeUnmount(() => {
   if (finishTimer) clearTimeout(finishTimer)
-  if (animationTimer) clearTimeout(animationTimer)
-  if (audioEl) audioEl.pause()
+  stopPlayback()
   releaseAudio()
   normalSocketClose = true
   if (socket && socket.readyState < WebSocket.CLOSING) socket.close()
@@ -295,7 +337,7 @@ onBeforeUnmount(() => {
           <span class="live-dot" />
         </div>
         <div v-if="liveStatus" class="live-status">{{ liveStatus }}</div>
-        <div v-if="busy" class="bubble them typing">· · ·</div>
+        <div v-if="busy && !streamingReply" class="bubble them typing">· · ·</div>
       </div>
 
       <div class="composer">
