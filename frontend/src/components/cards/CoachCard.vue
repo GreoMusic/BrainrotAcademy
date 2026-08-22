@@ -30,7 +30,6 @@ let lastSpeechAt = 0
 let ended = false
 
 const SILENCE_MS = 3000
-const SPEECH_THRESHOLD = 0.018
 
 function scrollDown() {
   nextTick(() => {
@@ -118,18 +117,6 @@ function stopLiveMic() {
   }
 }
 
-function watchForSilence(samples) {
-  let energy = 0
-  for (let i = 0; i < samples.length; i++) energy += samples[i] * samples[i]
-  const rms = Math.sqrt(energy / samples.length)
-
-  if (rms >= SPEECH_THRESHOLD) {
-    heardSpeech = true
-    lastSpeechAt = Date.now()
-    liveStatus.value = 'Listening…'
-  }
-}
-
 async function startLiveMic() {
   try {
     connecting.value = true
@@ -156,7 +143,6 @@ async function startLiveMic() {
       socket.send(JSON.stringify({ type: 'start', sample_rate: audioContext.sampleRate }))
       processorNode.port.onmessage = (event) => {
         if (socket.readyState === WebSocket.OPEN && recording.value) {
-          watchForSilence(event.data)
           socket.send(pcm16(event.data))
         }
       }
@@ -176,6 +162,9 @@ async function startLiveMic() {
       const data = JSON.parse(event.data)
       if (data.type === 'ready' && !heardSpeech) liveStatus.value = 'Start speaking'
       if (data.type === 'delta') {
+        heardSpeech = true
+        lastSpeechAt = Date.now()
+        liveStatus.value = 'Listening…'
         liveTranscript.value += data.text
         scrollDown()
       }
