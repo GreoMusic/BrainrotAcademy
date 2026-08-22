@@ -110,6 +110,8 @@ def _card_for_item(item: dict, pack: dict) -> dict:
         payload["segment"] = seg
         payload["index"] = segments.index(seg) if seg else 0
         payload["total"] = len(segments)
+        # The card polls this slug for its voices, which render in background.
+        payload["topic"] = pack.get("topic")
     return {"type": item.get("kind", "flashcard"), "id": item["id"], "payload": payload}
 
 
