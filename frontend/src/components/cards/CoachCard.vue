@@ -12,10 +12,25 @@ const busy = ref(false)
 const recording = ref(false)
 const verdict = ref(null)
 const scroller = ref(null)
+const confetti = ref([])
 
 let recorder = null
 let chunks = []
 let audioEl = null
+
+const CONFETTI_COLORS = ['#fb923c', '#a855f7', '#22c55e', '#3b82f6', '#ec4899', '#facc15']
+
+function burstConfetti() {
+  confetti.value = Array.from({ length: 28 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 0.3,
+    duration: 1.6 + Math.random() * 0.9,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    drift: Math.round((Math.random() - 0.5) * 60),
+    rotate: Math.round(Math.random() * 360),
+  }))
+}
 
 function scrollDown() {
   nextTick(() => {
@@ -38,8 +53,11 @@ function handle(data) {
     audioEl.play().catch(() => {})
   }
   if (data.done) {
-    verdict.value = !!data.understood
-    setTimeout(() => emit('answered', !!data.understood), 2800)
+    const passed = !!data.understood
+    verdict.value = passed
+    // Let the confetti actually land before the feed pulls them away.
+    if (passed) burstConfetti()
+    setTimeout(() => emit('answered', passed), 2800)
   }
 }
 
@@ -113,6 +131,19 @@ onBeforeUnmount(() => {
   <!-- Passing the coach is the moment worth celebrating, so it takes over the
        whole screen the way the design's verdict view does. -->
   <div v-if="verdict !== null" class="card verdict-screen">
+    <div v-if="verdict" class="confetti-layer">
+      <span
+        v-for="p in confetti" :key="p.id" class="confetti-piece"
+        :style="{
+          left: p.left + '%',
+          animationDelay: p.delay + 's',
+          animationDuration: p.duration + 's',
+          backgroundColor: p.color,
+          '--drift': p.drift + 'px',
+          '--rotate': p.rotate + 'deg',
+        }"
+      />
+    </div>
     <div class="verdict-ring">
       <div class="inner">{{ verdict ? '✓' : '↺' }}</div>
     </div>
@@ -181,4 +212,21 @@ onBeforeUnmount(() => {
 .round.send { background: var(--blue); color: #fff; border-color: transparent; }
 .round.rec { background: var(--ig-gradient); color: #fff; border-color: transparent; }
 .round:disabled { opacity: 0.45; }
+
+.confetti-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation-name: confetti-fall;
+  animation-timing-function: cubic-bezier(0.35, 0, 0.65, 1);
+  animation-fill-mode: forwards;
+}
+@keyframes confetti-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--drift), 460px) rotate(var(--rotate)); opacity: 0; }
+}
 </style>
