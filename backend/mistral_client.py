@@ -191,6 +191,37 @@ def transcribe(audio_bytes: bytes, *, filename: str = "clip.webm", language: str
     return (resp.text or "").strip()
 
 
+def transcribe_diarized(
+    audio_bytes: bytes, *, filename: str = "conversation.webm", language: str | None = None
+) -> dict[str, Any]:
+    """Transcribe a bounded recording and label its distinct speakers."""
+    resp = _retry(
+        lambda: get_client().audio.transcriptions.complete(
+            model=config.STT_MODEL,
+            file={"file_name": filename, "content": audio_bytes},
+            diarize=True,
+            timestamp_granularities=["segment"],
+            **({"language": language} if language else {}),
+        ),
+        what="diarized transcription",
+    )
+    segments = []
+    for segment in getattr(resp, "segments", None) or []:
+        text = (getattr(segment, "text", "") or "").strip()
+        if not text:
+            continue
+        segments.append(
+            {
+                "speaker": str(getattr(segment, "speaker_id", None) or "speaker"),
+                "text": text,
+                "start": getattr(segment, "start", None),
+                "end": getattr(segment, "end", None),
+            }
+        )
+    text = (getattr(resp, "text", "") or "").strip()
+    return {"text": text, "segments": segments}
+
+
 def list_preset_voices() -> list[dict[str, Any]]:
     """Discover real preset voice ids rather than hardcoding guesses."""
     resp = _retry(

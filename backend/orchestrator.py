@@ -146,6 +146,7 @@ def _coach_card(state: dict, pack: dict) -> dict:
         "payload": {
             "topic": state["topic"],
             "focus": subject,
+            "item_id": (focus or {}).get("id"),
             "opener": "Alright — no multiple choice this time. {}".format(
                 "In your own words: {}".format(subject) if subject else "Tell me what you remember."
             ),
@@ -323,6 +324,35 @@ def clear_friction(state: dict, pack: dict | None = None) -> dict:
         has_more = bool(pack and _items_by_need(state, pack))
         state["stage"] = LEARN if has_more else CHECK
         state["learn_dealt"] = False
+    return state
+
+
+def recover_failed_check(
+    state: dict, card_id: str, item_id: str | None = None
+) -> dict:
+    """Trade a failed coach check for a completed real-world reset.
+
+    The lesson answer still counts as missed, so it remains eligible for
+    re-teaching, but completing the recovery earns the same short scroll break
+    as passing the check.
+    """
+    if state["stage"] != CHECK or not card_id.startswith("coach:"):
+        return state
+
+    item_id = item_id or card_id.replace("coach:", "", 1)
+    if item_id in state["mastery"]:
+        cur = state["mastery"].get(item_id, 0.0)
+        state["mastery"][item_id] = max(0.0, cur - MASTERY_DOWN)
+        if item_id not in state["missed"]:
+            state["missed"].append(item_id)
+
+    state["pending"] = []
+    state["check_answers"] = []
+    state["round"] += 1
+    state["last_score"] = 0.0
+    state["stage"] = SCROLL
+    state["scroll_budget"] = config.SCROLL_BUDGET
+    state["friction_passes"] = 0
     return state
 
 

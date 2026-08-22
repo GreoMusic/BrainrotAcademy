@@ -1,5 +1,5 @@
 /* Design language lifted from brainrot-academy-phone-design.html:
-   Instagram. Light surfaces, Inter, the IG gradient, #0095F6 blue.
+   Social-feed light surfaces and Inter, with Mistral's warm brand spectrum.
    Two card families - full-bleed dark "reel" cards, and light content screens. */
 
 :root {
@@ -11,12 +11,12 @@
   --dim: #8e8e8e;
   --blue: #0095f6;
 
-  --g1: #feda75;
-  --g2: #fa7e1e;
-  --g3: #d62976;
-  --g4: #962fbf;
-  --g5: #4f5bd5;
-  --ig-gradient: linear-gradient(45deg, var(--g1), var(--g2), var(--g3), var(--g4), var(--g5));
+  --g1: #ffd800;
+  --g2: #ffaf00;
+  --g3: #ff8205;
+  --g4: #fa500f;
+  --g5: #e10500;
+  --brand-gradient: linear-gradient(90deg, var(--g1), var(--g2), var(--g3), var(--g4), var(--g5));
 
   color-scheme: light;
 }
@@ -157,7 +157,7 @@ button { border: 0; background: none; cursor: pointer; }
   margin-bottom: 14px;
   text-transform: uppercase;
 }
-.pill.grad { background: var(--ig-gradient); color: #fff; }
+.pill.grad { background: var(--brand-gradient); color: #fff; }
 .pill.blue { background: rgba(0, 149, 246, 0.1); color: var(--blue); }
 .pill.gray { background: #f2f2f2; color: #666; }
 
@@ -167,7 +167,7 @@ button { border: 0; background: none; cursor: pointer; }
 /* progress dashes */
 .dashes { display: flex; gap: 4px; margin-bottom: 16px; flex: none; }
 .dashes .d { flex: 1; height: 3px; border-radius: 3px; background: #eee; }
-.dashes .d.on { background: var(--ig-gradient); }
+.dashes .d.on { background: var(--brand-gradient); }
 
 /* the warm panel that holds a learning card */
 .learn-card {
@@ -221,7 +221,7 @@ button { border: 0; background: none; cursor: pointer; }
 .btn:active { transform: scale(0.98); }
 .btn:disabled { opacity: 0.45; }
 .btn-primary { background: var(--blue); }
-.btn-gradient { background: var(--ig-gradient); }
+.btn-gradient { background: var(--brand-gradient); }
 .btn-ghost { background: #f2f2f2; color: #111; }
 .btn-outline { background: #fff; color: #111; border: 1px solid var(--border); }
 
@@ -296,7 +296,7 @@ button { border: 0; background: none; cursor: pointer; }
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .budget-track { height: 3px; background: rgba(255, 255, 255, 0.28); border-radius: 3px; overflow: hidden; }
-.budget-fill { height: 100%; background: var(--ig-gradient); transition: width 0.4s ease; }
+.budget-fill { height: 100%; background: var(--brand-gradient); transition: width 0.4s ease; }
 
 /* ----------------------------------------------------------------- gate --- */
 .gate-full {
@@ -313,7 +313,7 @@ button { border: 0; background: none; cursor: pointer; }
 .wordmark { font-family: "Grand Hotel", cursive; font-size: 20px; color: #111; margin-bottom: 10px; }
 .gate-ring {
   width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 14px; padding: 3px;
-  background: var(--ig-gradient); display: flex; align-items: center; justify-content: center;
+  background: var(--brand-gradient); display: flex; align-items: center; justify-content: center;
 }
 .gate-ring .inner {
   width: 100%; height: 100%; border-radius: 50%; background: #fff;
@@ -327,7 +327,10 @@ button { border: 0; background: none; cursor: pointer; }
   position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
   z-index: 30; display: flex; align-items: flex-end;
 }
-.sheet { width: 100%; background: #fff; border-radius: 22px 22px 0 0; padding: 20px 20px 22px; }
+.sheet {
+  width: 100%; max-height: 92%; overflow-y: auto; background: #fff;
+  border-radius: 22px 22px 0 0; padding: 20px 20px 22px;
+}
 .sheet-handle { width: 36px; height: 4px; background: #ddd; border-radius: 4px; margin: 0 auto 14px; }
 
 .cam-box {
@@ -357,7 +360,7 @@ button { border: 0; background: none; cursor: pointer; }
 }
 .verdict-ring {
   width: 104px; height: 104px; border-radius: 50%; padding: 4px;
-  background: var(--ig-gradient); display: flex; align-items: center; justify-content: center;
+  background: var(--brand-gradient); display: flex; align-items: center; justify-content: center;
   animation: pop 0.4s cubic-bezier(0.2, 1.5, 0.4, 1);
 }
 @keyframes pop { 0% { transform: scale(0.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
