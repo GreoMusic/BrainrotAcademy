@@ -1,0 +1,459 @@
+{
+  "topic": "probability-and-statistics",
+  "title": "Probability & Statistics",
+  "emoji": "📐",
+  "blurb": "Math - Probability & Statistics",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the chance of rolling a 4 on a fair die?",
+      "back": "1 in 6, or ~16.67%",
+      "hook": "Dice don’t play favorites, bro."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "If two events can’t happen together, what are they?",
+      "back": "Mutually exclusive events",
+      "hook": "They’re basically ghosting each other."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s the mean of {2, 4, 6, 8}?",
+      "back": "5",
+      "hook": "Average vibes only here."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the probability of flipping heads twice in a row?",
+      "back": "25% or 0.25",
+      "hook": "Coin’s on a winning streak."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What’s the mode of {3, 3, 7, 7, 7}?",
+      "back": "7",
+      "hook": "This number’s the main character."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "If P(A) = 0.4 and P(B) = 0.5, and A and B are independent, what’s P(A and B)?",
+      "back": "0.2",
+      "hook": "Independent = no drama, just math."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The average person has a 1 in 10,000 chance of being struck by lightning in their lifetime.",
+      "emoji": "⚡"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "Birthdays are more likely to be on a Tuesday than any other day of the week.",
+      "emoji": "🎂"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "There’s a 0.0000000001% chance you’ll randomly pick the same 6-card lottery numbers as someone else.",
+      "emoji": "🎟️"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is Probability?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Statistics: The Art of Counting Stuff"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Normal Distribution: The Bell Curve"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Correlation vs. Causation"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "On a fair 6-sided die, what’s the probability of NOT rolling a 4?",
+      "options": [
+        "4/6",
+        "5/6",
+        "1/6"
+      ],
+      "correct": 1,
+      "explain": "There are 5 outcomes that aren’t 4 out of 6 total."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Which of these is NOT mutually exclusive with 'raining'?",
+      "options": [
+        "Snowing",
+        "Sunny",
+        "Hailing"
+      ],
+      "correct": 2,
+      "explain": "Hailing can happen while it’s raining, but snowing and sunny can’t."
+    },
+    {
+      "item_id": "fc3",
+      "q": "What’s the mean of {1, 3, 5, 7}?",
+      "options": [
+        "4",
+        "5",
+        "3"
+      ],
+      "correct": 0,
+      "explain": "(1+3+5+7)/4 = 16/4 = 4."
+    },
+    {
+      "item_id": "fc4",
+      "q": "What’s the probability of tails twice in a row?",
+      "options": [
+        "0.5",
+        "0.25",
+        "0.125"
+      ],
+      "correct": 1,
+      "explain": "Same as heads: 0.5 * 0.5 = 0.25."
+    },
+    {
+      "item_id": "fc5",
+      "q": "What’s the mode of {2, 2, 3, 3}?",
+      "options": [
+        "2",
+        "3",
+        "Both 2 and 3"
+      ],
+      "correct": 2,
+      "explain": "Both 2 and 3 appear twice, so it’s bimodal."
+    },
+    {
+      "item_id": "fc6",
+      "q": "If P(A) = 0.2 and P(B) = 0.3, what’s P(A and B) if independent?",
+      "options": [
+        "0.06",
+        "0.5",
+        "0.1"
+      ],
+      "correct": 0,
+      "explain": "0.2 * 0.3 = 0.06 for independent events."
+    },
+    {
+      "item_id": "ff1",
+      "q": "If 10,000 people are outside during a storm, how many are likely to be struck by lightning?",
+      "options": [
+        "1",
+        "10",
+        "100"
+      ],
+      "correct": 0,
+      "explain": "The odds are 1 in 10,000, so 1 person on average."
+    },
+    {
+      "item_id": "ff2",
+      "q": "Which day has the lowest probability of being a birthday?",
+      "options": [
+        "Sunday",
+        "Saturday",
+        "Monday"
+      ],
+      "correct": 2,
+      "explain": "Studies show Monday has the fewest births."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What’s the probability of picking the same 6 numbers as someone else in a 49-number lottery?",
+      "options": [
+        "1 in 14 million",
+        "1 in 7 million",
+        "1 in 2 million"
+      ],
+      "correct": 1,
+      "explain": "It’s 1 in 13,983,816, so ~1 in 7 million."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is Probability?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Probability is just math’s way of guessing how likely something is to happen.",
+            "id": "s1_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/probability-and-statistics/s1_t1_c673f223.mp3",
+            "dur": 3.29
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so it’s like... guessing but with numbers?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/probability-and-statistics/s1_t2_c7ce4cc3.mp3",
+            "dur": 2.19
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! If there’s a 50% chance of rain, it’s like flipping a coin—heads it rains, tails it doesn’t.",
+            "id": "s1_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/probability-and-statistics/s1_t3_6fd484f9.mp3",
+            "dur": 5.15
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, so my umbrella’s future is in the hands of a coin flip.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/probability-and-statistics/s1_t4_f88a5e28.mp3",
+            "dur": 2.43
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "More like the science behind the guess. It’s about patterns over time.",
+            "id": "s1_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/probability-and-statistics/s1_t5_86f890e7.mp3",
+            "dur": 2.19
+          }
+        ],
+        "quiz_after": {
+          "q": "If there’s a 25% chance of rain, what’s the probability it *doesn’t* rain?",
+          "options": [
+            "75%",
+            "25%",
+            "50%"
+          ],
+          "correct": 0,
+          "reaction_correct": "Wow, you actually got it.",
+          "reaction_wrong": "Oof. That’s basic math, friend.",
+          "reaction_correct_audio": "/static/audio/probability-and-statistics/s1_rok_c9e130e8.mp3",
+          "reaction_wrong_audio": "/static/audio/probability-and-statistics/s1_rno_870ff20a.mp3"
+        },
+        "dur": 15.25
+      },
+      {
+        "id": "s2",
+        "title": "Statistics: The Art of Counting Stuff",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Statistics is about collecting and analyzing data to find trends.",
+            "id": "s2_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/probability-and-statistics/s2_t1_cfb48a49.mp3",
+            "dur": 2.98
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So like, if I eat 10 pizzas a week, that’s my personal statistic?",
+            "id": "s2_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/probability-and-statistics/s2_t2_362f692b.mp3",
+            "dur": 3.01
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Yes! And if we track that for a year, we can see if you’re consistent or just really hungry.",
+            "id": "s2_t3",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/probability-and-statistics/s2_t3_cfe29069.mp3",
+            "dur": 3.9
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Or maybe just really bad at portion control.",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/probability-and-statistics/s2_t4_8c30b00e.mp3",
+            "dur": 2.34
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Hey, data doesn’t judge.",
+            "id": "s2_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/probability-and-statistics/s2_t5_072dd2ee.mp3",
+            "dur": 1.52
+          }
+        ],
+        "quiz_after": {
+          "q": "What’s the most basic way to describe statistics?",
+          "options": [
+            "Guessing future events",
+            "Collecting and analyzing data",
+            "Proving theories"
+          ],
+          "correct": 1,
+          "reaction_correct": "Finally, someone gets it.",
+          "reaction_wrong": "Nope. Try again, champ.",
+          "reaction_correct_audio": "/static/audio/probability-and-statistics/s2_rok_2fc712c1.mp3",
+          "reaction_wrong_audio": "/static/audio/probability-and-statistics/s2_rno_7c530fca.mp3"
+        },
+        "dur": 13.75
+      },
+      {
+        "id": "s3",
+        "title": "Normal Distribution: The Bell Curve",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Ever see a bell-shaped graph? That’s the normal distribution.",
+            "id": "s3_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/probability-and-statistics/s3_t1_85c4812a.mp3",
+            "dur": 2.28
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So it’s just a fancy way to say things cluster in the middle?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/probability-and-statistics/s3_t2_c51f5173.mp3",
+            "dur": 2.47
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Yep! Most people are average height, for example. A few are really tall or short.",
+            "id": "s3_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/probability-and-statistics/s3_t3_0dd5f168.mp3",
+            "dur": 2.59
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So I’m either average or an outlier. Thanks, math.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/probability-and-statistics/s3_t4_48ded140.mp3",
+            "dur": 2.33
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "An outlier with style.",
+            "id": "s3_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/probability-and-statistics/s3_t5_c5016022.mp3",
+            "dur": 1.57
+          }
+        ],
+        "quiz_after": {
+          "q": "What shape describes the normal distribution?",
+          "options": [
+            "Bell curve",
+            "Straight line",
+            "U-shape"
+          ],
+          "correct": 0,
+          "reaction_correct": "Ding ding ding.",
+          "reaction_wrong": "Not even close.",
+          "reaction_correct_audio": "/static/audio/probability-and-statistics/s3_rok_74cf5720.mp3",
+          "reaction_wrong_audio": "/static/audio/probability-and-statistics/s3_rno_3a143e8b.mp3"
+        },
+        "dur": 11.24
+      },
+      {
+        "id": "s4",
+        "title": "Correlation vs. Causation",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Correlation is when two things happen together. Causation is when one *causes* the other.",
+            "id": "s4_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/probability-and-statistics/s4_t1_1c290213.mp3",
+            "dur": 2.59
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So if I eat ice cream and it’s hot outside, ice cream causes heat?",
+            "id": "s4_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/probability-and-statistics/s4_t2_0712d95b.mp3",
+            "dur": 3.29
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "No! Both just happen in summer. That’s correlation, not causation.",
+            "id": "s4_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/probability-and-statistics/s4_t3_ea2c3884.mp3",
+            "dur": 2.28
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So my ice cream *isn’t* melting the sun. Bummer.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/probability-and-statistics/s4_t4_8569d4d9.mp3",
+            "dur": 1.57
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Sorry to burst your bubble.",
+            "id": "s4_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/probability-and-statistics/s4_t5_55ab7825.mp3",
+            "dur": 0.92
+          }
+        ],
+        "quiz_after": {
+          "q": "If two things happen together, what is it called?",
+          "options": [
+            "Causation",
+            "Correlation",
+            "Coincidence"
+          ],
+          "correct": 1,
+          "reaction_correct": "Nailed it.",
+          "reaction_wrong": "Wrong. Try listening next time.",
+          "reaction_correct_audio": "/static/audio/probability-and-statistics/s4_rok_4aba33d6.mp3",
+          "reaction_wrong_audio": "/static/audio/probability-and-statistics/s4_rno_e3884e98.mp3"
+        },
+        "dur": 10.65
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Probability & Statistics. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}
