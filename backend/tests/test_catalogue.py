@@ -23,7 +23,7 @@ def isolated_usage(tmp_path, monkeypatch):
 def test_catalogue_is_two_levels_and_well_formed():
     assert len(catalogue.SUBJECTS) >= 5
     for s in catalogue.SUBJECTS:
-        assert s["topics"], "{} has no topics".format(s["slug"])
+        assert len(s["topics"]) == 6, "{} should have six topics".format(s["slug"])
         for t in s["topics"]:
             assert t["slug"] and t["title"]
 
@@ -42,18 +42,19 @@ def test_lookup_resolves_subject_and_title():
 
 
 def test_selecting_spends_a_topic():
-    assert not catalogue.is_used("python")
-    catalogue.mark_used("python")
-    assert catalogue.is_used("python")
-    assert "python" not in catalogue.remaining()
+    slug = "distributed-systems"
+    assert not catalogue.is_used(slug)
+    catalogue.mark_used(slug)
+    assert catalogue.is_used(slug)
+    assert slug not in catalogue.remaining()
 
 
 def test_a_spent_topic_stays_spent_across_reloads():
     """Usage lives on disk - a restart must not hand the topic back."""
-    catalogue.mark_used("entropy")
-    assert catalogue.state()["used"] == ["entropy"]
+    catalogue.mark_used("climate-systems")
+    assert catalogue.state()["used"] == ["climate-systems"]
     # state() re-reads the file every call, so this is a genuine round-trip.
-    assert catalogue.is_used("entropy")
+    assert catalogue.is_used("climate-systems")
 
 
 def test_board_resets_only_when_every_topic_is_spent():
@@ -75,9 +76,10 @@ def test_board_resets_only_when_every_topic_is_spent():
 
 
 def test_reselecting_the_same_topic_does_not_advance_the_cycle():
-    catalogue.mark_used("python")
+    slug = "technical-writing"
+    catalogue.mark_used(slug)
     for _ in range(5):
-        out = catalogue.mark_used("python")
+        out = catalogue.mark_used(slug)
     assert out["used"] == 1
     assert out["cycle"] == 1
     assert out["reset"] is False
@@ -125,7 +127,7 @@ def test_browse_reports_progress_per_subject():
 
 def test_find_by_title_matches_free_text():
     assert catalogue.find_by_title("photosynthesis")["slug"] == "photosynthesis"
-    assert catalogue.find_by_title("  Grammar & Punctuation ")["slug"] == "grammar-and-punctuation"
+    assert catalogue.find_by_title("  Technical Writing ")["slug"] == "technical-writing"
     assert catalogue.find_by_title("something else") is None
 
 
@@ -133,4 +135,4 @@ def test_corrupt_usage_file_is_survivable():
     catalogue.USAGE_PATH.parent.mkdir(parents=True, exist_ok=True)
     catalogue.USAGE_PATH.write_text("{not json", encoding="utf-8")
     assert catalogue.state()["used"] == []
-    assert catalogue.mark_used("python")["used"] == 1
+    assert catalogue.mark_used("distributed-systems")["used"] == 1
