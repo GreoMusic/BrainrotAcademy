@@ -121,13 +121,58 @@ def test_scroll_budget_exhausts_into_friction():
     assert gate["payload"]["answer"] == eval(gate["payload"]["question"].replace("x", "*"))
 
 
-def test_cleared_friction_returns_to_check():
+def test_reel_interleaves_clips_and_gifs():
+    """A mixed reel is a genuine mix - not every real clip before the first
+    GIPHY clip, the way plain concatenation would serve it."""
+    pack = make_pack(n_clips=2)
+    pack["gifs"] = [{"id": "g0", "src": "/gif0.mp4"}, {"id": "g1", "src": "/gif1.mp4"}]
+    s = orch.new_session("s1", "test", pack)
+    _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
+    s = answer_check(s, pack, True)
+
+    cards, s = drain(s, pack, 4)
+    assert [c["type"] for c in cards] == ["video", "gif", "video", "gif"]
+
+
+def test_reel_falls_back_to_video_none_with_no_clips_or_gifs():
+    pack = make_pack(n_clips=0)
+    s = orch.new_session("s1", "test", pack)
+    _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
+    s = answer_check(s, pack, True)
+
+    card, s = orch.next_card(s, pack)
+    assert card["type"] == "video"
+    assert card["payload"]["src"] is None
+
+
+def test_first_cleared_friction_returns_to_more_scroll():
+    """The first gate after a CHECK buys another round of scrolling rather
+    than ending it outright - one toll for six videos reads as a bad trade."""
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
     s = answer_check(s, pack, True)
     _, s = drain(s, pack, config.SCROLL_BUDGET)
-    _, s = orch.next_card(s, pack)  # the gate
+    _, s = orch.next_card(s, pack)  # the first gate
+
+    s = orch.clear_friction(s)
+    assert s["stage"] == orch.SCROLL
+    assert s["scroll_budget"] == config.SCROLL_BUDGET
+
+    card, s = orch.next_card(s, pack)
+    assert card["type"] == "video"
+
+
+def test_second_cleared_friction_returns_to_check():
+    pack = make_pack()
+    s = orch.new_session("s1", "test", pack)
+    _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
+    s = answer_check(s, pack, True)
+    _, s = drain(s, pack, config.SCROLL_BUDGET)
+    _, s = orch.next_card(s, pack)  # first gate
+    s = orch.clear_friction(s)
+    _, s = drain(s, pack, config.SCROLL_BUDGET)
+    _, s = orch.next_card(s, pack)  # second gate
 
     s = orch.clear_friction(s)
     assert s["stage"] == orch.CHECK
@@ -156,11 +201,21 @@ def test_full_stage_sequence():
         note(s)
     _, s = orch.next_card(s, pack)
     note(s)
-    s = orch.clear_friction(s)
+    s = orch.clear_friction(s)  # first gate - buys another round of scroll
+    note(s)
+    for _ in range(config.SCROLL_BUDGET):
+        card, s = orch.next_card(s, pack)
+        note(s)
+    _, s = orch.next_card(s, pack)
+    note(s)
+    s = orch.clear_friction(s)  # second gate - back to a review CHECK
     _, s = orch.next_card(s, pack)
     note(s)
 
-    assert seen == [orch.LEARN, orch.CHECK, orch.SCROLL, orch.FRICTION, orch.CHECK], seen
+    assert seen == [
+        orch.LEARN, orch.CHECK, orch.SCROLL, orch.FRICTION,
+        orch.SCROLL, orch.FRICTION, orch.CHECK,
+    ], seen
 
 
 def test_mastery_rises_and_falls():
@@ -272,12 +327,14 @@ def test_clearing_a_gate_resumes_learning_while_material_remains():
     pack = make_pack(n_items=12)
     s = orch.new_session("s1", "test", pack)
     s["stage"] = orch.FRICTION
+    s["friction_passes"] = 1  # simulate the second gate in a row
 
     s = orch.clear_friction(s, pack)
     assert s["stage"] == orch.LEARN
 
     # With everything mastered there is nothing left to teach -> review instead.
     s["stage"] = orch.FRICTION
+    s["friction_passes"] = 1
     for k in s["mastery"]:
         s["mastery"][k] = 1.0
     s = orch.clear_friction(s, pack)

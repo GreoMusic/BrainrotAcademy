@@ -21,6 +21,42 @@ def math():
     return jsonify(orch.make_math_problem(difficulty))
 
 
+@bp.post("/math-photo")
+def math_photo():
+    """A correct number alone proves nothing - a search bar can supply that.
+    This checks the photo actually shows the problem being worked out by hand."""
+    photo = request.files.get("photo")
+    if not photo:
+        return jsonify({"error": "photo required"}), 400
+    question = request.form.get("question", "")
+
+    try:
+        out = mc.vision_json(
+            photo.read(),
+            "Someone was asked to solve {} = ?\n\n"
+            "Does this photo show that problem being worked out by hand on paper "
+            "or a whiteboard - actual handwritten numbers and work, not a screen, "
+            "not a blank page, not an unrelated photo? "
+            'Return {{"shows_work":bool,"reason":str}} - "reason" is one friendly '
+            "sentence addressed to the person, whether or not they passed.".format(
+                question
+            ),
+            mime=photo.mimetype or "image/jpeg",
+        )
+    except Exception as exc:  # noqa: BLE001
+        # Never trap the user behind a broken judge.
+        return jsonify({"pass": True, "reason": "Could not verify - letting you through."}), 200
+
+    ok = bool(out.get("shows_work"))
+    return jsonify(
+        {
+            "pass": ok,
+            "reason": out.get("reason")
+            or ("Nice work. Verified." if ok else "Doesn't look like your work on that problem."),
+        }
+    )
+
+
 @bp.post("/touch-grass")
 def touch_grass():
     photo = request.files.get("photo")

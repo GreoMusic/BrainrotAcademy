@@ -16,6 +16,7 @@ const liveTranscript = ref('')
 const liveStatus = ref('')
 const verdict = ref(null)
 const scroller = ref(null)
+const confetti = ref([])
 
 let socket = null
 let mediaStream = null
@@ -37,6 +38,20 @@ const voiceUrls = new Set()
 let replayAudio = null
 
 const SILENCE_MS = 3000
+
+const CONFETTI_COLORS = ['#fb923c', '#a855f7', '#22c55e', '#3b82f6', '#ec4899', '#facc15']
+
+function burstConfetti() {
+  confetti.value = Array.from({ length: 28 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 0.3,
+    duration: 1.6 + Math.random() * 0.9,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    drift: Math.round((Math.random() - 0.5) * 60),
+    rotate: Math.round(Math.random() * 360),
+  }))
+}
 
 function scrollDown() {
   nextTick(() => {
@@ -240,6 +255,8 @@ async function askCoach(text) {
       : 0
     if (result?.done) {
       verdict.value = !!result.understood
+      // Let the confetti actually land before the feed pulls them away.
+      if (verdict.value) burstConfetti()
       finishTimer = setTimeout(
         () => emit('answered', !!result.understood),
         remainingMs + 1200,
@@ -423,6 +440,19 @@ onBeforeUnmount(() => {
   <!-- Passing the coach is the moment worth celebrating, so it takes over the
        whole screen the way the design's verdict view does. -->
   <div v-if="verdict !== null" class="card verdict-screen">
+    <div v-if="verdict" class="confetti-layer">
+      <span
+        v-for="p in confetti" :key="p.id" class="confetti-piece"
+        :style="{
+          left: p.left + '%',
+          animationDelay: p.delay + 's',
+          animationDuration: p.duration + 's',
+          backgroundColor: p.color,
+          '--drift': p.drift + 'px',
+          '--rotate': p.rotate + 'deg',
+        }"
+      />
+    </div>
     <div class="verdict-ring">
       <div class="inner">{{ verdict ? '✓' : '↺' }}</div>
     </div>
@@ -548,4 +578,21 @@ onBeforeUnmount(() => {
   border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.confetti-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
+.confetti-piece {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation-name: confetti-fall;
+  animation-timing-function: cubic-bezier(0.35, 0, 0.65, 1);
+  animation-fill-mode: forwards;
+}
+@keyframes confetti-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--drift), 460px) rotate(var(--rotate)); opacity: 0; }
+}
 </style>
