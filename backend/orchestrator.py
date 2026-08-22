@@ -20,10 +20,10 @@ LEARN, CHECK, SCROLL, FRICTION = "LEARN", "CHECK", "SCROLL", "FRICTION"
 # Rotated through so a long session does not repeat the same gate.
 FRICTION_KINDS = ["math_gate", "touch_grass", "talk_to_human"]
 
-# Every Nth CHECK swaps multiple choice for a spoken/typed coach conversation.
-# 2 means the user meets the coach on their second check - early enough to
-# demo, not so early that the quiz mechanic never lands.
-COACH_EVERY = 2
+# A LEARN round always teaches in this order - flashcard, then fun fact, then
+# podcast - so the loop reads the same every round instead of drifting toward
+# whichever kind currently has the lowest mastery.
+KIND_ORDER = ["flashcard", "fun_fact", "podcast"]
 
 MASTERY_UP = 0.34
 MASTERY_DOWN = 0.25
@@ -76,19 +76,23 @@ def _items_by_need(state: dict, pack: dict) -> list[dict]:
         )
     )
 
-    # Round-robin across kinds so one LEARN round is a flashcard AND a fun fact
-    # AND a podcast segment. Plain weakest-first would serve all six flashcards
-    # before the first podcast ever appeared.
+    # Round-robin across kinds, in KIND_ORDER, so one LEARN round is a
+    # flashcard AND a fun fact AND a podcast segment, always in that order.
+    # Plain weakest-first would serve all six flashcards before the first
+    # podcast ever appeared, and bucketing by mastery order alone would let
+    # the sequence drift round to round.
     buckets: dict[str, list[dict]] = {}
     for it in rest:
         buckets.setdefault(it.get("kind", "flashcard"), []).append(it)
+    order = KIND_ORDER + [k for k in buckets if k not in KIND_ORDER]
 
     mixed = []
     while buckets:
-        for kind in list(buckets):
-            mixed.append(buckets[kind].pop(0))
-            if not buckets[kind]:
-                del buckets[kind]
+        for kind in order:
+            if kind in buckets:
+                mixed.append(buckets[kind].pop(0))
+                if not buckets[kind]:
+                    del buckets[kind]
 
     return missed + mixed
 
@@ -107,27 +111,6 @@ def _card_for_item(item: dict, pack: dict) -> dict:
         payload["index"] = segments.index(seg) if seg else 0
         payload["total"] = len(segments)
     return {"type": item.get("kind", "flashcard"), "id": item["id"], "payload": payload}
-
-
-def _quiz_cards(state: dict, pack: dict, n: int) -> list[dict]:
-    """Quiz the items just taught; top up with review items if short."""
-    quizzes = {q["item_id"]: q for q in pack.get("quiz", [])}
-
-    taught = [c["id"] for c in state["history"][-8:] if c.get("stage") == LEARN]
-    ordered = [i for i in taught if i in quizzes]
-
-    # Top up with the weakest items so a CHECK is never under-length.
-    if len(ordered) < n:
-        for i in sorted(quizzes, key=lambda k: state["mastery"].get(k, 0.0)):
-            if i not in ordered:
-                ordered.append(i)
-            if len(ordered) >= n:
-                break
-
-    return [
-        {"type": "quiz", "id": "quiz:" + i, "payload": dict(quizzes[i], item_id=i)}
-        for i in ordered[:n]
-    ]
 
 
 def _coach_card(state: dict, pack: dict) -> dict:
@@ -223,13 +206,10 @@ def _refill(state: dict, pack: dict) -> None:
     elif stage == CHECK:
         if state["check_answers"]:
             _resolve_check(state)
-        elif state["round"] > 0 and state["round"] % COACH_EVERY == 0:
-            state["pending"] = [_coach_card(state, pack)]
         else:
-            state["pending"] = _quiz_cards(state, pack, config.QUIZ_CARDS_PER_CHECK)
-            if not state["pending"]:
-                state["stage"] = SCROLL
-                state["scroll_budget"] = config.SCROLL_BUDGET
+            # Always a conversation, never multiple choice - the user proves
+            # it by talking it through, every round.
+            state["pending"] = [_coach_card(state, pack)]
 
     elif stage == SCROLL:
         if state["scroll_budget"] > 0:
