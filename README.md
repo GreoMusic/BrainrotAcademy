@@ -29,7 +29,7 @@ Instead of just blocking brainrot (which people route around), BrainrotBouncer m
 Two terminals.
 
 ```bash
-cd backend && .venv/Scripts/python.exe -m flask --app app run --port 5001
+cd backend && .venv/bin/python -m flask --app app run --port 5001
 ```
 
 ```bash
@@ -42,9 +42,9 @@ Open http://localhost:5173.
 
 ```bash
 cd backend
-python -m venv .venv
-.venv/Scripts/python.exe -m pip install -r requirements.txt
-.venv/Scripts/python.exe -m tools.generate_content --stub
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m tools.generate_content --stub
 ```
 
 `--stub` writes a hand-written photosynthesis pack, so **the whole feed works
@@ -52,8 +52,8 @@ without an API key**. Add a key only when you want generated topics and audio.
 
 ```bash
 cp .env.example .env      # then put your key in it
-.venv/Scripts/python.exe -m tools.smoke_test          # verifies chat + TTS + STT
-.venv/Scripts/python.exe -m tools.generate_content --all
+.venv/bin/python -m tools.smoke_test          # verifies chat + TTS + STT
+.venv/bin/python -m tools.generate_content --all
 ```
 
 Drop any vertical `.mp4` files into `backend/static/clips/` and they become the
@@ -62,7 +62,7 @@ doomscroll reel automatically.
 ## Tests
 
 ```bash
-cd backend && .venv/Scripts/python.exe -m pytest tests/ -q
+cd backend && .venv/bin/python -m pytest tests/ -q
 ```
 
 `test_orchestrator.py` drives the transition engine directly — no server, no
@@ -102,7 +102,7 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 | Flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
 | Touch-grass photo check | `mistral-medium-latest` (vision) |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
-| Coach mic + conversation check | `voxtral-mini-transcribe-latest` |
+| Coach mic + conversation check | `voxtral-mini-latest` |
 
 SDK note: on `mistralai` 2.x the import is `from mistralai.client import Mistral`,
 and `audio.speech.complete(...)` returns `audio_data` as a **base64 string**.
