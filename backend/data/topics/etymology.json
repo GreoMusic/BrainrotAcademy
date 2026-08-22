@@ -1,0 +1,459 @@
+{
+  "topic": "etymology",
+  "title": "Etymology",
+  "emoji": "📚",
+  "blurb": "English - Etymology",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "Where does the word 'salary' come from?",
+      "back": "From Latin 'salarium' for salt payment.",
+      "hook": "Paid in salt? Mind blown."
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "The word 'muscle' has a very literal origin. What is it?",
+      "back": "From Latin 'musculus' meaning 'little mouse'.",
+      "hook": "Your biceps: tiny rodents under skin."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s the etymology of 'disaster'?",
+      "back": "From Greek 'dys-' (bad) + 'astron' (star).",
+      "hook": "Bad stars? More like bad luck."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "Where does 'spam' (the food) come from?",
+      "back": "Short for 'spiced ham'.",
+      "hook": "Not email, not mystery meat."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "The word 'robot' comes from a Czech word meaning what?",
+      "back": "Forced labor or drudgery.",
+      "hook": "Czech word for 'I do not consent'."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s the origin of 'okay'?",
+      "back": "From a 19th-century fad abbreviation 'O.K.'.",
+      "hook": "No, it’s not 'oll korrect'."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The word 'silly' once meant 'blessed' or 'happy' in Middle English.",
+      "emoji": "😇"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "‘Avocado’ comes from the Nahuatl word ‘āhuacatl’, meaning ‘testicle’ because of its shape.",
+      "emoji": "🥑"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "‘Clue’ comes from ‘clew’, an old word for a ball of thread, like in the Theseus myth.",
+      "emoji": "🧵"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Even Is Etymology?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Loanwords: Borrowing Without Asking"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Words That Changed Meaning"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Why Should We Care?"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "What was 'salarium' originally?",
+      "options": [
+        "A soldier's bread ration",
+        "Salt money for Roman soldiers",
+        "A type of ancient coin"
+      ],
+      "correct": 1,
+      "explain": "Roman soldiers were sometimes paid in salt, or 'salarium'."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Why 'little mouse' for muscle?",
+      "options": [
+        "It twitched like a mouse",
+        "It looked like a mouse under skin",
+        "Mice were sacred in gyms"
+      ],
+      "correct": 1,
+      "explain": "Ancient Romans thought muscles looked like mice scurrying under the skin."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Literally, 'disaster' means:",
+      "options": [
+        "A fallen star",
+        "Bad star alignment",
+        "A meteor impact"
+      ],
+      "correct": 1,
+      "explain": "Ancient Greeks believed disasters were caused by bad star positions."
+    },
+    {
+      "item_id": "fc4",
+      "q": "What does SPAM stand for?",
+      "options": [
+        "Stuffed Pork And Meat",
+        "Spiced Ham",
+        "Special Processed American Meat"
+      ],
+      "correct": 1,
+      "explain": "The name is a portmanteau of 'spiced' and 'ham'."
+    },
+    {
+      "item_id": "fc5",
+      "q": "The Czech origin of 'robot' implies:",
+      "options": [
+        "A machine with feelings",
+        "Forced work",
+        "A helper"
+      ],
+      "correct": 1,
+      "explain": "Coined by Karel Čapek in 1920 from 'robota', meaning forced labor."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What was 'O.K.' short for in the 1830s?",
+      "options": [
+        "Old Kindergarten",
+        "Oll Korrect (all correct)",
+        "Oklahoma"
+      ],
+      "correct": 1,
+      "explain": "A humorous misspelling of 'all correct' popularized by a fad for abbreviations."
+    },
+    {
+      "item_id": "ff1",
+      "q": "What did 'silly' originally mean?",
+      "options": [
+        "Happy",
+        "Foolish",
+        "Drunk"
+      ],
+      "correct": 0,
+      "explain": "It evolved from 'seely' (blessed) to its current meaning by the 16th century."
+    },
+    {
+      "item_id": "ff2",
+      "q": "Why was the avocado named 'āhuacatl'?",
+      "options": [
+        "It tasted like testicles",
+        "It looked like testicles",
+        "It grew in testicle-shaped trees"
+      ],
+      "correct": 1,
+      "explain": "The Nahuatl word referred to the fruit's resemblance to testicles."
+    },
+    {
+      "item_id": "ff3",
+      "q": "What’s the origin of 'clue'?",
+      "options": [
+        "A detective’s tool",
+        "A ball of thread",
+        "A lock’s mechanism"
+      ],
+      "correct": 1,
+      "explain": "'Clew' (thread ball) was used to find your way, like a clue in a mystery."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Even Is Etymology?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Etymology’s just the story behind a word’s origin.",
+            "id": "s1_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/etymology/s1_t1_ff83b97b.mp3",
+            "dur": 2.11
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So, like, a word’s birth certificate?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/etymology/s1_t2_33c12dee.mp3",
+            "dur": 2.1
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! It tells us where it came from and how it evolved.",
+            "id": "s1_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/etymology/s1_t3_868b8a2d.mp3",
+            "dur": 2.92
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, so I can finally find out why ‘awful’ means ‘terrible’ now?",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/etymology/s1_t4_154f8a4a.mp3",
+            "dur": 2.63
+          },
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Funny you mention that—it used to mean ‘full of awe’!",
+            "id": "s1_t5",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/etymology/s1_t5_77c05d36.mp3",
+            "dur": 2.59
+          }
+        ],
+        "quiz_after": {
+          "q": "What does etymology study?",
+          "options": [
+            "The meaning of words today",
+            "The history of words",
+            "How words sound"
+          ],
+          "correct": 1,
+          "reaction_correct": "Okay, maybe I do need this.",
+          "reaction_wrong": "Wow, you’re as lost as I am.",
+          "reaction_correct_audio": "/static/audio/etymology/s1_rok_3924374a.mp3",
+          "reaction_wrong_audio": "/static/audio/etymology/s1_rno_8d582cec.mp3"
+        },
+        "dur": 12.35
+      },
+      {
+        "id": "s2",
+        "title": "Loanwords: Borrowing Without Asking",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "English steals words from other languages all the time.",
+            "id": "s2_t1",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/etymology/s2_t1_b9484492.mp3",
+            "dur": 2.81
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So ‘ballet’ is just French for... ballet?",
+            "id": "s2_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/etymology/s2_t2_de4fedf1.mp3",
+            "dur": 2.51
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Yep, borrowed straight from French, meaning ‘dance’.",
+            "id": "s2_t3",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/etymology/s2_t3_0dd40feb.mp3",
+            "dur": 1.94
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Wow, groundbreaking.",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/etymology/s2_t4_84448dec.mp3",
+            "dur": 1.52
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "But ‘kindergarten’? German for ‘children’s garden’!",
+            "id": "s2_t5",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/etymology/s2_t5_4c894ec4.mp3",
+            "dur": 2.62
+          }
+        ],
+        "quiz_after": {
+          "q": "Which language did English borrow ‘ballet’ from?",
+          "options": [
+            "Italian",
+            "French",
+            "Spanish"
+          ],
+          "correct": 1,
+          "reaction_correct": "Fine, you knew that.",
+          "reaction_wrong": "Oof, even I got that one.",
+          "reaction_correct_audio": "/static/audio/etymology/s2_rok_35d4d85d.mp3",
+          "reaction_wrong_audio": "/static/audio/etymology/s2_rno_06f3d8b7.mp3"
+        },
+        "dur": 11.4
+      },
+      {
+        "id": "s3",
+        "title": "Words That Changed Meaning",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "‘Silly’ used to mean ‘blessed’ or ‘happy’!",
+            "id": "s3_t1",
+            "voice": "gb_oliver_excited",
+            "audio": "/static/audio/etymology/s3_t1_b4da4d0f.mp3",
+            "dur": 2.28
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So my goldfish isn’t ‘silly’—it’s divine?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/etymology/s3_t2_f31397b2.mp3",
+            "dur": 2.06
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Yep, and ‘bully’ used to mean ‘sweetheart’.",
+            "id": "s3_t3",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/etymology/s3_t3_55c1f653.mp3",
+            "dur": 2.38
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh, so my bully’s just a sweetheart? Got it.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/etymology/s3_t4_bd96b6f8.mp3",
+            "dur": 2.49
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Language shifts. It’s wild.",
+            "id": "s3_t5",
+            "voice": "gb_oliver_neutral",
+            "audio": "/static/audio/etymology/s3_t5_dc9ab81f.mp3",
+            "dur": 1.32
+          }
+        ],
+        "quiz_after": {
+          "q": "What did ‘silly’ originally mean?",
+          "options": [
+            "Happy",
+            "Foolish",
+            "Quiet"
+          ],
+          "correct": 0,
+          "reaction_correct": "Huh. Mind blown.",
+          "reaction_wrong": "Nope. Try again, pal.",
+          "reaction_correct_audio": "/static/audio/etymology/s3_rok_ac1ddfba.mp3",
+          "reaction_wrong_audio": "/static/audio/etymology/s3_rno_97511dab.mp3"
+        },
+        "dur": 10.53
+      },
+      {
+        "id": "s4",
+        "title": "Why Should We Care?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Knowing etymology helps you decode new words.",
+            "id": "s4_t1",
+            "voice": "gb_oliver_curious",
+            "audio": "/static/audio/etymology/s4_t1_7e2d8dd3.mp3",
+            "dur": 2.44
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Oh, so I can finally understand ‘philanthropist’?",
+            "id": "s4_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/etymology/s4_t2_d3b69c57.mp3",
+            "dur": 3.2
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! ‘Phil’ means ‘love,’ ‘anthro’ means ‘human’—love of humans!",
+            "id": "s4_t3",
+            "voice": "gb_oliver_cheerful",
+            "audio": "/static/audio/etymology/s4_t3_d245598e.mp3",
+            "dur": 3.02
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so a ‘philanthropist’ is just a.. human lover?",
+            "id": "s4_t4",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/etymology/s4_t4_bf773ce1.mp3",
+            "dur": 2.7
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "More or less, yeah.",
+            "id": "s4_t5",
+            "voice": "gb_oliver_confident",
+            "audio": "/static/audio/etymology/s4_t5_0445b703.mp3",
+            "dur": 1.08
+          }
+        ],
+        "quiz_after": {
+          "q": "What does ‘anthro’ mean in ‘philanthropist’?",
+          "options": [
+            "Animal",
+            "Human",
+            "Money"
+          ],
+          "correct": 1,
+          "reaction_correct": "Okay, that’s actually useful.",
+          "reaction_wrong": "You’re failing harder than me.",
+          "reaction_correct_audio": "/static/audio/etymology/s4_rok_e456b638.mp3",
+          "reaction_wrong_audio": "/static/audio/etymology/s4_rno_fcc91bfb.mp3"
+        },
+        "dur": 12.44
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Etymology. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

@@ -9,8 +9,10 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
+import catalogue
 import content
 import orchestrator as orch
+import topics
 
 bp = Blueprint("session", __name__, url_prefix="/api")
 
@@ -32,28 +34,105 @@ def _get(session_id: str):
 
 
 @bp.get("/topics")
-def topics():
-    return jsonify({"topics": content.list_topics()})
+def list_topics():
+    return jsonify({"topics": topics.suggestions()})
+
+
+@bp.get("/topics/<slug>/status")
+def topic_status(slug: str):
+    """Polled by the podcast card while voices render in the background."""
+    return jsonify(topics.status(slug))
+
+
+@bp.get("/topics/<slug>/segment/<seg_id>")
+def topic_segment(slug: str, seg_id: str):
+    """Re-read one podcast segment.
+
+    Lets a podcast card that started on captions alone pick up its audio once
+    the background render finishes, without restarting the session.
+    """
+    try:
+        pack = content.load_pack(slug)
+    except content.TopicNotFound as exc:
+        return jsonify({"error": str(exc)}), 404
+
+    seg = next(
+        (s for s in pack.get("podcast", {}).get("segments", []) if s["id"] == seg_id), None
+    )
+    if seg is None:
+        return jsonify({"error": "no such segment"}), 404
+    return jsonify({"segment": seg, "audio_ready": bool(pack.get("audio_ready"))})
+
+
+@bp.get("/catalogue")
+def catalogue_view():
+    """The two-level board, with what is spent and what is left this cycle."""
+    return jsonify(catalogue.browse())
 
 
 @bp.post("/session")
 def start():
+    """Start a session, either on a catalogue topic or on free text.
+
+    Blocks for text generation (a few seconds on a new topic, instant on a
+    cached one). Audio renders in the background and lands later.
+    """
     body = request.get_json(silent=True) or {}
-    topic = body.get("topic")
-    if not topic:
+    slug_in = (body.get("slug") or "").strip()
+    topic = (body.get("topic") or "").strip()
+
+    entry = catalogue.lookup(slug_in) if slug_in else None
+    if entry is None and topic:
+        # Typing the name of a catalogue topic should select that topic, not
+        # quietly mint a parallel copy of it under a different slug.
+        entry = catalogue.find_by_title(topic)
+
+    if entry is None and not topic:
         return jsonify({"error": "topic required"}), 400
+    if len(topic) > 120:
+        return jsonify({"error": "topic too long"}), 400
+
+    # The no-repeats rule. Exhausting the board resets it, so a refusal here
+    # always leaves the user something else to pick.
+    if entry and catalogue.is_used(entry["slug"]):
+        return jsonify(
+            {
+                "error": "You already did {} this cycle. Pick something else.".format(
+                    entry["title"]
+                ),
+                "used": True,
+            }
+        ), 409
+
     try:
-        pack = content.load_pack(topic)
-    except content.TopicNotFound as exc:
-        return jsonify({"error": str(exc)}), 404
+        if entry:
+            meta = {
+                "title": entry["title"],
+                "emoji": entry["emoji"],
+                "blurb": "{} - {}".format(entry["subject_title"], entry["title"]),
+            }
+            slug, pack = topics.ensure_pack(
+                entry["title"], meta=meta, slug=entry["slug"]
+            )
+        else:
+            slug, pack = topics.ensure_pack(topic)
+    except topics.TopicRejected as exc:
+        return jsonify({"error": str(exc), "rejected": True}), 422
+    except Exception as exc:  # noqa: BLE001
+        return jsonify({"error": "could not build that topic: {}".format(exc)}), 502
+
+    cycle = catalogue.mark_used(slug)
 
     sid = uuid.uuid4().hex[:12]
-    SESSIONS[sid] = orch.new_session(sid, topic, pack)
+    SESSIONS[sid] = orch.new_session(sid, slug, pack)
     return jsonify(
         {
             "session_id": sid,
-            "topic": topic,
-            "title": pack.get("title", topic),
+            "topic": slug,
+            "title": pack.get("title", slug),
+            "emoji": pack.get("emoji", ""),
+            "audio_ready": bool(pack.get("audio_ready")),
+            "cycle": cycle,
             "progress": orch.progress(SESSIONS[sid]),
         }
     )
