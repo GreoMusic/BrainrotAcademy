@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 import config
@@ -16,7 +17,30 @@ class TopicNotFound(Exception):
     pass
 
 
-@lru_cache(maxsize=16)
+def pack_path(slug: str) -> "Path":
+    return config.TOPICS_DIR / "{}.json".format(slug)
+
+
+def pack_exists(slug: str) -> bool:
+    p = pack_path(slug)
+    return p.exists() and p.stat().st_size > 0
+
+
+def read_pack_file(slug: str) -> dict[str, Any]:
+    """Raw read, bypassing the cache - used by the background audio render."""
+    return json.loads(pack_path(slug).read_text(encoding="utf-8"))
+
+
+def write_pack_file(slug: str, pack: dict[str, Any]) -> None:
+    config.TOPICS_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = pack_path(slug).with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(pack, indent=2, ensure_ascii=False), encoding="utf-8")
+    # Atomic swap: a reader must never catch a half-written pack, and the
+    # background audio job rewrites this file while the feed is being served.
+    tmp.replace(pack_path(slug))
+
+
+@lru_cache(maxsize=32)
 def load_pack(topic: str) -> dict[str, Any]:
     path = config.TOPICS_DIR / "{}.json".format(topic)
     if not path.exists():

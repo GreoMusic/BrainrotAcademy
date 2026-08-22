@@ -42,12 +42,11 @@ def drain(state, pack, n):
     return out, state
 
 
-def answer_check(state, pack, correct_flags):
-    """Walk one full CHECK, answering each quiz card in turn."""
-    for correct in correct_flags:
-        card, state = orch.next_card(state, pack)
-        assert card["type"] == "quiz", "expected quiz, got {}".format(card["type"])
-        state = orch.record_answer(state, card["id"], correct, card["payload"]["item_id"])
+def answer_check(state, pack, correct, item_id=None):
+    """Walk the one-card CHECK - always a coach conversation now."""
+    card, state = orch.next_card(state, pack)
+    assert card["type"] == "coach", "expected coach, got {}".format(card["type"])
+    state = orch.record_answer(state, card["id"], correct, item_id)
     return state
 
 
@@ -70,24 +69,24 @@ def test_learn_hands_off_to_check():
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
 
     card, s = orch.next_card(s, pack)
-    assert card["type"] == "quiz"
+    assert card["type"] == "coach"
     assert s["stage"] == orch.CHECK
 
 
 def test_failed_check_loops_back_to_learn_and_reteaches_missed():
-    """The money shot: get one wrong, land back in LEARN on that exact item."""
+    """The money shot: get the conversation wrong, land back in LEARN on that
+    exact item."""
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
 
-    s = answer_check(s, pack, [False] * config.QUIZ_CARDS_PER_CHECK)
-    missed = list(s["missed"])
-    assert missed, "failed answers should be recorded as missed"
+    s = answer_check(s, pack, False, item_id="i0")
+    assert s["missed"] == ["i0"], "failed answers should be recorded as missed"
 
     card, s = orch.next_card(s, pack)
     assert s["stage"] == orch.LEARN, "a failed CHECK must return to LEARN"
     assert card["type"] == "flashcard"
-    assert card["id"] == missed[0], "the missed item must be re-taught first"
+    assert card["id"] == "i0", "the missed item must be re-taught first"
     assert s["last_score"] < config.PASS_THRESHOLD
 
 
@@ -96,7 +95,7 @@ def test_passed_check_unlocks_scroll_budget():
     s = orch.new_session("s1", "test", pack)
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
 
-    s = answer_check(s, pack, [True] * config.QUIZ_CARDS_PER_CHECK)
+    s = answer_check(s, pack, True)
 
     card, s = orch.next_card(s, pack)
     assert s["stage"] == orch.SCROLL
@@ -109,7 +108,7 @@ def test_scroll_budget_exhausts_into_friction():
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
-    s = answer_check(s, pack, [True] * config.QUIZ_CARDS_PER_CHECK)
+    s = answer_check(s, pack, True)
 
     cards, s = drain(s, pack, config.SCROLL_BUDGET)
     assert all(c["type"] == "video" for c in cards)
@@ -126,7 +125,7 @@ def test_cleared_friction_returns_to_check():
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
-    s = answer_check(s, pack, [True] * config.QUIZ_CARDS_PER_CHECK)
+    s = answer_check(s, pack, True)
     _, s = drain(s, pack, config.SCROLL_BUDGET)
     _, s = orch.next_card(s, pack)  # the gate
 
@@ -134,7 +133,7 @@ def test_cleared_friction_returns_to_check():
     assert s["stage"] == orch.CHECK
 
     card, s = orch.next_card(s, pack)
-    assert card["type"] == "quiz"
+    assert card["type"] == "coach"
 
 
 def test_full_stage_sequence():
@@ -150,7 +149,7 @@ def test_full_stage_sequence():
     for _ in range(config.LEARN_CARDS_PER_ROUND):
         card, s = orch.next_card(s, pack)
         note(s)
-    s = answer_check(s, pack, [True] * config.QUIZ_CARDS_PER_CHECK)
+    s = answer_check(s, pack, True)
     note(s)
     for _ in range(config.SCROLL_BUDGET):
         card, s = orch.next_card(s, pack)
@@ -196,10 +195,10 @@ def test_engine_never_stalls_over_a_long_session():
     for n in range(200):
         card, s = orch.next_card(s, pack)
         assert card["type"], "card {} had no type".format(n)
-        if card["type"] == "quiz":
-            s = orch.record_answer(s, card["id"], n % 3 != 0, card["payload"]["item_id"])
+        if card["type"] == "coach":
+            s = orch.record_answer(s, card["id"], n % 3 != 0)
         elif card["type"] in orch.FRICTION_KINDS:
-            s = orch.clear_friction(s)
+            s = orch.clear_friction(s, pack)
 
 
 def test_progress_shape():
@@ -212,34 +211,22 @@ def test_progress_shape():
     assert orch.progress(s)["mastered"] == 1
 
 
-def test_coach_card_appears_as_a_check():
-    """Every COACH_EVERY-th check swaps multiple choice for a conversation."""
+def test_every_check_is_a_coach_conversation():
+    """CHECK is always a coach conversation now - never multiple choice."""
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
+    _, s = drain(s, pack, config.LEARN_CARDS_PER_ROUND)
 
-    kinds = []
-    for _ in range(120):
-        card, s = orch.next_card(s, pack)
-        kinds.append(card["type"])
-        if card["type"] == "quiz":
-            s = orch.record_answer(s, card["id"], True, card["payload"]["item_id"])
-        elif card["type"] == "coach":
-            s = orch.record_answer(s, card["id"], True)
-        elif card["type"] in orch.FRICTION_KINDS:
-            s = orch.clear_friction(s, pack)
-        if "coach" in kinds:
-            break
-
-    assert "coach" in kinds, kinds
+    card, s = orch.next_card(s, pack)
+    assert card["type"] == "coach"
 
 
 def test_a_coach_conversation_resolves_the_whole_check():
-    """The coach is one card standing in for a full quiz round, so a single
+    """The coach is one card standing in for a full CHECK, so a single
     answer must end the CHECK instead of waiting for peers that never come."""
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     s["stage"] = orch.CHECK
-    s["round"] = orch.COACH_EVERY
 
     card, s = orch.next_card(s, pack)
     assert card["type"] == "coach"
@@ -254,7 +241,6 @@ def test_failing_the_coach_returns_to_learning():
     pack = make_pack()
     s = orch.new_session("s1", "test", pack)
     s["stage"] = orch.CHECK
-    s["round"] = orch.COACH_EVERY
 
     card, s = orch.next_card(s, pack)
     s = orch.record_answer(s, card["id"], False)
@@ -264,7 +250,9 @@ def test_failing_the_coach_returns_to_learning():
 
 
 def test_a_learn_round_mixes_kinds():
-    """Weakest-first alone buried podcast segments behind every flashcard."""
+    """A LEARN round always teaches flashcard, then fun fact, then podcast -
+    weakest-first alone buried podcast segments behind every flashcard, and
+    mastery-first bucketing alone let the order drift round to round."""
     pack = make_pack()
     pack["items"] += [
         {"id": "ff1", "kind": "fun_fact", "text": "x"},
@@ -275,8 +263,7 @@ def test_a_learn_round_mixes_kinds():
 
     cards, s = drain(s, pack, 3)
     kinds = [c["type"] for c in cards]
-    assert len(set(kinds)) == 3, kinds
-    assert "podcast" in kinds
+    assert kinds == ["flashcard", "fun_fact", "podcast"], kinds
 
 
 def test_clearing_a_gate_resumes_learning_while_material_remains():

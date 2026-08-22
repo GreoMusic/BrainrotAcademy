@@ -1,16 +1,24 @@
 <script setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import { api } from '../../api'
 
-const props = defineProps({ card: Object, active: Boolean })
-const emit = defineEmits(['answered'])
+const props = defineProps({ card: Object, active: Boolean, sessionId: String })
+const emit = defineEmits(['answered', 'listened'])
 
-const seg = computed(() => props.card.payload.segment || { turns: [] })
+// Voices render in the background after a topic is generated, so a segment can
+// arrive caption-only. Swap in the audio the moment it lands.
+const liveSeg = ref(null)
+const seg = computed(() => liveSeg.value || props.card.payload.segment || { turns: [] })
 const turns = computed(() => seg.value.turns || [])
+const awaitingVoices = computed(() => turns.value.length > 0 && !turns.value[0].audio)
 
 const idx = ref(0)
 const playing = ref(false)
 const showQuiz = ref(false)
 const picked = ref(null)
+// Set once the segment has played out. The feed unlocks off this, so it also
+// stops a late-arriving audio render from restarting a card already cleared.
+const finished = ref(false)
 
 const current = computed(() => turns.value[idx.value] || {})
 const quiz = computed(() => seg.value.quiz_after)
@@ -18,6 +26,33 @@ const quiz = computed(() => seg.value.quiz_after)
 let audio = null
 let preload = null
 let timer = null
+let poll = null
+
+async function watchForVoices() {
+  if (poll || !awaitingVoices.value) return
+  const slug = props.card.payload.topic
+  if (!slug) return
+  poll = setInterval(async () => {
+    try {
+      const { segment, audio_ready } = await api.segment(slug, seg.value.id)
+      if (segment && segment.turns?.[0]?.audio) {
+        liveSeg.value = segment
+        stopPolling()
+        // Restart so they hear it rather than read it - but never re-lock a
+        // card they already listened through.
+        if (props.active && !finished.value) playTurn(0)
+      } else if (audio_ready) {
+        stopPolling()
+      }
+    } catch {
+      stopPolling()
+    }
+  }, 4000)
+}
+
+function stopPolling() {
+  if (poll) { clearInterval(poll); poll = null }
+}
 
 /** Play turn N. Falls back to a duration timer when audio has not been
  *  rendered yet, so the podcast is demoable before any TTS exists. */
@@ -43,7 +78,11 @@ function playTurn(n) {
 
 function finishSegment() {
   playing.value = false
+  finished.value = true
   if (quiz.value) showQuiz.value = true
+  // The lock: the feed will not hand the user anything past this card until
+  // they have actually listened all the way through.
+  emit('listened')
 }
 
 function stopAudio() {
@@ -85,20 +124,28 @@ function answer(i) {
 watch(
   () => props.active,
   (a) => {
-    if (a) playTurn(0)
-    else {
+    if (a) {
+      playTurn(0)
+      watchForVoices()
+    } else {
       stopAudio()
+      stopPolling()
       playing.value = false
       idx.value = 0
       showQuiz.value = false
       picked.value = null
+      finished.value = false
     }
   },
   { immediate: true, flush: 'post' },
 )
 
-onBeforeUnmount(stopAudio)
+onBeforeUnmount(() => {
+  stopAudio()
+  stopPolling()
+})
 </script>
+
 
 <template>
   <div class="card lightscreen">
@@ -117,7 +164,10 @@ onBeforeUnmount(stopAudio)
       </div>
 
       <div class="learn-card pod">
-        <div class="k">{{ card.payload.title }}</div>
+        <div class="k">
+          {{ card.payload.title }}
+          <em v-if="awaitingVoices" class="rendering">· voices rendering</em>
+        </div>
 
         <div class="hosts">
           <div class="host" :class="{ live: playing && current.speaker === 'a' }">
@@ -190,6 +240,7 @@ onBeforeUnmount(stopAudio)
 }
 
 .line { flex: 1; display: flex; align-items: center; font-size: 15px; }
+.rendering { font-style: normal; color: var(--dim); text-transform: none; letter-spacing: 0; }
 
 .wave { display: flex; align-items: flex-end; gap: 2.5px; height: 22px; margin-top: 10px; opacity: 0.28; }
 .wave.on { opacity: 1; }

@@ -42,22 +42,43 @@ Open http://localhost:5173.
 
 ```bash
 cd backend
-python3.11 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python -m tools.generate_content --stub
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+cp .env.example .env      # then put your Mistral key in it
+.venv/Scripts/python.exe -m tools.smoke_test
 ```
 
-`--stub` writes a hand-written photosynthesis pack, so **the whole feed works
-without an API key**. Add a key only when you want generated topics and audio.
-
-```bash
-cp .env.example .env      # then put your key in it
-.venv/bin/python -m tools.smoke_test          # verifies chat + TTS + STT
-.venv/bin/python -m tools.generate_content --all
-```
+`smoke_test` verifies chat, TTS and transcription in one shot and prints the
+real preset voice ids. Everything else is generated on demand.
 
 Drop any vertical `.mp4` files into `backend/static/clips/` and they become the
 doomscroll reel automatically.
+
+### Topics are generated on demand
+
+Type any subject at the gate and Mistral builds the round for it: flashcards,
+fun facts, a quiz, and a two-host podcast. Packs are cached to
+`backend/data/topics/`, so the same subject is instant next time.
+
+Text takes ~12s on a cold topic and gates the feed behind a progress screen.
+Audio is slower (~29 TTS clips), so it renders in a **background thread** and
+the pack is rewritten when it lands; until then the podcast plays from captions
+on a duration timer and shows a "voices rendering" badge. Two rules hold:
+
+- **Nothing is generated mid-scroll.** Generation happens once per topic at
+  session start. Once the feed is running it serves entirely from disk.
+- **Rendered clips are named by content hash.** Keyed on turn position alone, a
+  regenerated script would find `s1_t1.mp3` on disk and ship the previous take
+  against the new line.
+
+To pre-warm topics before a demo (optional):
+
+```bash
+cd backend && .venv/Scripts/python.exe -m tools.generate_content --all
+```
+
+`--stub` still writes a hand-authored photosynthesis pack with no API calls, as
+an offline fallback.
 
 ## Tests
 
@@ -99,13 +120,23 @@ will not fetch more until it is cleared. There is no scroll-locking anywhere.
 
 | Job | Model |
 |---|---|
-| Flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
+| Topic normalising, flashcards, quizzes, podcast scripts, coach, grading | `mistral-medium-latest` |
 | Touch-grass photo check | `mistral-medium-latest` (vision) |
 | Podcast + coach speech | `voxtral-mini-tts-latest` |
 | Talk-to-human transcription | `voxtral-mini-latest` |
 | Live coach transcription | `voxtral-mini-transcribe-realtime-2602` |
 
-SDK note: on `mistralai` 2.x the import is `from mistralai.client import Mistral`,
-and `audio.speech.complete(...)` returns `audio_data` as a **base64 string**.
-Preset voices exist — `audio.voices.list(type_="preset")` — so no voice cloning
-setup is required.
+Voices are presets from `audio.voices.list(type_="preset")`, which ship as
+`<family>_<emotion>` slugs. A host is a voice family and each line picks an
+emotion, so the skeptic can actually sound confused and then sarcastic — that
+is most of what stops a two-hander sounding like one narrator reading both
+parts. Asking a family for an emotion it lacks is a hard 404, hence the
+fallback table in `config.py`.
+
+SDK notes for `mistralai` 2.x, where the docs and the API disagree:
+
+- the import is `from mistralai.client import Mistral`, not `from mistralai import …`
+- `audio.speech.complete(...)` returns `audio_data` as a **base64 string**
+- `voices.list(...)` paginates under `items` — there is no `voices` or `data`
+- the documented `voxtral-mini-transcribe-*` ids are **not served**; the general
+  `voxtral-mini-latest` handles the transcriptions endpoint

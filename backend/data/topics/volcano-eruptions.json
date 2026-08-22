@@ -1,0 +1,459 @@
+{
+  "topic": "volcano-eruptions",
+  "title": "Volcano Eruptions",
+  "emoji": "🌋",
+  "blurb": "Learn why magma bursts to the surface",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "Why does magma rise to the surface during an eruption?",
+      "back": "Less dense than surrounding rock, so it floats up.",
+      "hook": "Lava’s elevator pitch: I’m lighter!"
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "What’s the main gas driving volcanic eruptions?",
+      "back": "Water vapor and CO₂ build pressure.",
+      "hook": "Pop goes the bubble, but deadly."
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "What’s the difference between lava and magma?",
+      "back": "Magma is underground, lava is above.",
+      "hook": "Same liquid, different zip code."
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s the most common type of volcano?",
+      "back": "Shield volcanoes, like in Hawaii.",
+      "hook": "Gentle giants of the lava world."
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What triggers a volcanic eruption?",
+      "back": "Pressure from gas and magma buildup.",
+      "hook": "Nature’s pressure cooker explodes."
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "Can volcanoes erupt underwater?",
+      "back": "Yes, they create new islands sometimes.",
+      "hook": "The ocean’s secret fireworks show."
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "Volcanoes can shoot rocks the size of cars over 100 miles.",
+      "emoji": "🚗💥"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "There’s a volcano in Antarctica that’s been erupting for 1,900 years.",
+      "emoji": "❄️🔥"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "The tallest volcano in the solar system is on Mars.",
+      "emoji": "🪐🌋"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What Makes a Volcano Erupt?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Why Does Magma Rise?"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "What Triggers the Explosion?"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Where Does the Magma Come From?"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "What makes magma rise?",
+      "options": [
+        "High density",
+        "Low density",
+        "Extreme heat"
+      ],
+      "correct": 1,
+      "explain": "Magma is less dense than solid rock, so buoyancy pushes it upward."
+    },
+    {
+      "item_id": "fc2",
+      "q": "Which gas causes most eruption pressure?",
+      "options": [
+        "Sulfur dioxide",
+        "Carbon dioxide",
+        "Oxygen"
+      ],
+      "correct": 1,
+      "explain": "CO₂ is a major gas in magma that creates explosive pressure."
+    },
+    {
+      "item_id": "fc3",
+      "q": "What is magma called after it erupts?",
+      "options": [
+        "Pumice",
+        "Lava",
+        "Ash"
+      ],
+      "correct": 1,
+      "explain": "Magma becomes lava once it reaches the surface."
+    },
+    {
+      "item_id": "fc4",
+      "q": "Which volcano type has broad, gentle slopes?",
+      "options": [
+        "Stratovolcano",
+        "Cinder cone",
+        "Shield volcano"
+      ],
+      "correct": 2,
+      "explain": "Shield volcanoes have wide, gently sloping profiles from fluid lava flows."
+    },
+    {
+      "item_id": "fc5",
+      "q": "What causes the pressure that triggers eruptions?",
+      "options": [
+        "Earthquakes only",
+        "Gas and magma buildup",
+        "Meteor strikes"
+      ],
+      "correct": 1,
+      "explain": "Gas and magma buildup increase pressure until the volcano erupts."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What do underwater eruptions often form?",
+      "options": [
+        "Glaciers",
+        "New islands",
+        "Deserts"
+      ],
+      "correct": 1,
+      "explain": "Underwater volcanic activity can build up and create new landmasses."
+    },
+    {
+      "item_id": "ff1",
+      "q": "How far have volcanic rocks been found from their source?",
+      "options": [
+        "1 mile",
+        "10 miles",
+        "Over 100 miles"
+      ],
+      "correct": 2,
+      "explain": "Powerful eruptions can eject large rocks incredible distances."
+    },
+    {
+      "item_id": "ff2",
+      "q": "Which continent has a long-erupting volcano?",
+      "options": [
+        "Africa",
+        "Antarctica",
+        "Europe"
+      ],
+      "correct": 1,
+      "explain": "Mount Erebus in Antarctica has been continuously active for millennia."
+    },
+    {
+      "item_id": "ff3",
+      "q": "Where is Olympus Mons, the tallest volcano?",
+      "options": [
+        "Earth",
+        "Mars",
+        "Venus"
+      ],
+      "correct": 1,
+      "explain": "Olympus Mons on Mars is about 22 km high, three times taller than Everest."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What Makes a Volcano Erupt?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Volcanoes erupt when magma pushes up from deep underground.",
+            "id": "s1_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/volcano-eruptions/s1_t1_a5296c37.mp3",
+            "dur": 2.02
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Wait, so it’s just… angry Earth juice?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/volcano-eruptions/s1_t2_e3875e6f.mp3",
+            "dur": 2.33
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Pretty much! But that juice is super hot, molten rock.",
+            "id": "s1_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/volcano-eruptions/s1_t3_ccfef6f8.mp3",
+            "dur": 2.9
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Great, so Earth’s just a giant espresso machine.",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/volcano-eruptions/s1_t4_c2ce0c58.mp3",
+            "dur": 2.6
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "It’s not *just* juice—pressure builds until it can’t be contained anymore!",
+            "id": "s1_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/volcano-eruptions/s1_t5_c140c9bd.mp3",
+            "dur": 2.48
+          }
+        ],
+        "quiz_after": {
+          "q": "What is magma?",
+          "options": [
+            "Solid rock",
+            "Molten rock",
+            "Frozen lava"
+          ],
+          "correct": 1,
+          "reaction_correct": "Told you it’s Earth juice.",
+          "reaction_wrong": "Nope, try melting some rocks.",
+          "reaction_correct_audio": "/static/audio/volcano-eruptions/s1_rok_f1c03764.mp3",
+          "reaction_wrong_audio": "/static/audio/volcano-eruptions/s1_rno_82ed082a.mp3"
+        },
+        "dur": 12.33
+      },
+      {
+        "id": "s2",
+        "title": "Why Does Magma Rise?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "Magma rises because it’s less dense than the rock around it.",
+            "id": "s2_t1",
+            "voice": "en_paul_happy",
+            "audio": "/static/audio/volcano-eruptions/s2_t1_d66e476b.mp3",
+            "dur": 3.88
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So it’s like a hot air balloon under the ground?",
+            "id": "s2_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/volcano-eruptions/s2_t2_73a344a2.mp3",
+            "dur": 2.17
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Exactly! Heat and gases make it buoyant.",
+            "id": "s2_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/volcano-eruptions/s2_t3_e026bfc6.mp3",
+            "dur": 1.87
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So Earth’s just a giant lava lamp.",
+            "id": "s2_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/volcano-eruptions/s2_t4_6717e36f.mp3",
+            "dur": 1.83
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Yep, and the lamp’s about to flicker!",
+            "id": "s2_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/volcano-eruptions/s2_t5_656aa337.mp3",
+            "dur": 1.65
+          }
+        ],
+        "quiz_after": {
+          "q": "What makes magma buoyant?",
+          "options": [
+            "Heat and pressure",
+            "Heat and gases",
+            "Cold and solids"
+          ],
+          "correct": 1,
+          "reaction_correct": "Float on, little lava bubble.",
+          "reaction_wrong": "Nope, gases are the real MVPs.",
+          "reaction_correct_audio": "/static/audio/volcano-eruptions/s2_rok_52adc76c.mp3",
+          "reaction_wrong_audio": "/static/audio/volcano-eruptions/s2_rno_be0b24c0.mp3"
+        },
+        "dur": 11.4
+      },
+      {
+        "id": "s3",
+        "title": "What Triggers the Explosion?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Gases in the magma expand as they rise, forcing it out.",
+            "id": "s3_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/volcano-eruptions/s3_t1_23d61bc0.mp3",
+            "dur": 3.02
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So it’s like shaking a soda can?",
+            "id": "s3_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/volcano-eruptions/s3_t2_eaeec47a.mp3",
+            "dur": 2.01
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Yes! The pressure builds until—BOOM!",
+            "id": "s3_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/volcano-eruptions/s3_t3_53026c10.mp3",
+            "dur": 2.6
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Fantastic. Earth’s a ticking soda bomb.",
+            "id": "s3_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/volcano-eruptions/s3_t4_3e4faf35.mp3",
+            "dur": 2.06
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "Not a bomb, just nature’s fireworks.",
+            "id": "s3_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/volcano-eruptions/s3_t5_3da7895e.mp3",
+            "dur": 1.74
+          }
+        ],
+        "quiz_after": {
+          "q": "What causes the pressure that leads to an eruption?",
+          "options": [
+            "Expanding gases",
+            "Cold water",
+            "Gravity"
+          ],
+          "correct": 0,
+          "reaction_correct": "Pop goes the magma!",
+          "reaction_wrong": "Nope, think soda can.",
+          "reaction_correct_audio": "/static/audio/volcano-eruptions/s3_rok_889332f1.mp3",
+          "reaction_wrong_audio": "/static/audio/volcano-eruptions/s3_rno_1caa8f0d.mp3"
+        },
+        "dur": 11.43
+      },
+      {
+        "id": "s4",
+        "title": "Where Does the Magma Come From?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "happy",
+            "text": "Magma forms deep in the mantle, where rocks melt.",
+            "id": "s4_t1",
+            "voice": "en_paul_happy",
+            "audio": "/static/audio/volcano-eruptions/s4_t1_2d4062d5.mp3",
+            "dur": 3.0
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "So Earth’s core is just… a big furnace?",
+            "id": "s4_t2",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/volcano-eruptions/s4_t2_3d26477d.mp3",
+            "dur": 2.68
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Kinda! Heat from the core melts the mantle above it.",
+            "id": "s4_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/volcano-eruptions/s4_t3_9e0231be.mp3",
+            "dur": 2.47
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Cool. So we’re living on a toaster.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/volcano-eruptions/s4_t4_98a41692.mp3",
+            "dur": 1.52
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "A toaster that sometimes pops up lava!",
+            "id": "s4_t5",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/volcano-eruptions/s4_t5_02b82a1e.mp3",
+            "dur": 1.6
+          }
+        ],
+        "quiz_after": {
+          "q": "Where does magma form?",
+          "options": [
+            "The crust",
+            "The mantle",
+            "The atmosphere"
+          ],
+          "correct": 1,
+          "reaction_correct": "Hot stuff, mantle!",
+          "reaction_wrong": "Way off. Think deeper.",
+          "reaction_correct_audio": "/static/audio/volcano-eruptions/s4_rok_e16b39d6.mp3",
+          "reaction_wrong_audio": "/static/audio/volcano-eruptions/s4_rno_f884fb07.mp3"
+        },
+        "dur": 11.27
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Volcano Eruptions. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

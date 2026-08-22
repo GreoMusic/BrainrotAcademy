@@ -189,42 +189,48 @@
             "speaker": "a",
             "text": "Okay. A tree weighs two tons. Where did the two tons come from?",
             "audio": "/static/audio/photosynthesis/s1_t1.mp3",
-            "dur": 2.44
+            "dur": 2.98,
+            "voice": "en_paul_neutral"
           },
           {
             "id": "s1_t2",
             "speaker": "b",
             "text": "The soil, obviously. It grew out of the ground.",
             "audio": "/static/audio/photosynthesis/s1_t2.mp3",
-            "dur": 2.04
+            "dur": 2.25,
+            "voice": "gb_jane_neutral"
           },
           {
             "id": "s1_t3",
             "speaker": "a",
             "text": "That is what everyone says, and it is wrong. Dig up a tree and the hole is basically the same size.",
             "audio": "/static/audio/photosynthesis/s1_t3.mp3",
-            "dur": 3.72
+            "dur": 4.11,
+            "voice": "en_paul_neutral"
           },
           {
             "id": "s1_t4",
             "speaker": "b",
             "text": "Wait. So where is the tree coming from?",
             "audio": "/static/audio/photosynthesis/s1_t4.mp3",
-            "dur": 1.27
+            "dur": 1.59,
+            "voice": "gb_jane_neutral"
           },
           {
             "id": "s1_t5",
             "speaker": "a",
             "text": "The air. It is pulling carbon dioxide out of the sky and building itself out of it. A tree is mostly air that stopped moving.",
             "audio": "/static/audio/photosynthesis/s1_t5.mp3",
-            "dur": 4.6
+            "dur": 5.63,
+            "voice": "en_paul_neutral"
           },
           {
             "id": "s1_t6",
             "speaker": "b",
             "text": "That is genuinely unsettling and I love it.",
             "audio": "/static/audio/photosynthesis/s1_t6.mp3",
-            "dur": 1.42
+            "dur": 2.23,
+            "voice": "gb_jane_neutral"
           }
         ],
         "quiz_after": {
@@ -240,7 +246,7 @@
           "reaction_correct_audio": "/static/audio/photosynthesis/s1_rok.mp3",
           "reaction_wrong_audio": "/static/audio/photosynthesis/s1_rno.mp3"
         },
-        "dur": 15.49
+        "dur": 18.79
       },
       {
         "id": "s2",
@@ -251,35 +257,40 @@
             "speaker": "a",
             "text": "Here is the part nobody tells you. Chlorophyll is bad at its job.",
             "audio": "/static/audio/photosynthesis/s2_t1.mp3",
-            "dur": 2.71
+            "dur": 2.06,
+            "voice": "en_paul_neutral"
           },
           {
             "id": "s2_t2",
             "speaker": "b",
             "text": "Bad how? It runs the entire planet.",
             "audio": "/static/audio/photosynthesis/s2_t2.mp3",
-            "dur": 1.58
+            "dur": 1.84,
+            "voice": "gb_jane_neutral"
           },
           {
             "id": "s2_t3",
             "speaker": "a",
             "text": "It throws away green light. Green is the brightest part of sunlight and the leaf just bounces it back.",
             "audio": "/static/audio/photosynthesis/s2_t3.mp3",
-            "dur": 3.45
+            "dur": 3.07,
+            "voice": "en_paul_neutral"
           },
           {
             "id": "s2_t4",
             "speaker": "b",
             "text": "So leaves are green because that is the light they refuse to use?",
             "audio": "/static/audio/photosynthesis/s2_t4.mp3",
-            "dur": 2.05
+            "dur": 2.83,
+            "voice": "gb_jane_neutral"
           },
           {
             "id": "s2_t5",
             "speaker": "a",
             "text": "Correct. The colour of every plant on Earth is a rejection notice.",
             "audio": "/static/audio/photosynthesis/s2_t5.mp3",
-            "dur": 2.16
+            "dur": 2.31,
+            "voice": "en_paul_neutral"
           }
         ],
         "quiz_after": {
@@ -295,9 +306,10 @@
           "reaction_correct_audio": "/static/audio/photosynthesis/s2_rok.mp3",
           "reaction_wrong_audio": "/static/audio/photosynthesis/s2_rno.mp3"
         },
-        "dur": 11.95
+        "dur": 12.11
       }
     ]
   },
-  "coach_system": "You are a warm, sharp tutor quizzing someone on photosynthesis. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+  "coach_system": "You are a warm, sharp tutor quizzing someone on photosynthesis. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook.",
+  "audio_ready": true
 }
