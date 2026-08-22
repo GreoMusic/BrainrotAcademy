@@ -5,5 +5,9 @@ __pycache__/
 .env
 dist/
 backend/static/audio/*/
+# Keep the shipped demo's pre-rendered Mistral podcast audio available after
+# cloning; audio for newly generated topics remains local.
+!backend/static/audio/photosynthesis/
+!backend/static/audio/photosynthesis/*.mp3
 backend/static/audio/_smoke.mp3
 backend/static/clips/*.mp4
