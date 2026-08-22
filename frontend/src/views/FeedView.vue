@@ -5,6 +5,7 @@ import ProgressHud from '../components/ProgressHud.vue'
 import FlashcardCard from '../components/cards/FlashcardCard.vue'
 import FunFactCard from '../components/cards/FunFactCard.vue'
 import VideoCard from '../components/cards/VideoCard.vue'
+import GifCard from '../components/cards/GifCard.vue'
 import QuizCard from '../components/cards/QuizCard.vue'
 import MathGateCard from '../components/cards/MathGateCard.vue'
 import PodcastCard from '../components/cards/PodcastCard.vue'
@@ -18,6 +19,7 @@ const CARD_FOR = {
   flashcard: FlashcardCard,
   fun_fact: FunFactCard,
   video: VideoCard,
+  gif: GifCard,
   quiz: QuizCard,
   coach: CoachCard,
   podcast: PodcastCard,

@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
+GIPHY_API_KEY = os.getenv("GIPHY_API_KEY", "")
 
 # Verified Aug 2026. See plan for the capability -> model mapping.
 CHAT_MODEL = os.getenv("CHAT_MODEL", "mistral-medium-latest")
