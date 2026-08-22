@@ -28,8 +28,9 @@ const CARD_FOR = {
 
 // Cards the user must resolve before the feed may grow past them.
 // This is what makes a gate a gate: it blocks simply by being the last card,
-// so there is no scroll-locking hack anywhere.
-const BLOCKING = new Set(['quiz', 'coach', 'math_gate', 'touch_grass', 'talk_to_human'])
+// so there is no scroll-locking hack anywhere. Podcast is here too: the user
+// has to finish listening before the feed will hand them anything past it.
+const BLOCKING = new Set(['quiz', 'coach', 'math_gate', 'touch_grass', 'talk_to_human', 'podcast'])
 
 const cards = ref([])
 const activeIndex = ref(0)
@@ -105,6 +106,14 @@ async function onAnswered(card, correct) {
   scrollToNext()
 }
 
+/** A podcast finished playing. No server call - the LEARN queue already has
+ *  whatever comes next, the user just needed to actually listen first. */
+async function onListened(card) {
+  card.resolved = true
+  await ensureBuffer()
+  scrollToNext()
+}
+
 /** A friction gate was cleared. */
 async function onCleared(card) {
   card.resolved = true
@@ -151,6 +160,7 @@ onBeforeUnmount(() => {
           :session-id="session.session_id"
           @answered="(correct) => onAnswered(card, correct)"
           @cleared="() => onCleared(card)"
+          @listened="() => onListened(card)"
         />
       </div>
 

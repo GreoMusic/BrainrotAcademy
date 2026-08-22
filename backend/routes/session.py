@@ -17,10 +17,11 @@ bp = Blueprint("session", __name__, url_prefix="/api")
 # In-memory. A refresh resets the session; acceptable for a 24h demo.
 SESSIONS: dict[str, dict] = {}
 
-# Cards that need the user's answer before the engine can pick what comes next.
+# Cards that need the user to act before the engine can pick what comes next
+# - answer a question, clear a gate, or (for podcast) finish listening.
 # Prefetch stops at one of these: serving past it would advance session state
 # for a card the client will not show, silently skipping content.
-BLOCKING = {"quiz", "coach", "math_gate", "touch_grass", "talk_to_human"}
+BLOCKING = {"quiz", "coach", "math_gate", "touch_grass", "talk_to_human", "podcast"}
 
 
 def _get(session_id: str):

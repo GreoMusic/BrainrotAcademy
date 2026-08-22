@@ -2,7 +2,7 @@
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 
 const props = defineProps({ card: Object, active: Boolean })
-const emit = defineEmits(['answered'])
+const emit = defineEmits(['answered', 'listened'])
 
 const seg = computed(() => props.card.payload.segment || { turns: [] })
 const turns = computed(() => seg.value.turns || [])
@@ -44,6 +44,9 @@ function playTurn(n) {
 function finishSegment() {
   playing.value = false
   if (quiz.value) showQuiz.value = true
+  // The lock: the feed will not hand the user anything past this card until
+  // they have actually listened all the way through.
+  emit('listened')
 }
 
 function stopAudio() {

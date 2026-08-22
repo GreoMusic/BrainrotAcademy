@@ -30,26 +30,25 @@ def sid(client):
 
 
 def walk(client, sid, *, correct, limit=40, n=3, stop=None):
-    """Drive the feed, answering every quiz and clearing every gate.
+    """Drive the feed: answer every coach conversation, clear every gate.
 
-    `stop` is checked after every card, so a test can end the walk at exactly
-    the transition it cares about instead of guessing a card count.
+    Podcasts block a single prefetch batch but need no explicit action - the
+    server needs nothing to hand over what comes next, the client just was not
+    allowed to skip ahead of it. `stop` is checked after every card, so a test
+    can end the walk at exactly the transition it cares about instead of
+    guessing a card count.
     """
     seen = []
     while len(seen) < limit:
         cards = client.get("/api/session/{}/next?n={}".format(sid, n)).get_json()["cards"]
         for card in cards:
             seen.append(card["type"])
-            if card["type"] == "quiz":
+            if card["type"] == "coach":
                 client.post(
                     "/api/session/{}/answer".format(sid),
-                    json={
-                        "card_id": card["id"],
-                        "correct": correct,
-                        "item_id": card["payload"]["item_id"],
-                    },
+                    json={"card_id": card["id"], "correct": correct},
                 )
-            elif card["type"] in BLOCKING:
+            elif card["type"] in ("math_gate", "touch_grass", "talk_to_human"):
                 client.post("/api/session/{}/friction/clear".format(sid))
             if stop and stop(seen):
                 return seen
@@ -58,7 +57,7 @@ def walk(client, sid, *, correct, limit=40, n=3, stop=None):
 
 def after_first_check(seen):
     """True once a card follows the CHECK block - i.e. the branch was taken."""
-    return "quiz" in seen and seen[-1] != "quiz"
+    return "coach" in seen and seen[-1] != "coach"
 
 
 def test_health(client):
@@ -84,17 +83,17 @@ def test_prefetch_stops_at_blocking_cards(client, sid):
         assert i == len(types) - 1, "a blocking card must end the batch: {}".format(types)
 
 
-def test_every_quiz_in_a_check_is_served(client, sid):
-    """With prefetch on, a full CHECK must still deliver all its questions."""
+def test_every_check_is_exactly_one_coach_conversation(client, sid):
+    """With prefetch on, a CHECK must still deliver exactly one coach turn."""
     seen = walk(client, sid, correct=False, stop=after_first_check)
-    assert seen.count("quiz") == config.QUIZ_CARDS_PER_CHECK, seen
+    assert seen.count("coach") == 1, seen
 
 
 def test_failing_a_check_returns_to_learning(client, sid):
     seen = walk(client, sid, correct=False, stop=after_first_check)
     # A LEARN round mixes kinds rather than serving one kind at a time.
     assert len(set(seen[: config.LEARN_CARDS_PER_ROUND])) > 1, seen
-    assert "quiz" in seen
+    assert "coach" in seen
     assert seen[-1] in ("flashcard", "fun_fact", "podcast"), seen
     stage = client.get("/api/session/{}/progress".format(sid)).get_json()["progress"]["stage"]
     assert stage == "LEARN"
@@ -104,8 +103,8 @@ def test_passing_a_check_unlocks_videos_then_a_gate(client, sid):
     seen = walk(client, sid, correct=True, stop=lambda s: "math_gate" in s)
     assert seen.count("video") >= config.SCROLL_BUDGET
     assert "math_gate" in seen, seen
-    # Videos must come after the quiz, never before.
-    assert seen.index("quiz") < seen.index("video")
+    # Videos must come after the coach conversation, never before.
+    assert seen.index("coach") < seen.index("video")
     assert seen.index("video") < seen.index("math_gate")
 
 
@@ -129,22 +128,22 @@ def test_podcast_cards_carry_their_segment(client, sid):
                 assert seg and seg.get("turns"), "podcast card lacks its segment"
                 assert "total" in card["payload"]
                 return
-            if card["type"] == "quiz":
+            if card["type"] == "coach":
                 client.post(
                     "/api/session/{}/answer".format(sid2),
-                    json={"card_id": card["id"], "correct": True, "item_id": card["payload"]["item_id"]},
+                    json={"card_id": card["id"], "correct": True},
                 )
-            elif card["type"] in BLOCKING:
+            elif card["type"] in ("math_gate", "touch_grass", "talk_to_human"):
                 client.post("/api/session/{}/friction/clear".format(sid2))
 
 
 def test_learn_round_mixes_card_kinds(client, sid):
-    """A round should be a flashcard AND a fun fact AND a podcast segment -
-    weakest-first alone buried podcasts behind every flashcard."""
+    """A round is always flashcard, then fun fact, then podcast, in that
+    fixed order - weakest-first alone buried podcasts behind every flashcard,
+    and mastery-first bucketing alone let the order drift round to round."""
     cards = client.get("/api/session/{}/next?n=3".format(sid)).get_json()["cards"]
     kinds = [c["type"] for c in cards]
-    assert len(set(kinds)) == len(kinds), "a LEARN round repeated a kind: {}".format(kinds)
-    assert "podcast" in kinds, kinds
+    assert kinds == ["flashcard", "fun_fact", "podcast"], kinds
 
 
 def test_clearing_a_gate_returns_to_learning_while_material_remains(client, sid):
