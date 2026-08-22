@@ -40,7 +40,7 @@ button { border: 0; background: none; cursor: pointer; }
 /* ---------------------------------------------------------------- frame ---
    A phone on desktop, full-bleed on an actual phone. */
 .stage {
-  height: 100dvh;
+  height: var(--app-height, 100dvh);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@ button { border: 0; background: none; cursor: pointer; }
 
 .phone {
   width: 340px;
-  height: min(720px, calc(100dvh - 40px));
+  height: min(720px, calc(var(--app-height, 100dvh) - 40px));
   background: #111;
   border-radius: 42px;
   padding: 10px;
@@ -83,7 +83,7 @@ button { border: 0; background: none; cursor: pointer; }
   .stage { padding: 0; }
   .phone {
     width: 100%;
-    height: 100dvh;
+    height: var(--app-height, 100dvh);
     border-radius: 0;
     padding: 0;
     box-shadow: none;
