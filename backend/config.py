@@ -13,6 +13,9 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "")
 CHAT_MODEL = os.getenv("CHAT_MODEL", "mistral-medium-latest")
 TTS_MODEL = os.getenv("TTS_MODEL", "voxtral-mini-tts-latest")
 STT_MODEL = os.getenv("STT_MODEL", "voxtral-mini-latest")
+REALTIME_STT_MODEL = os.getenv(
+    "REALTIME_STT_MODEL", "voxtral-mini-transcribe-realtime-2602"
+)
 
 DATA_DIR = BASE_DIR / "data"
 TOPICS_DIR = DATA_DIR / "topics"

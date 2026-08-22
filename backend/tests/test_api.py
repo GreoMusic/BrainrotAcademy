@@ -62,7 +62,14 @@ def after_first_check(seen):
 
 
 def test_health(client):
-    assert client.get("/api/health").get_json()["ok"] is True
+    health = client.get("/api/health").get_json()
+    assert health["ok"] is True
+    assert health["realtime_stt_model"] == config.REALTIME_STT_MODEL
+
+
+def test_realtime_coach_websocket_is_registered(client):
+    rules = {rule.rule for rule in client.application.url_map.iter_rules() if rule.websocket}
+    assert "/api/coach/realtime" in rules
 
 
 def test_unknown_session_404s(client):
