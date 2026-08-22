@@ -12,6 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import config  # noqa: E402
 from app import create_app  # noqa: E402
+import mistral_client  # noqa: E402
+import topics  # noqa: E402
 from routes.session import BLOCKING  # noqa: E402
 
 
@@ -68,8 +70,42 @@ def test_unknown_session_404s(client):
     assert client.get("/api/session/nope/next").status_code == 404
 
 
-def test_unknown_topic_404s(client):
-    assert client.post("/api/session", json={"topic": "nope"}).status_code == 404
+def test_missing_topic_is_rejected(client):
+    """There is no such thing as an unknown topic any more - anything the user
+    types gets generated - so only malformed input is refused up front. Both
+    checks short-circuit before any API call, keeping the suite offline."""
+    assert client.post("/api/session", json={}).status_code == 400
+    assert client.post("/api/session", json={"topic": "   "}).status_code == 400
+    assert client.post("/api/session", json={"topic": "x" * 200}).status_code == 400
+
+
+def test_cached_topic_starts_without_generating(client):
+    """A pack already on disk must start instantly and hit no API."""
+    if not (config.TOPICS_DIR / "photosynthesis.json").exists():
+        pytest.skip("no pack; run: python -m tools.generate_content --stub")
+
+    calls = []
+    real = mistral_client.chat_json
+
+    def spy(*a, **kw):
+        calls.append(a)
+        return real(*a, **kw)
+
+    mistral_client.chat_json = spy
+    try:
+        res = client.post("/api/session", json={"topic": "photosynthesis"})
+    finally:
+        mistral_client.chat_json = real
+
+    assert res.status_code == 200
+    assert calls == [], "a cached topic must not call the model"
+
+
+def test_slugify_collapses_phrasings():
+    assert topics.slugify("How do Black Holes work?!") == "how-do-black-holes-work"
+    assert topics.slugify("WW2") == topics.slugify("ww2")
+    assert topics.slugify("") == "topic"
+    assert len(topics.slugify("x" * 300)) <= 48
 
 
 def test_prefetch_stops_at_blocking_cards(client, sid):

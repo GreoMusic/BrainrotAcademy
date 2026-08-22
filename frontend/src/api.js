@@ -16,6 +16,10 @@ export const api = {
 
   next: (sid, n = 1) => fetch(`/api/session/${sid}/next?n=${n}`).then(j),
 
+  topicStatus: (slug) => fetch(`/api/topics/${slug}/status`).then(j),
+
+  segment: (slug, segId) => fetch(`/api/topics/${slug}/segment/${segId}`).then(j),
+
   answer: (sid, cardId, correct, itemId) =>
     fetch(`/api/session/${sid}/answer`, {
       method: 'POST',
