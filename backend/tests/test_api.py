@@ -84,6 +84,26 @@ def test_health(client):
     assert health["realtime_stt_model"] == config.REALTIME_STT_MODEL
 
 
+def test_failed_coach_recovery_unlocks_scroll(client, sid):
+    coach = None
+    for _ in range(8):
+        cards = client.get("/api/session/{}/next?n=3".format(sid)).get_json()["cards"]
+        coach = next((card for card in cards if card["type"] == "coach"), None)
+        if coach:
+            break
+
+    assert coach is not None
+    response = client.post(
+        "/api/session/{}/coach/recover".format(sid),
+        json={"card_id": coach["id"], "item_id": coach["payload"]["item_id"]},
+    )
+    payload = response.get_json()
+    assert response.status_code == 200
+    assert payload["stage"] == "SCROLL"
+    assert payload["progress"]["scroll_budget"] == config.SCROLL_BUDGET
+    assert payload["progress"]["last_score"] == 0.0
+
+
 def test_conversation_gate_returns_transcript_and_reflection(client, monkeypatch):
     monkeypatch.setattr(
         friction_routes.mc,

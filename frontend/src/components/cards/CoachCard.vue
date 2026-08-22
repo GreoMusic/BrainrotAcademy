@@ -1,8 +1,9 @@
 <script setup>
 import { reactive, ref, nextTick, onBeforeUnmount } from 'vue'
+import ConversationChallenge from '../ConversationChallenge.vue'
 
 const props = defineProps({ card: Object, active: Boolean })
-const emit = defineEmits(['answered'])
+const emit = defineEmits(['answered', 'recovered'])
 
 const messages = ref([
   { role: 'assistant', content: props.card.payload.opener || 'Explain it to me in your own words.' },
@@ -17,6 +18,11 @@ const liveStatus = ref('')
 const verdict = ref(null)
 const scroller = ref(null)
 const confetti = ref([])
+const recoveryMode = ref(null)
+const recoveryBusy = ref(false)
+const recoveryVerdict = ref(null)
+const recoveryPreview = ref(null)
+const recoveryFile = ref(null)
 
 let socket = null
 let mediaStream = null
@@ -255,12 +261,11 @@ async function askCoach(text) {
       : 0
     if (result?.done) {
       verdict.value = !!result.understood
-      // Let the confetti actually land before the feed pulls them away.
-      if (verdict.value) burstConfetti()
-      finishTimer = setTimeout(
-        () => emit('answered', !!result.understood),
-        remainingMs + 1200,
-      )
+      if (verdict.value) {
+        // Let the confetti actually land before the feed pulls them away.
+        burstConfetti()
+        finishTimer = setTimeout(() => emit('answered', true), remainingMs + 1200)
+      }
     }
     if (remainingMs) await new Promise((resolve) => setTimeout(resolve, remainingMs))
   } catch (error) {
@@ -424,6 +429,31 @@ function endCoaching() {
   emit('answered', false)
 }
 
+function completeRecovery() {
+  emit('recovered')
+}
+
+async function verifyRecoveryPhoto(event) {
+  const file = event.target.files[0]
+  if (!file) return
+  if (recoveryPreview.value) URL.revokeObjectURL(recoveryPreview.value)
+  recoveryPreview.value = URL.createObjectURL(file)
+  recoveryBusy.value = true
+  recoveryVerdict.value = null
+  try {
+    const form = new FormData()
+    form.append('photo', file)
+    const response = await fetch('/api/friction/touch-grass', { method: 'POST', body: form })
+    recoveryVerdict.value = await response.json()
+    if (!response.ok) throw new Error(recoveryVerdict.value.error || 'Could not verify the photo')
+    if (recoveryVerdict.value.pass) finishTimer = setTimeout(completeRecovery, 1200)
+  } catch (error) {
+    recoveryVerdict.value = { pass: false, reason: error.message || 'Could not verify the photo.' }
+  } finally {
+    recoveryBusy.value = false
+  }
+}
+
 onBeforeUnmount(() => {
   if (finishTimer) clearTimeout(finishTimer)
   stopPlayback()
@@ -433,13 +463,14 @@ onBeforeUnmount(() => {
   if (replayAudio) replayAudio.pause()
   voiceUrls.forEach((url) => URL.revokeObjectURL(url))
   voiceUrls.clear()
+  if (recoveryPreview.value) URL.revokeObjectURL(recoveryPreview.value)
 })
 </script>
 
 <template>
   <!-- Passing the coach is the moment worth celebrating, so it takes over the
        whole screen the way the design's verdict view does. -->
-  <div v-if="verdict !== null" class="card verdict-screen">
+  <div v-if="verdict !== null" class="card verdict-screen" :class="{ 'recovery-screen': !verdict }">
     <div v-if="verdict" class="confetti-layer">
       <span
         v-for="p in confetti" :key="p.id" class="confetti-piece"
@@ -453,21 +484,61 @@ onBeforeUnmount(() => {
         }"
       />
     </div>
-    <div class="verdict-ring">
-      <div class="inner">{{ verdict ? '✓' : '↺' }}</div>
-    </div>
-    <div class="verdict-title">{{ verdict ? "You're verified" : 'Not yet' }}</div>
-    <div class="verdict-sub">
-      {{ verdict
-        ? 'Real understanding, not a bluff. Back to the feed.'
-        : 'Close, but the idea is not there yet. One more learning round.' }}
+    <template v-if="verdict">
+      <div class="verdict-ring"><div class="inner">✓</div></div>
+      <div class="verdict-title">You're verified</div>
+      <div class="verdict-sub">Real understanding, not a bluff. Back to the feed.</div>
+    </template>
+
+    <div v-else class="recovery-panel">
+      <template v-if="!recoveryMode">
+        <div class="verdict-ring"><div class="inner">↺</div></div>
+        <div class="verdict-title">Earn your break another way</div>
+        <div class="verdict-sub">Choose one real-world reset to unlock the scroll.</div>
+        <div class="recovery-options">
+          <button class="recovery-option" @click="recoveryMode = 'talk'">
+            <span>💬</span><strong>Talk to someone</strong><small>Have a short, everyday conversation</small>
+          </button>
+          <button class="recovery-option" @click="recoveryMode = 'nature'">
+            <span>🌿</span><strong>Touch grass</strong><small>Photograph something alive outside</small>
+          </button>
+        </div>
+      </template>
+
+      <template v-else-if="recoveryMode === 'talk'">
+        <div class="recovery-heading">Talk to someone</div>
+        <p class="recovery-copy">Complete a short conversation to unlock your break.</p>
+        <ConversationChallenge @complete="completeRecovery" @back="recoveryMode = null" />
+      </template>
+
+      <template v-else>
+        <div class="recovery-heading">Touch grass</div>
+        <p class="recovery-copy">Go outside and photograph a plant, the sky, or another piece of nature.</p>
+        <div class="cam-box recovery-camera" @click="recoveryFile.click()">
+          <img v-if="recoveryPreview" :src="recoveryPreview" />
+          <span v-else>📷 point at nature</span>
+        </div>
+        <input ref="recoveryFile" type="file" accept="image/*" capture="environment" hidden @change="verifyRecoveryPhoto" />
+        <div v-if="recoveryBusy || recoveryVerdict" class="recovery-status" :class="{ good: recoveryVerdict?.pass }">
+          {{ recoveryBusy ? 'Checking…' : recoveryVerdict.reason }}
+        </div>
+        <button class="btn btn-gradient" @click="recoveryFile.click()">
+          {{ recoveryPreview ? 'Retake photo' : 'Open camera' }}
+        </button>
+        <button class="recovery-back" @click="recoveryMode = null">Choose another reset</button>
+      </template>
     </div>
   </div>
 
   <div v-else class="card lightscreen">
     <div class="appbar">
       <div class="who">
-        <div class="pfp">🤖</div>
+        <div class="pfp" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <circle cx="16" cy="12" r="5" />
+            <path d="M7.5 27c.7-5.1 3.6-8 8.5-8s7.8 2.9 8.5 8" />
+          </svg>
+        </div>
         <div>
           <div class="name">coach</div>
           <div class="status">active now</div>
@@ -528,9 +599,12 @@ onBeforeUnmount(() => {
 <style scoped>
 .who { display: flex; align-items: center; gap: 10px; }
 .pfp {
-  width: 32px; height: 32px; border-radius: 50%; background: #eee;
-  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #8b4c38; background: linear-gradient(145deg, #ffe0c7, #f5b997);
+  box-shadow: inset 0 0 0 1px rgba(139, 76, 56, 0.08);
 }
+.pfp svg { width: 23px; height: 23px; fill: currentColor; }
 .name { font-size: 13px; font-weight: 700; }
 .status { font-size: 10.5px; color: var(--dim); }
 .end-button {
@@ -564,7 +638,7 @@ onBeforeUnmount(() => {
 .voice-button {
   width: 48px; height: 48px; flex: none; display: grid; place-items: center;
   padding: 0; border-radius: 50%; border: 0; color: #fff;
-  background: var(--ig-gradient); transition: 160ms ease;
+  background: var(--brand-gradient); transition: 160ms ease;
   box-shadow: 0 6px 18px rgba(193, 53, 132, 0.25);
 }
 .voice-button:not(:disabled):active { transform: scale(0.985); }
@@ -595,4 +669,22 @@ onBeforeUnmount(() => {
   0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
   100% { transform: translate(var(--drift), 460px) rotate(var(--rotate)); opacity: 0; }
 }
+.recovery-screen { justify-content: center; overflow-y: auto; background: #fffaf4; color: var(--ink); }
+.recovery-screen .verdict-sub { color: var(--dim); }
+.recovery-panel { width: 100%; max-width: 286px; display: flex; flex-direction: column; align-items: center; }
+.recovery-options { width: 100%; display: grid; gap: 10px; margin-top: 20px; }
+.recovery-option {
+  width: 100%; padding: 13px; display: grid; grid-template-columns: 36px 1fr;
+  align-items: center; column-gap: 10px; border: 1px solid var(--border);
+  border-radius: 14px; background: #fff; text-align: left;
+}
+.recovery-option > span { grid-row: 1 / 3; font-size: 22px; text-align: center; }
+.recovery-option strong { font-size: 12.5px; }
+.recovery-option small { margin-top: 2px; color: var(--dim); font-size: 10px; }
+.recovery-heading { width: 100%; font-size: 18px; font-weight: 800; text-align: center; }
+.recovery-copy { margin: 6px 0 10px; color: var(--dim); font-size: 11px; line-height: 1.45; text-align: center; }
+.recovery-camera { width: 100%; margin: 8px 0 12px; }
+.recovery-status { width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 10px; background: #f5f5f5; color: #555; font-size: 11px; text-align: center; }
+.recovery-status.good { background: rgba(255, 130, 5, 0.1); color: #c43d08; font-weight: 700; }
+.recovery-back { margin-top: 10px; padding: 4px; color: var(--dim); font-size: 10.5px; text-decoration: underline; }
 </style>

@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
 .privacy { margin: 0; font-size: 10.5px; line-height: 1.4; color: var(--dim); }
 .conversation-mic {
   width: 58px; height: 58px; margin: 17px auto 8px; padding: 0; display: grid; place-items: center;
-  border: 0; border-radius: 50%; color: #fff; background: var(--ig-gradient);
+  border: 0; border-radius: 50%; color: #fff; background: var(--brand-gradient);
   box-shadow: 0 7px 20px rgba(193, 53, 132, 0.23);
 }
 .conversation-mic.recording { animation: pulse 1.1s infinite; }
