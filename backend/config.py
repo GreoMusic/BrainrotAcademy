@@ -23,10 +23,11 @@ STATIC_DIR = BASE_DIR / "static"
 AUDIO_DIR = STATIC_DIR / "audio"
 CLIPS_DIR = STATIC_DIR / "clips"
 
-# Current Mistral preset voice IDs. Keep two distinct voices so podcast turns
-# read as a conversation. All remain overridable from backend/.env.
-VOICE_HOST_A = os.getenv("VOICE_HOST_A", "5de47977-6e47-4266-a938-3bc1d76b4676")  # Jane - Curious
-VOICE_HOST_B = os.getenv("VOICE_HOST_B", "390c8a2b-60a6-4882-8437-c49a8bd33b63")  # Oliver - Curious
+# Current Mistral preset voice IDs. The podcast uses restrained American
+# deliveries so it sounds conversational rather than theatrical. All remain
+# overridable from backend/.env.
+VOICE_HOST_A = os.getenv("VOICE_HOST_A", "c69964a6-ab8b-4f8a-9465-ec0925096ec8")  # Paul - Neutral
+VOICE_HOST_B = os.getenv("VOICE_HOST_B", "01d985cd-5e0c-4457-bfd8-80ba31a5bc03")  # Paul - Cheerful
 VOICE_COACH = os.getenv("VOICE_COACH", "01d985cd-5e0c-4457-bfd8-80ba31a5bc03")   # Paul - Cheerful
 
 # Transition engine tuning.
