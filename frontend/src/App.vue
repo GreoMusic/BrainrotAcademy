@@ -292,8 +292,8 @@ async function start(payload) {
   animation: copy-rise 800ms 260ms ease-out both;
 }
 .landing-wordmark {
-  margin-bottom: 17px; color: #c43d08; font-size: 10px; font-weight: 850;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 15px; color: #c65125; font-family: "Grand Hotel", cursive;
+  font-size: 22px; font-weight: 400; line-height: 1; letter-spacing: 0;
 }
 .landing-copy h1 {
   color: #191919; font-size: 31px; line-height: 1.05; letter-spacing: -0.045em;
