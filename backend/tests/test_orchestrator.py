@@ -145,6 +145,28 @@ def test_reel_falls_back_to_video_none_with_no_clips_or_gifs():
     assert card["payload"]["src"] is None
 
 
+def test_new_session_prefers_a_fresh_gif_batch_over_the_pack_s():
+    """A pack is cached and replayed across every session on that topic - if
+    the reel were served straight from pack["gifs"], every session would show
+    the exact same handful of clips. A caller (routes/session.py, with a
+    freshly-fetched GIPHY batch) can override that per session."""
+    pack = make_pack(n_clips=0)
+    pack["gifs"] = [{"id": "stale", "src": "/stale.mp4"}]
+    fresh = [{"id": "fresh1", "src": "/fresh1.mp4"}, {"id": "fresh2", "src": "/fresh2.mp4"}]
+
+    s = orch.new_session("s1", "test", pack, gifs=fresh)
+    assert {g["id"] for g in s["gifs"]} == {"fresh1", "fresh2"}
+
+
+def test_new_session_falls_back_to_pack_gifs_without_a_fresh_batch():
+    """No GIPHY key, or a failed fetch, must not empty the reel out."""
+    pack = make_pack(n_clips=0)
+    pack["gifs"] = [{"id": "g0", "src": "/g0.mp4"}]
+
+    s = orch.new_session("s1", "test", pack)
+    assert [g["id"] for g in s["gifs"]] == ["g0"]
+
+
 def test_first_cleared_friction_returns_to_more_scroll():
     """The first gate after a CHECK buys another round of scrolling rather
     than ending it outright - one toll for six videos reads as a bad trade."""
