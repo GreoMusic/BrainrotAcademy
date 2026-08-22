@@ -1,0 +1,494 @@
+{
+  "topic": "networking-and-http",
+  "title": "Networking & HTTP",
+  "emoji": "💻",
+  "blurb": "Coding - Networking & HTTP",
+  "audio_ready": true,
+  "items": [
+    {
+      "id": "fc1",
+      "kind": "flashcard",
+      "front": "What’s the difference between HTTP and HTTPS?",
+      "back": "HTTPS encrypts data with SSL/TLS",
+      "hook": "HTTPS = HTTP wearing armor"
+    },
+    {
+      "id": "fc2",
+      "kind": "flashcard",
+      "front": "What does a 404 error mean?",
+      "back": "Page not found on the server",
+      "hook": "Oops, ghosted by the server"
+    },
+    {
+      "id": "fc3",
+      "kind": "flashcard",
+      "front": "Which HTTP method should you use to add data?",
+      "back": "POST",
+      "hook": "POST = create, GET = fetch"
+    },
+    {
+      "id": "fc4",
+      "kind": "flashcard",
+      "front": "What’s a TCP handshake?",
+      "back": "SYN, SYN-ACK, ACK",
+      "hook": "TCP’s way of saying hi"
+    },
+    {
+      "id": "fc5",
+      "kind": "flashcard",
+      "front": "What does a DNS server do?",
+      "back": "Translates domain names to IPs",
+      "hook": "Google’s phonebook for the internet"
+    },
+    {
+      "id": "fc6",
+      "kind": "flashcard",
+      "front": "What’s the max size of an HTTP header?",
+      "back": "No strict limit, but often 8KB",
+      "hook": "Headers can be chonky"
+    },
+    {
+      "id": "ff1",
+      "kind": "fun_fact",
+      "text": "The first ever website is still online at info.cern.ch.",
+      "emoji": "🌍"
+    },
+    {
+      "id": "ff2",
+      "kind": "fun_fact",
+      "text": "HTTP/3 uses QUIC, a protocol built by Google for faster connections.",
+      "emoji": "⚡"
+    },
+    {
+      "id": "ff3",
+      "kind": "fun_fact",
+      "text": "A single 404 error costs companies up to $7,000 in lost revenue per minute.",
+      "emoji": "💸"
+    },
+    {
+      "id": "pod_s1",
+      "kind": "podcast",
+      "segment_id": "s1",
+      "title": "What is HTTP Anyway?"
+    },
+    {
+      "id": "pod_s2",
+      "kind": "podcast",
+      "segment_id": "s2",
+      "title": "Request Methods: GET vs POST"
+    },
+    {
+      "id": "pod_s3",
+      "kind": "podcast",
+      "segment_id": "s3",
+      "title": "Status Codes: The Server’s Mood"
+    },
+    {
+      "id": "pod_s4",
+      "kind": "podcast",
+      "segment_id": "s4",
+      "title": "Headers: The Metadata"
+    }
+  ],
+  "quiz": [
+    {
+      "item_id": "fc1",
+      "q": "Which protocol encrypts data?",
+      "options": [
+        "HTTP",
+        "HTTPS",
+        "FTP"
+      ],
+      "correct": 1,
+      "explain": "HTTPS uses SSL/TLS to secure the connection."
+    },
+    {
+      "item_id": "fc2",
+      "q": "What error means the page is missing?",
+      "options": [
+        "500",
+        "403",
+        "404"
+      ],
+      "correct": 2,
+      "explain": "404 is the standard 'Not Found' HTTP status code."
+    },
+    {
+      "item_id": "fc3",
+      "q": "Which method sends data to the server?",
+      "options": [
+        "GET",
+        "DELETE",
+        "POST"
+      ],
+      "correct": 2,
+      "explain": "POST is used to submit data to be processed."
+    },
+    {
+      "item_id": "fc4",
+      "q": "What’s the first step in a TCP handshake?",
+      "options": [
+        "SYN",
+        "ACK",
+        "FIN"
+      ],
+      "correct": 0,
+      "explain": "SYN is the first packet sent to initiate a connection."
+    },
+    {
+      "item_id": "fc5",
+      "q": "What turns google.com into an IP?",
+      "options": [
+        "HTTP",
+        "DNS",
+        "TCP"
+      ],
+      "correct": 1,
+      "explain": "DNS resolves domain names to IP addresses."
+    },
+    {
+      "item_id": "fc6",
+      "q": "What’s a common max HTTP header size?",
+      "options": [
+        "2KB",
+        "8KB",
+        "1MB"
+      ],
+      "correct": 1,
+      "explain": "8KB is a typical limit for HTTP headers."
+    },
+    {
+      "item_id": "ff1",
+      "q": "Where was the first website hosted?",
+      "options": [
+        "MIT",
+        "CERN",
+        "Stanford"
+      ],
+      "correct": 1,
+      "explain": "CERN hosted the first website in 1990."
+    },
+    {
+      "item_id": "ff2",
+      "q": "What protocol does HTTP/3 use?",
+      "options": [
+        "TCP",
+        "QUIC",
+        "UDP"
+      ],
+      "correct": 1,
+      "explain": "HTTP/3 is designed to run over QUIC."
+    },
+    {
+      "item_id": "ff3",
+      "q": "How much can a 404 cost per minute?",
+      "options": [
+        "$100",
+        "$7,000",
+        "$1M"
+      ],
+      "correct": 1,
+      "explain": "Downtime and 404s can be extremely costly."
+    }
+  ],
+  "podcast": {
+    "segments": [
+      {
+        "id": "s1",
+        "title": "What is HTTP Anyway?",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "curious",
+            "text": "Ever wonder how your browser talks to websites?",
+            "id": "s1_t1",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/networking-and-http/s1_t1_91a0c871.mp3",
+            "dur": 2.06
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Uh... it just *does*?",
+            "id": "s1_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/networking-and-http/s1_t2_94622de5.mp3",
+            "dur": 1.18
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "It uses HTTP! That’s like texting back and forth—your browser sends a request, the server replies.",
+            "id": "s1_t3",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/networking-and-http/s1_t3_e2614c3a.mp3",
+            "dur": 4.18
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So my browser’s a teenager now?",
+            "id": "s1_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/networking-and-http/s1_t4_b7cb5629.mp3",
+            "dur": 1.34
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "More like a chatty barista! Requests are orders, responses are your coffee.",
+            "id": "s1_t5",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/networking-and-http/s1_t5_8643813d.mp3",
+            "dur": 4.6
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "But how’s it know what to order?",
+            "id": "s1_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/networking-and-http/s1_t6_5aa8abcf.mp3",
+            "dur": 1.17
+          }
+        ],
+        "quiz_after": {
+          "q": "HTTP is a protocol for what?",
+          "options": [
+            "File transfers",
+            "Browser-server communication",
+            "Email delivery"
+          ],
+          "correct": 1,
+          "reaction_correct": "Finally, someone gets it!",
+          "reaction_wrong": "Nope. Try again, genius.",
+          "reaction_correct_audio": "/static/audio/networking-and-http/s1_rok_485bc15f.mp3"
+        },
+        "dur": 14.53
+      },
+      {
+        "id": "s2",
+        "title": "Request Methods: GET vs POST",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "GET fetches data, like loading a webpage.",
+            "id": "s2_t1",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/networking-and-http/s2_t1_4e6b340a.mp3",
+            "dur": 1.25
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "So POST * Posts * data? Deep.",
+            "id": "s2_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/networking-and-http/s2_t2_80a43c3d.mp3",
+            "dur": 1.98
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Exactly! POST sends data, like submitting a form.",
+            "id": "s2_t3",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/networking-and-http/s2_t3_f104c57e.mp3",
+            "dur": 2.43
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "But why not just use GET for everything?",
+            "id": "s2_t4",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/networking-and-http/s2_t4_18fd4eb8.mp3",
+            "dur": 1.49
+          },
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "GET’s for reading! POST’s for creating or changing stuff.",
+            "id": "s2_t5",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/networking-and-http/s2_t5_8de72e4d.mp3",
+            "dur": 2.88
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "What if I GET a POST?",
+            "id": "s2_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/networking-and-http/s2_t6_da0a0ed2.mp3",
+            "dur": 1.21
+          }
+        ],
+        "quiz_after": {
+          "q": "Which method is for retrieving data?",
+          "options": [
+            "POST",
+            "GET",
+            "DELETE"
+          ],
+          "correct": 1,
+          "reaction_correct": "Nailed it!",
+          "reaction_wrong": "Close, but no cigar.",
+          "reaction_correct_audio": "/static/audio/networking-and-http/s2_rok_1c0df69e.mp3",
+          "reaction_wrong_audio": "/static/audio/networking-and-http/s2_rno_7343c02e.mp3"
+        },
+        "dur": 11.24
+      },
+      {
+        "id": "s3",
+        "title": "Status Codes: The Server’s Mood",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "200 means success! 404 means not found—",
+            "id": "s3_t1",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/networking-and-http/s3_t1_53e20e8b.mp3",
+            "dur": 4.1
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Like my will to live after this?",
+            "id": "s3_t2",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/networking-and-http/s3_t2_6710b516.mp3",
+            "dur": 1.83
+          },
+          {
+            "speaker": "a",
+            "emotion": "confident",
+            "text": "500’s the server’s ‘my bad’ moment.",
+            "id": "s3_t3",
+            "voice": "en_paul_confident",
+            "audio": "/static/audio/networking-and-http/s3_t3_e77919f4.mp3",
+            "dur": 1.49
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "Why not just say ‘oops’?",
+            "id": "s3_t4",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/networking-and-http/s3_t4_0c915b45.mp3",
+            "dur": 1.67
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Machines need numbers, not therapy.",
+            "id": "s3_t5",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/networking-and-http/s3_t5_625774cc.mp3",
+            "dur": 1.74
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "What’s a 418 then?",
+            "id": "s3_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/networking-and-http/s3_t6_a4aeab13.mp3",
+            "dur": 1.5
+          }
+        ],
+        "quiz_after": {
+          "q": "What does a 404 status code mean?",
+          "options": [
+            "Success",
+            "Not Found",
+            "Server Error"
+          ],
+          "correct": 1,
+          "reaction_correct": "Smart cookie!",
+          "reaction_wrong": "Wrong. Try Googling it.",
+          "reaction_correct_audio": "/static/audio/networking-and-http/s3_rok_b9e1eb55.mp3",
+          "reaction_wrong_audio": "/static/audio/networking-and-http/s3_rno_b42011ff.mp3"
+        },
+        "dur": 12.33
+      },
+      {
+        "id": "s4",
+        "title": "Headers: The Metadata",
+        "turns": [
+          {
+            "speaker": "a",
+            "emotion": "excited",
+            "text": "Headers are like the envelope for your HTTP letters!",
+            "id": "s4_t1",
+            "voice": "en_paul_excited",
+            "audio": "/static/audio/networking-and-http/s4_t1_8a2126ca.mp3",
+            "dur": 2.59
+          },
+          {
+            "speaker": "b",
+            "emotion": "confused",
+            "text": "So... the stamp is the data?",
+            "id": "s4_t2",
+            "voice": "gb_jane_confused",
+            "audio": "/static/audio/networking-and-http/s4_t2_f73339c2.mp3",
+            "dur": 1.76
+          },
+          {
+            "speaker": "a",
+            "emotion": "cheerful",
+            "text": "Headers tell servers about the request—language, cookies, etc.",
+            "id": "s4_t3",
+            "voice": "en_paul_cheerful",
+            "audio": "/static/audio/networking-and-http/s4_t3_61189d4c.mp3",
+            "dur": 2.72
+          },
+          {
+            "speaker": "b",
+            "emotion": "sarcasm",
+            "text": "Cookies? Now I’m hungry.",
+            "id": "s4_t4",
+            "voice": "gb_jane_sarcasm",
+            "audio": "/static/audio/networking-and-http/s4_t4_6aa560e4.mp3",
+            "dur": 1.38
+          },
+          {
+            "speaker": "a",
+            "emotion": "neutral",
+            "text": "Not the edible kind. They track sessions.",
+            "id": "s4_t5",
+            "voice": "en_paul_neutral",
+            "audio": "/static/audio/networking-and-http/s4_t5_2f5f02fa.mp3",
+            "dur": 2.0
+          },
+          {
+            "speaker": "b",
+            "emotion": "curious",
+            "text": "Can I eat those?",
+            "id": "s4_t6",
+            "voice": "gb_jane_curious",
+            "audio": "/static/audio/networking-and-http/s4_t6_d4b0503e.mp3",
+            "dur": 1.26
+          }
+        ],
+        "quiz_after": {
+          "q": "What do HTTP headers contain?",
+          "options": [
+            "The main data",
+            "Metadata about the request",
+            "The webpage content"
+          ],
+          "correct": 1,
+          "reaction_correct": "Yes! Finally.",
+          "reaction_wrong": "Nope. Back to the drawing board.",
+          "reaction_correct_audio": "/static/audio/networking-and-http/s4_rok_66bad134.mp3",
+          "reaction_wrong_audio": "/static/audio/networking-and-http/s4_rno_60ac1371.mp3"
+        },
+        "dur": 11.71
+      }
+    ]
+  },
+  "coach_system": "You are a warm, sharp tutor quizzing someone on Networking & HTTP. Ask ONE short question at a time and react to their answer honestly - correct them when they are wrong. Keep every reply under 40 words and sound like a person, not a textbook."
+}

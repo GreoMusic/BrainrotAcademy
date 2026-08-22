@@ -3,8 +3,8 @@
 Complements test_orchestrator.py: that one proves the engine, this one proves
 the wiring between the engine and HTTP.
 """
-import json
 import io
+import json
 import sys
 from pathlib import Path
 
@@ -16,6 +16,7 @@ import config  # noqa: E402
 from app import create_app  # noqa: E402
 import catalogue  # noqa: E402
 import mistral_client  # noqa: E402
+import orchestrator as orch  # noqa: E402
 import topics  # noqa: E402
 from routes import friction as friction_routes  # noqa: E402
 from routes import session as session_routes  # noqa: E402
@@ -82,6 +83,7 @@ def after_first_check(seen):
 def test_health(client):
     health = client.get("/api/health").get_json()
     assert health["ok"] is True
+    assert health["ocr_model"] == config.OCR_MODEL
     assert health["realtime_stt_model"] == config.REALTIME_STT_MODEL
 
 
@@ -115,7 +117,10 @@ def test_conversation_gate_returns_transcript_and_reflection(client, monkeypatch
                 "That sounds relaxing. Where did you go? I walked around the lake near home."
             ),
             "segments": [
-                {"speaker": "speaker_0", "text": "My day was pretty good. I went for a long walk after lunch."},
+                {
+                    "speaker": "speaker_0",
+                    "text": "My day was pretty good. I went for a long walk after lunch.",
+                },
                 {"speaker": "speaker_1", "text": "That sounds relaxing. Where did you go?"},
                 {"speaker": "speaker_0", "text": "I walked around the lake near home."},
             ],
@@ -148,9 +153,128 @@ def test_conversation_gate_returns_transcript_and_reflection(client, monkeypatch
     assert response.status_code == 200
     assert payload["pass"] is True
     assert "long walk" in payload["transcript"]
-    assert {segment["speaker"] for segment in payload["segments"]} == {"speaker_0", "speaker_1"}
+    assert {segment["speaker"] for segment in payload["segments"]} == {
+        "speaker_0",
+        "speaker_1",
+    }
     assert len(payload["reflection"]["strengths"]) == 2
     assert payload["reflection"]["next_step"]
+
+
+def test_catalogue_reset_unlocks_spent_topics(client):
+    catalogue.mark_used("photosynthesis")
+    before = client.get("/api/catalogue").get_json()
+    assert before["used"] == 1
+
+    response = client.post("/api/catalogue/reset")
+    after = response.get_json()
+
+    assert response.status_code == 200
+    assert after["used"] == 0
+    assert after["remaining"] == after["total"]
+    assert after["cycle"] == before["cycle"] + 1
+
+
+def _activate_math_gate(sid):
+    state = session_routes.SESSIONS[sid]
+    state["stage"] = orch.FRICTION
+    state["friction_cursor"] = 0
+    return orch._friction_card(state)
+
+
+def test_math_photo_is_ocrd_and_compared_server_side(client, sid, monkeypatch):
+    card = _activate_math_gate(sid)
+    expected = session_routes.SESSIONS[sid]["active_friction"]["answer"]
+    calls = []
+
+    def fake_ocr(image_bytes, question, *, mime):
+        calls.append((image_bytes, question, mime))
+        return {"final_answer": "x = {}".format(expected), "markdown": "work"}
+
+    monkeypatch.setattr(mistral_client, "ocr_math_answer", fake_ocr)
+    response = client.post(
+        "/api/session/{}/friction/math".format(sid),
+        data={
+            "card_id": card["id"],
+            "photo": (io.BytesIO(b"fake image"), "work.jpg", "image/jpeg"),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["pass"] is True
+    assert calls == [(b"fake image", card["payload"]["question"], "image/jpeg")]
+    assert "answer" not in card["payload"]
+
+
+def test_math_photo_rejects_a_wrong_or_missing_answer(client, sid, monkeypatch):
+    card = _activate_math_gate(sid)
+    monkeypatch.setattr(
+        mistral_client,
+        "ocr_math_answer",
+        lambda *_args, **_kwargs: {"final_answer": None, "markdown": "unclear"},
+    )
+    response = client.post(
+        "/api/session/{}/friction/math".format(sid),
+        data={
+            "card_id": card["id"],
+            "photo": (io.BytesIO(b"fake image"), "work.png", "image/png"),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["pass"] is False
+    assert "Box or circle" in response.get_json()["reason"]
+
+
+def test_math_photo_accepts_number_recovered_from_ocr_page_text(client, sid, monkeypatch):
+    card = _activate_math_gate(sid)
+    expected = session_routes.SESSIONS[sid]["active_friction"]["answer"]
+    monkeypatch.setattr(
+        mistral_client,
+        "ocr_math_answer",
+        lambda *_args, **_kwargs: {
+            "final_answer": str(expected),
+            "markdown": str(expected),
+        },
+    )
+
+    response = client.post(
+        "/api/session/{}/friction/math".format(sid),
+        data={
+            "card_id": card["id"],
+            "photo": (io.BytesIO(b"fake image"), "standalone-number.jpg", "image/jpeg"),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["pass"] is True
+    assert response.get_json()["recognized_answer"] == str(expected)
+
+
+def test_math_gate_accepts_a_direct_numeric_answer(client, sid, monkeypatch):
+    card = _activate_math_gate(sid)
+    expected = session_routes.SESSIONS[sid]["active_friction"]["answer"]
+    ocr_calls = []
+    monkeypatch.setattr(
+        mistral_client,
+        "ocr_math_answer",
+        lambda *_args, **_kwargs: ocr_calls.append(True),
+    )
+
+    correct = client.post(
+        "/api/session/{}/friction/math".format(sid),
+        data={"card_id": card["id"], "answer": str(expected)},
+    )
+    wrong = client.post(
+        "/api/session/{}/friction/math".format(sid),
+        data={"card_id": card["id"], "answer": str(expected + 1)},
+    )
+
+    assert correct.status_code == 200
+    assert correct.get_json()["pass"] is True
+    assert wrong.status_code == 200
+    assert wrong.get_json()["pass"] is False
+    assert ocr_calls == [], "typing an answer must not call OCR"
 
 
 def test_realtime_coach_websocket_is_registered(client):

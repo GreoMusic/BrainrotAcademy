@@ -1,20 +1,21 @@
-"""Session routes - the feed's only critical path.
+"""Session and gate-lifecycle routes.
 
-`/next` deliberately does no network I/O: every card it serves comes from a
-pre-generated pack on disk (plus this session's own gif batch, fetched once
-at start), so the feed keeps working on bad wifi. `/session` already blocks
-on Mistral for a new topic's text, so a GIPHY call there for a fresh reel
-costs nothing the user does not already tolerate.
+`/next` deliberately does no network I/O: cards come from a pre-generated pack
+plus the session's GIF batch. Session creation may fetch GIPHY content, and
+user-triggered gate verification may call Mistral.
 """
 from __future__ import annotations
 
+import re
 import uuid
+from decimal import Decimal, InvalidOperation
 
 from flask import Blueprint, jsonify, request
 
 import catalogue
 import content
 import giphy_client
+import mistral_client as mc
 import orchestrator as orch
 import topics
 
@@ -22,6 +23,8 @@ bp = Blueprint("session", __name__, url_prefix="/api")
 
 # In-memory. A refresh resets the session; acceptable for a 24h demo.
 SESSIONS: dict[str, dict] = {}
+MAX_MATH_PHOTO_BYTES = 10 * 1024 * 1024
+_NUMBER_RE = re.compile(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)")
 
 # Cards that need the user to act before the engine can pick what comes next
 # - answer a question, clear a gate, or (for podcast) finish listening.
@@ -71,6 +74,13 @@ def topic_segment(slug: str, seg_id: str):
 @bp.get("/catalogue")
 def catalogue_view():
     """The two-level board, with what is spent and what is left this cycle."""
+    return jsonify(catalogue.browse())
+
+
+@bp.post("/catalogue/reset")
+def catalogue_reset():
+    """Start a fresh cycle so every built-in topic is selectable again."""
+    catalogue.reset(cycle_bump=True)
     return jsonify(catalogue.browse())
 
 
@@ -209,6 +219,100 @@ def coach_recover(sid: str):
 
     state = orch.recover_failed_check(state, card_id, body.get("item_id"))
     return jsonify({"progress": orch.progress(state), "stage": state["stage"]})
+
+
+def _number_from_ocr(value) -> Decimal | None:
+    """Normalize OCR decoration such as '$42$', 'x = 42', or '42.0'."""
+    if value is None:
+        return None
+    matches = _NUMBER_RE.findall(str(value).replace(",", "").replace("−", "-"))
+    if not matches:
+        return None
+    try:
+        return Decimal(matches[-1])
+    except InvalidOperation:
+        return None
+
+
+@bp.post("/session/<sid>/friction/math")
+def grade_math(sid: str):
+    """Check a typed answer or OCR a notebook photo, always server-side."""
+    state, err = _get(sid)
+    if err:
+        return err
+
+    active = state.get("active_friction") or {}
+    card_id = (request.form.get("card_id") or "").strip()
+    if (
+        state.get("stage") != orch.FRICTION
+        or active.get("kind") != "math_gate"
+        or active.get("card_id") != card_id
+    ):
+        return jsonify({"error": "that math gate is not active"}), 409
+
+    if "answer" in request.form:
+        submitted = (request.form.get("answer") or "").strip()
+        try:
+            value = Decimal(submitted.replace(",", ""))
+        except InvalidOperation:
+            return jsonify(
+                {"pass": False, "reason": "Enter a valid number and try again."}
+            )
+        if not value.is_finite():
+            return jsonify(
+                {"pass": False, "reason": "Enter a valid number and try again."}
+            )
+
+        correct = value == Decimal(str(active["answer"]))
+        return jsonify(
+            {
+                "pass": correct,
+                "recognized_answer": submitted,
+                "reason": "Correct!" if correct else "Not quite. Check your work and try again.",
+            }
+        )
+
+    photo = request.files.get("photo")
+    if not photo:
+        return jsonify({"error": "photo required"}), 400
+    mime = (photo.mimetype or "").lower()
+    if not mime.startswith("image/"):
+        return jsonify({"error": "photo must be an image"}), 415
+
+    image_bytes = photo.read(MAX_MATH_PHOTO_BYTES + 1)
+    if len(image_bytes) > MAX_MATH_PHOTO_BYTES:
+        return jsonify({"error": "photo must be 10 MB or smaller"}), 413
+    if not image_bytes:
+        return jsonify({"error": "photo is empty"}), 400
+
+    try:
+        result = mc.ocr_math_answer(
+            image_bytes,
+            active["question"],
+            mime=mime,
+        )
+    except Exception:  # noqa: BLE001
+        return jsonify({"error": "could not read the photo; please try again"}), 502
+
+    recognized = result.get("final_answer")
+    value = _number_from_ocr(recognized)
+    correct = value is not None and value == Decimal(str(active["answer"]))
+    if value is None:
+        reason = "I couldn't find a final numeric answer. Box or circle it, then retake the photo."
+    elif correct:
+        reason = "I read your final answer as {}. Correct!".format(recognized)
+    else:
+        reason = "I read your final answer as {}. Check your work and try again.".format(
+            recognized
+        )
+
+    return jsonify(
+        {
+            "pass": correct,
+            "recognized_answer": recognized,
+            "reason": reason,
+        }
+    )
 
 
 @bp.get("/session/<sid>/progress")
